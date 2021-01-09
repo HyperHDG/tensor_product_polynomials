@@ -4,8 +4,8 @@
 #include <type_traits>
 #include <utility>
 
-namespace TPP
-{
+//namespace TPP
+//{
 
 /*!*************************************************************************************************
  * \brief   Unused parametes will neither result in g++, nor in doxygen warnings if wrapped by this.
@@ -75,4 +75,4 @@ static constexpr float_t heron_root(const float_t square)
   return 0.5 * (lower_root + upper_root);
 }
 
-} // end of namespace TPP
+//} // end of namespace TPP
