@@ -37,7 +37,7 @@ namespace TPP
  * \param   Expr  C++ Expression that can be evaluated to \c true or \c false.
  * \param   Msg   Message that is to be displayed if \c Expr is evaluated to \c false.
  **************************************************************************************************/
-#define tpp_assert(Expr, Msg) __TPP_Assert(#Expr, Expr, __FILE__, __LINE__, __hy_assertion_text)
+#define TPP::tpp_assert(Expr, Msg) __TPP_Assert(#Expr,Expr,__FILE__,__LINE__,__hy_assertion_text)
 
 // -------------------------------------------------------------------------------------------------
 /// \cond EXCLUDE_CODE
