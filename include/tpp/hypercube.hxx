@@ -1,5 +1,8 @@
 #pragma once  // Ensure that file is included only once in a single compilation.
 
+namespace TPP
+{
+
 /*!*************************************************************************************************
  * \brief   Helper class containing numbers and functions related to hypercubes.
  *
@@ -72,3 +75,5 @@ struct Hypercube
     return point;
   }
 };  // end of struct Hypercube
+
+} // end of namespace TPP
