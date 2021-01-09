@@ -110,7 +110,7 @@ struct Legendre
 
     // Return L^2 normalized value.
     if (normalized)
-      legendre_val *= heron_root((return_t)(2. * index + 1.));
+      legendre_val *= TPP::heron_root((return_t)(2. * index + 1.));
 
     return legendre_val;
   }
@@ -152,7 +152,7 @@ struct Legendre
 
     // Return L^2 normalized value.
     if (normalized)
-      legendre_val *= heron_root((return_t)(2. * index + 1.));
+      legendre_val *= TPP::heron_root((return_t)(2. * index + 1.));
 
     // Derivatives with respect to unit interval must be multiplied by 2.
     if (unit_interval)
