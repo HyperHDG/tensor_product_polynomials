@@ -2,7 +2,7 @@
 
 #include <HyperHDG/dense_la.hxx>
 #include <HyperHDG/hy_assert.hxx>
-#include <HyperHDG/quadrature/one_dimensional.hxx>
+#include <tpp/quadrature/one_dimensional.hxx>
 
 #include <array>
 #include <cmath>
