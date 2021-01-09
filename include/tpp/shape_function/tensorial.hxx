@@ -1,8 +1,8 @@
 #pragma once  // Ensure that file is included only once in a single compilation.
 
-#include <HyperHDG/hy_assert.hxx>
-#include <HyperHDG/hypercube.hxx>
-#include <HyperHDG/shape_function/one_dimensional.hxx>
+#include <tpp/tpp_assert.hxx>
+#include <tpp/hypercube.hxx>
+#include <tpp/shape_function/one_dimensional.hxx>
 
 #include <array>
 

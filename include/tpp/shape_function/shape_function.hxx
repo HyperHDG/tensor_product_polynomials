@@ -1,6 +1,6 @@
 #pragma once  // Ensure that file is included only once in a single compilation.
 
-#include <HyperHDG/shape_function/tensorial.hxx>
+#include <tpp/shape_function/tensorial.hxx>
 
 /*!*************************************************************************************************
  * \brief   Struct that handles different types of evaluation of shape functions.

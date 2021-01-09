@@ -1,8 +1,7 @@
 #pragma once  // Ensure that file is included only once in a single compilation.
 
-#include <HyperHDG/hy_assert.hxx>
-
-#include <cmath>
+#include <tpp/tpp_assert.hxx>
+#include <tpp/compile_time_tricks.hxx>
 
 /*!*************************************************************************************************
  * \brief   Namespace for auxiliary functions and classes needed for struct shap_function.
@@ -87,7 +86,7 @@ struct Legendre
    * \retval  fct_value     Evaluated value of shape function.
    ************************************************************************************************/
   template <typename return_t, typename input_t>
-  static inline return_t fct_val(const unsigned int index,
+  static constexpr return_t fct_val(const unsigned int index,
                                  const input_t& x_val,
                                  const bool normalized = true)
   {
@@ -111,7 +110,7 @@ struct Legendre
 
     // Return L^2 normalized value.
     if (normalized)
-      legendre_val *= std::sqrt((return_t)(2. * index + 1.));
+      legendre_val *= heron_root((return_t)(2. * index + 1.));
 
     return legendre_val;
   }
@@ -130,7 +129,7 @@ struct Legendre
    * \retval  fct_value     Evaluated value of shape function's derivative.
    ************************************************************************************************/
   template <typename return_t, typename input_t>
-  static inline return_t der_val(const unsigned int index,
+  static constexpr return_t der_val(const unsigned int index,
                                  const input_t& x_val,
                                  const bool normalized = true,
                                  const bool unit_interval = true)
@@ -153,7 +152,7 @@ struct Legendre
 
     // Return L^2 normalized value.
     if (normalized)
-      legendre_val *= std::sqrt((return_t)(2. * index + 1.));
+      legendre_val *= heron_root((return_t)(2. * index + 1.));
 
     // Derivatives with respect to unit interval must be multiplied by 2.
     if (unit_interval)
