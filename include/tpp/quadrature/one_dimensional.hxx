@@ -1,6 +1,7 @@
 #pragma once  // Ensure that file is included only once in a single compilation.
 
 #include <tpp/tpp_assert.hxx>
+#include <tpp/compile_time_tricks.hxx>
 
 #include <array>
 #include <cmath>
