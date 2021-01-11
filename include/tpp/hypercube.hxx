@@ -42,7 +42,7 @@ struct Hypercube
    * \retval  decomposition Array consisting of respective one-dimensional indices.
    ************************************************************************************************/
   //template <typename return_t>
-  static inline std::array<unsigned int, std::max(dimT, 1U)> index_decompose(
+  static constexpr std::array<unsigned int, std::max(dimT, 1U)> index_decompose(
     unsigned int index,
     const unsigned int range)
   {

@@ -48,7 +48,7 @@ struct Gaussian
    * \authors   Andreas Rupp, Heidelberg University, 2020.
    ************************************************************************************************/
   template <typename return_t = double>
-  static inline std::array<return_t, n_points()> points()
+  static constexpr std::array<return_t, n_points()> points()
   {
     static_assert(n_points() < 10, "Amount of points needs to be smaller than 10!");
     std::array<return_t, n_points()> quad_points;
@@ -122,7 +122,7 @@ struct Gaussian
    * \authors   Andreas Rupp, Heidelberg University, 2020.
    ************************************************************************************************/
   template <typename return_t = double>
-  static inline std::array<return_t, n_points()> weights()
+  static constexpr std::array<return_t, n_points()> weights()
   {
     static_assert(n_points() < 10, "Amount of points needs to be smaller than 10!");
     std::array<return_t, n_points()> quad_weights;
