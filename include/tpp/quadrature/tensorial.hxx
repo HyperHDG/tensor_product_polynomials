@@ -319,19 +319,20 @@ class Tensorial
   /*!***********************************************************************************************
    * \brief   Integrate product of shape functions times some function over some geometry.
    *
-   * \tparam  geom_t         Geometry which is the integration domain.
+   * \tparam  point_t       Type of point which is the first argument of the function.
+   * \tparam  geom_t        Geometry which is the integration domain.
    * \tparam  func          Function that is also to be integrated.
    * \param   i             Local index of local shape function.
    * \param   j             Local index of local shape function.
    * \param   geom          Geometrical information.
-   * \param   time          Time at which function is evaluated.
+   * \param   f_param       Function parameter (e.g. time) with respect to which it is evaluated.
    * \retval  integral      Integral of product of both shape functions.
    ************************************************************************************************/
   template <typename point_t, typename geom_t, return_t fun(const point_t&, const return_t)>
   static return_t integrate_vol_phiphifunc(const unsigned int i,
                                            const unsigned int j,
                                            geom_t& geom,
-                                           const return_t time = 0.)
+                                           const return_t f_param = 0.)
   {
     static_assert(geom_t::hyEdge_dim() == dim(), "Dimension of hyperedge must fit to quadrature!");
     return_t integral = 0., quad_val;
@@ -350,20 +351,22 @@ class Tensorial
         quad_val *= quad_weights[dec_q[dim]] * shape_fcts_at_quad[dec_i[dim]][dec_q[dim]] *
                     shape_fcts_at_quad[dec_j[dim]][dec_q[dim]];
       }
-      integral += fun(geom.map_ref_to_phys(quad_pt), time) * quad_val;
+      integral += fun(geom.map_ref_to_phys(quad_pt), f_param) * quad_val;
     }
     return integral * geom.area();
   }
   /*!***********************************************************************************************
    * \brief   Integrate product of shape functions times some function over some geometry.
    *
-   * \tparam  geom_t         Geometry which is the integration domain.
+   * \tparam  smallVec_t    Type of vector which is returned by the function.
+   * \tparam  point_t       Type of point which is the first argument of the function.
+   * \tparam  geom_t        Geometry which is the integration domain.
    * \tparam  func          Function that is also to be integrated.
    * \param   i             Local index of local shape function.
    * \param   j             Local index of local shape function.
    * \param   dimension     Local dimension with respect to which the vector-function is integrated.
    * \param   geom          Geometrical information.
-   * \param   time          Time at which function is evaluated.
+   * \param   f_param       Function parameter (e.g. time) with respect to which it is evaluated.
    * \retval  integral      Integral of product of both shape functions.
    ************************************************************************************************/
   template <typename smallVec_t,
@@ -374,7 +377,7 @@ class Tensorial
                                               const unsigned int j,
                                               const unsigned int dimension,
                                               geom_t& geom,
-                                              const return_t time = 0.)
+                                              const return_t f_param = 0.)
   {
     static_assert(geom_t::hyEdge_dim() == dim(), "Dimension of hyperedge must fit to quadrature!");
     return_t integral = 0., quad_val;
@@ -395,7 +398,7 @@ class Tensorial
                     shape_fcts_at_quad[dec_j[dim]][dec_q[dim]];
       }
       integral +=
-        scalar_product(fun(geom.map_ref_to_phys(quad_pt), time), mat_q.get_column(dimension)) *
+        scalar_product(fun(geom.map_ref_to_phys(quad_pt), f_param), mat_q.get_column(dimension)) *
         quad_val;
     }
     return integral * geom.area();
@@ -403,7 +406,7 @@ class Tensorial
   /*!***********************************************************************************************
    * \brief   Integrate product of shape functions over some geometry.
    *
-   * \tparam  geom_t         Geometry which is the integration domain.
+   * \tparam  geom_t        Geometry which is the integration domain.
    * \param   i             Local index of local shape function.
    * \param   j             Local index of local shape function.
    * \param   geom          Geometrical information.
@@ -423,7 +426,7 @@ class Tensorial
   /*!***********************************************************************************************
    * \brief   Integrate product of linear combinations of shape functions over some geometry.
    *
-   * \tparam  geom_t         Geometry which is the integration domain.
+   * \tparam  geom_t        Geometry which is the integration domain.
    * \tparam  array_size    Size of arrays containing coefficients of linear combinations.
    * \tparam  floating_t    The floating point type for the calculation.
    * \param   is            Coefficients of local shape functions.
@@ -467,17 +470,18 @@ class Tensorial
   /*!***********************************************************************************************
    * \brief   Integrate product of shape function times some function over some geometry.
    *
+   * \tparam  point_t       Type of point which is the first argument of the function.
    * \tparam  geom_t        Geometry which is the integration domain.
    * \tparam  fun           Function whose product with shape function is integrated.
    * \param   i             Local index of local shape function.
    * \param   geom          Geometrical information.
-   * \param   time          Time at which function is evaluated.
+   * \param   f_param       Function parameter (e.g. time) with respect to which it is evaluated.
    * \retval  integral      Integral of product of both shape functions.
    ************************************************************************************************/
   template <typename point_t, typename geom_t, return_t fun(const point_t&, const return_t)>
   static return_t integrate_vol_phifunc(const unsigned int i,
                                         geom_t& geom,
-                                        const return_t time = 0.)
+                                        const return_t f_param = 0.)
   {
     static_assert(geom_t::hyEdge_dim() == dim(), "Dimension of hyperedge must fit to quadrature!");
     return_t integral = 0., quad_val;
@@ -494,24 +498,25 @@ class Tensorial
         quad_pt[dim] = quad_points[dec_q[dim]];
         quad_val *= quad_weights[dec_q[dim]] * shape_fcts_at_quad[dec_i[dim]][dec_q[dim]];
       }
-      integral += fun(geom.map_ref_to_phys(quad_pt), time) * quad_val;
+      integral += fun(geom.map_ref_to_phys(quad_pt), f_param) * quad_val;
     }
     return integral * geom.area();
   }
   /*!***********************************************************************************************
    * \brief   Average integral of product of shape function times some function over some geometry.
    *
-   * \tparam  geom_t         Geometry which is the integration domain.
+   * \tparam  point_t       Type of point which is the first argument of the function.
+   * \tparam  geom_t        Geometry which is the integration domain.
    * \tparam  fun           Function whose product with shape function is integrated.
    * \param   i             Local index of local shape function.
    * \param   geom          Geometrical information.
-   * \param   time          Time at which function is evaluated.
+   * \param   f_param       Function parameter (e.g. time) with respect to which it is evaluated.
    * \retval  integral      Integral of product of both shape functions.
    ************************************************************************************************/
   template <typename point_t, typename geom_t, return_t fun(const point_t&, const return_t)>
   static return_t integrate_volUni_phifunc(const unsigned int i,
                                            geom_t& geom,
-                                           const return_t time = 0.)
+                                           const return_t f_param = 0.)
   {
     static_assert(geom_t::hyEdge_dim() == dim(), "Dimension of hyperedge must fit to quadrature!");
     return_t integral = 0., quad_val;
@@ -528,19 +533,18 @@ class Tensorial
         quad_pt[dim] = quad_points[dec_q[dim]];
         quad_val *= quad_weights[dec_q[dim]] * shape_fcts_at_quad[dec_i[dim]][dec_q[dim]];
       }
-      integral += fun(geom.map_ref_to_phys(quad_pt), time) * quad_val;
+      integral += fun(geom.map_ref_to_phys(quad_pt), f_param) * quad_val;
     }
     return integral;
   }
   /*!***********************************************************************************************
    * \brief   Integrate gradient of shape function times other shape function over some geometry.
    *
-   * \note    poly_deg_i and poly_deg_j must be set to max_poly_degree (which is also their default)
-   *          if the basis is not hierarchic.
-   * \todo    Generalize and recover correct implementation!
+   * \note    poly_deg_i and poly_deg_j must be set to the maximum polynomial degree (which is also
+   *          their default value) if the basis is not hierarchical.
    *
-   *
-   * \tparam  geom_t         Geometry which is the integration domain.
+   * \tparam  smallVec_t    Type of the return value.
+   * \tparam  geom_t        Geometry which is the integration domain.
    * \tparam  poly_deg_i    Polynomial degree of shape functions associated to i.
    * \tparam  poly_deg_j    Polynomial degree of shape functions associated to j.
    * \param   i             Local index of local shape function with gradient.
@@ -573,12 +577,14 @@ class Tensorial
   /*!***********************************************************************************************
    * \brief   Integrate gradient of shape functions times other function over some geometry.
    *
-   * \tparam  geom_t         Geometry which is the integration domain.
+   * \tparam  point_t       Type of point which is the first argument of the function.
+   * \tparam  geom_t        Geometry which is the integration domain.
    * \tparam  fun           Weight function that is additionally integrated.
+   * \tparam  smallVecT     Vector type of a gradient (evaluated at some point).
    * \param   i             Local index of local shape function.
    * \param   j             Local index of local shape function.
    * \param   geom          Geometrical information.
-   * \param   time          Time at which fun is evaluated.
+   * \param   f_param       Time at which fun is evaluated.
    * \retval  integral      Integral of product of both shape function's weighted gradients.
    ************************************************************************************************/
   template <typename point_t,
@@ -588,7 +594,7 @@ class Tensorial
   static return_t integrate_vol_nablaphinablaphifunc(const unsigned int i,
                                                      const unsigned int j,
                                                      geom_t& geom,
-                                                     return_t time = 0.)
+                                                     return_t f_param = 0.)
   {
     static_assert(geom_t::hyEdge_dim() == dim(), "Dimension of hyperedge must fit to quadrature!");
     return_t integral = 0., quad_weight;
@@ -623,7 +629,7 @@ class Tensorial
           }
         }
       }
-      integral += quad_weight * fun(geom.map_ref_to_phys(quad_pt), time) *
+      integral += quad_weight * fun(geom.map_ref_to_phys(quad_pt), f_param) *
                   scalar_product(nabla_phi_i, nabla_phi_j / rrT);
     }
     return geom.area() * integral;
@@ -631,12 +637,14 @@ class Tensorial
   /*!***********************************************************************************************
    * \brief   Integrate derivative of shape function times other function over some geometry.
    *
-   * \tparam  geom_t         Geometry which is the integration domain.
+   * \tparam  point_t       Type of point which is the first argument of the function.
+   * \tparam  geom_t        Geometry which is the integration domain.
+   * \tparam  smallVec_t    Type of the gradient.
    * \tparam  fun           Weight function that is additionally integrated.
    * \param   i             Local index of local shape function.
    * \param   dim_der       Dimension with respect to which derivative is calculated.
    * \param   geom          Geometrical information.
-   * \param   time          Time at which fun is evaluated.
+   * \param   f_param       Time at which fun is evaluated.
    * \retval  integral      Integral of product of both shape function's weighted gradients.
    ************************************************************************************************/
   template <typename point_t,
@@ -646,7 +654,7 @@ class Tensorial
   static return_t integrate_vol_derphifunc(const unsigned int i,
                                            const unsigned int dim_der,
                                            geom_t& geom,
-                                           return_t time = 0.)
+                                           return_t f_param = 0.)
   {
     static_assert(geom_t::hyEdge_dim() == dim(), "Dimension of hyperedge must fit to quadrature!");
     return_t integral = 0., quad_weight;
@@ -674,7 +682,7 @@ class Tensorial
         }
       }
       integral +=
-        quad_weight * fun(geom.map_ref_to_phys(quad_pt), time) * (nabla_phi_i / rT)[dim_der];
+        quad_weight * fun(geom.map_ref_to_phys(quad_pt), f_param) * (nabla_phi_i / rT)[dim_der];
     }
     return geom.area() * integral;
   }
@@ -682,13 +690,15 @@ class Tensorial
    * \brief   Integrate gradient of shape function times shape function times other function times
    *          normal over some geometry's boundary.
    *
-   * \tparam  geom_t         Geometry which is the integration domain.
+   * \tparam  point_t       Type of point which is the first argument of the function.
+   * \tparam  geom_t        Geometry which is the integration domain.
    * \tparam  fun           Weight function that is additionally integrated.
+   * \tparam  smallVec_t    Type of the gradient.
    * \param   i             Local index of local shape function with gradient.
    * \param   j             Local index of local shape function.
    * \param   bdr           Index of the boundatry face to integrate over.
    * \param   geom          Geometrical information.
-   * \param   time          Time at which fun is evaluated.
+   * \param   f_param       Time at which fun is evaluated.
    * \retval  integral      Integral of product of both shape function's weighted gradients.
    ************************************************************************************************/
   template <typename point_t,
@@ -699,7 +709,7 @@ class Tensorial
                                                   const unsigned int j,
                                                   const unsigned int bdr,
                                                   geom_t& geom,
-                                                  return_t time = 0.)
+                                                  return_t f_param = 0.)
   {
     static_assert(geom_t::hyEdge_dim() == dim(), "Dimension of hyperedge must fit to quadrature!");
     return_t integral = 0., quad_weight, phi_j;
@@ -744,7 +754,7 @@ class Tensorial
             nabla_phi_i[dim_fct] *= shape_fcts_at_quad[dec_i[dim]][dec_q[dim - (dim > bdr)]];
         }
       }
-      integral += quad_weight * fun(geom.map_ref_to_phys(quad_pt), time) * phi_j *
+      integral += quad_weight * fun(geom.map_ref_to_phys(quad_pt), f_param) * phi_j *
                   scalar_product(normal, nabla_phi_i / rT);
     }
     return geom.face_area(bdr) * integral;
@@ -754,13 +764,14 @@ class Tensorial
    * \brief   Integrate gradient of shape function times shape function times other function times
    *          normal over some geometry's boundary.
    *
-   * \tparam  geom_t         Geometry which is the integration domain.
+   * \tparam  point_t       Type of point which is the first argument of the function.
+   * \tparam  geom_t        Geometry which is the integration domain.
    * \tparam  fun           Weight function that is additionally integrated.
    * \param   i             Local index of local shape function with gradient.
    * \param   j             Local index of local shape function.
    * \param   bdr           Index of the boundatry face to integrate over.
    * \param   geom          Geometrical information.
-   * \param   time          Time at which fun is evaluated.
+   * \param   f_param       Time at which fun is evaluated.
    * \retval  integral      Integral of product of both shape function's weighted gradients.
    ************************************************************************************************/
   template <typename point_t,
@@ -771,7 +782,7 @@ class Tensorial
                                                   const unsigned int j,
                                                   const unsigned int bdr,
                                                   geom_t& geom,
-                                                  return_t time = 0.)
+                                                  return_t f_param = 0.)
   {
     static_assert(geom_t::hyEdge_dim() == dim(), "Dimension of hyperedge must fit to quadrature!");
     return_t integral = 0., quad_weight, phi_j;
@@ -816,7 +827,7 @@ class Tensorial
             nabla_phi_i[dim_fct] *= shape_fcts_at_quad[dec_i[dim]][dec_q[dim - (dim > bdr_dim)]];
         }
       }
-      integral += quad_weight * fun(geom.map_ref_to_phys(quad_pt), time) * phi_j *
+      integral += quad_weight * fun(geom.map_ref_to_phys(quad_pt), f_param) * phi_j *
                   scalar_product(normal, nabla_phi_i / rT);
     }
     return geom.face_area(bdr) * integral;
@@ -888,14 +899,14 @@ class Tensorial
    * \param   i             Local index of local shape function.
    * \param   bdr           Boundary face index.
    * \param   geom          Geometrical information.
-   * \param   time          Time at which the function is evaluated.
+   * \param   f_param          Time at which the function is evaluated.
    * \retval  integral      Integral of product of both shape functions.
    ************************************************************************************************/
   template <typename point_t, typename geom_t, return_t fun(const point_t&, const return_t)>
   static return_t integrate_bdr_phifunc(const unsigned int i,
                                         const unsigned int bdr,
                                         geom_t& geom,
-                                        const return_t time = 0.)
+                                        const return_t f_param = 0.)
   {
     static_assert(geom_t::hyEdge_dim() == dim(), "Dimension of hyperedge must fit to quadrature!");
     return_t integral = 0., quad_val;
@@ -922,7 +933,7 @@ class Tensorial
                       shape_fcts_at_quad[dec_i[dim]][dec_q[dim - (dim > dim_bdr)]];
         }
       }
-      integral += fun(geom.map_ref_to_phys(quad_pt), time) * quad_val;
+      integral += fun(geom.map_ref_to_phys(quad_pt), f_param) * quad_val;
     }
     return integral * geom.face_area(bdr);
   }
@@ -934,14 +945,14 @@ class Tensorial
    * \param   i             Local index of local shape function.
    * \param   bdr           Boundary face index.
    * \param   geom          Geometrical information.
-   * \param   time          Time at which the function is evaluated.
+   * \param   f_param          Time at which the function is evaluated.
    * \retval  integral      Integral of product of both shape functions.
    ************************************************************************************************/
   template <typename point_t, typename geom_t, return_t fun(const point_t&, const return_t)>
   static return_t integrate_bdrUni_psifunc(const unsigned int i,
                                            const unsigned int bdr,
                                            geom_t& geom,
-                                           const return_t time = 0.)
+                                           const return_t f_param = 0.)
   {
     static_assert(geom_t::hyEdge_dim() == dim(), "Dimension of hyperedge must fit to quadrature!");
     return_t integral = 0., quad_val;
@@ -966,7 +977,7 @@ class Tensorial
             shape_fcts_at_quad[dec_i[dim - (dim > dim_bdr)]][dec_q[dim - (dim > dim_bdr)]];
         }
       }
-      integral += fun(geom.map_ref_to_phys(quad_pt), time) * quad_val;
+      integral += fun(geom.map_ref_to_phys(quad_pt), f_param) * quad_val;
     }
     return integral;
   }
@@ -977,7 +988,7 @@ class Tensorial
    * \tparam  func          Function whose distance is measured.
    * \param   coeffs        Coefficients of discrete function.
    * \param   geom          Geometrical information.
-   * \param   time          Time at which the function is evaluated.
+   * \param   f_param          Time at which the function is evaluated.
    * \retval  integral      Squared distance of functions.
    ************************************************************************************************/
   template <typename point_t,
@@ -986,7 +997,7 @@ class Tensorial
             std::size_t n_coeff>
   static return_t integrate_vol_diffsquare_discana(const std::array<return_t, n_coeff> coeffs,
                                                    geom_t& geom,
-                                                   const return_t time = 0.)
+                                                   const return_t f_param = 0.)
   {
     static_assert(geom_t::hyEdge_dim() == dim(), "Dimension of hyperedge must fit to quadrature!");
     return_t integral = 0., quad_weight;
@@ -1009,7 +1020,7 @@ class Tensorial
           quad_val[i] *= shape_fcts_at_quad[dec_i[dim]][dec_q[dim]];
         }
       }
-      integral += quad_weight * std::pow(fun(geom.map_ref_to_phys(quad_pt), time) -
+      integral += quad_weight * std::pow(fun(geom.map_ref_to_phys(quad_pt), f_param) -
                                            std::accumulate(quad_val.begin(), quad_val.end(), 0.),
                                          2);
     }
