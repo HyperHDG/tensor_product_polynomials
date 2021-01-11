@@ -4,7 +4,6 @@
 
 namespace TPP
 {
-
 /*!*************************************************************************************************
  * \brief   Contains auxiliary classes that are uesed as template parameters of ShapeFunction.
  *
@@ -14,4 +13,4 @@ namespace ShapeType
 {
 }  // end of namespace ShapeType
 
-} // end of namespace TPP
+}  // end of namespace TPP
