@@ -500,7 +500,7 @@ class Tensorial
   /*!***********************************************************************************************
    * \brief   Integrate product of shape function times some function over some geometry.
    *
-   * \tparam  geom_t         Geometry which is the integration domain.
+   * \tparam  geom_t        Geometry which is the integration domain.
    * \tparam  fun           Function whose product with shape function is integrated.
    * \param   i             Local index of local shape function.
    * \param   geom          Geometrical information.
