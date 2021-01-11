@@ -615,7 +615,8 @@ class Tensorial
    * \param   time          Time at which fun is evaluated.
    * \retval  integral      Integral of product of both shape function's weighted gradients.
    ************************************************************************************************/
-  template <typename point_t typename geom_t,
+  template <typename point_t,
+            typename geom_t,
             return_t fun(const point_t&, const return_t),
             typename smallVec_t = point_t>
   static return_t integrate_vol_nablaphinablaphifunc(const unsigned int i,
@@ -927,7 +928,7 @@ class Tensorial
    * \param   time          Time at which the function is evaluated.
    * \retval  integral      Integral of product of both shape functions.
    ************************************************************************************************/
-  template <typename point_t typename geom_t, return_t fun(const point_t&, const return_t)>
+  template <typename point_t, typename geom_t, return_t fun(const point_t&, const return_t)>
   static return_t integrate_bdr_phifunc(const unsigned int i,
                                         const unsigned int bdr,
                                         geom_t& geom,
