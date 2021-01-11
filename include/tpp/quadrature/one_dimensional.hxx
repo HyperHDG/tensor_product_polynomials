@@ -105,7 +105,7 @@ struct Gaussian
     //for (unsigned int index = 0; index < quad_points.size(); ++index)
     //  quad_points[index] = 0.5 * (quad_points[index] + 1.);
 
-    return quad_points;
+    return std::array<return_t, n_points()>;
   }
   /*!***********************************************************************************************
    * \brief   Gaussian quadrature weights on one-dimensional unit interval.
