@@ -10,7 +10,6 @@
 
 namespace TPP
 {
-
 namespace Quadrature
 {
 /*!*************************************************************************************************
@@ -1104,4 +1103,4 @@ struct Tensorial
 
 }  // end of namespace Quadrature
 
-} // end of namespace TPP
+}  // end of namespace TPP

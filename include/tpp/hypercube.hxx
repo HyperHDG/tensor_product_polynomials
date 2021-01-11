@@ -2,7 +2,6 @@
 
 namespace TPP
 {
-
 /*!*************************************************************************************************
  * \brief   Helper class containing numbers and functions related to hypercubes.
  *
@@ -41,7 +40,7 @@ struct Hypercube
    * \param   range         Range (maximum, excluded) of the 1D indices.
    * \retval  decomposition Array consisting of respective one-dimensional indices.
    ************************************************************************************************/
-  //template <typename return_t>
+  // template <typename return_t>
   static constexpr std::array<unsigned int, std::max(dimT, 1U)> index_decompose(
     unsigned int index,
     const unsigned int range)
@@ -78,4 +77,4 @@ struct Hypercube
   }
 };  // end of struct Hypercube
 
-} // end of namespace TPP
+}  // end of namespace TPP

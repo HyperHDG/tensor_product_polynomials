@@ -1,14 +1,13 @@
 #pragma once  // Ensure that file is included only once in a single compilation.
 
-#include <tpp/tpp_assert.hxx>
 #include <tpp/hypercube.hxx>
 #include <tpp/shape_function/one_dimensional.hxx>
+#include <tpp/tpp_assert.hxx>
 
 #include <array>
 
 namespace TPP
 {
-
 /*!*************************************************************************************************
  * \brief   Namespace for auxiliary functions and classes needed for struct shap_function.
  *
@@ -57,7 +56,7 @@ struct Tensorial
    ************************************************************************************************/
   template <typename return_t, typename point_t>
   static constexpr return_t fct_val(__attribute__((unused)) const unsigned int index,
-                                 __attribute__((unused)) const point_t& point)
+                                    __attribute__((unused)) const point_t& point)
   {
     static_assert(point_t::size() == dim(), "Point needs to have correct dimension.");
 
@@ -88,8 +87,8 @@ struct Tensorial
    ************************************************************************************************/
   template <typename return_t, typename point_t>
   static constexpr return_t der_val(const unsigned int index,
-                                 const point_t& point,
-                                 const unsigned int der_dim)
+                                    const point_t& point,
+                                    const unsigned int der_dim)
   {
     static_assert(point_t::size() == dim(), "Point needs to have correct dimension.");
     tpp_assert(der_dim < dimT, "The derivative needs to be with respect to a valid dimension.");
@@ -109,4 +108,4 @@ struct Tensorial
 
 }  // end of namespace ShapeType
 
-} // end of namespace TPP
+}  // end of namespace TPP

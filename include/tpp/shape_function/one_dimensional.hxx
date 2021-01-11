@@ -1,11 +1,10 @@
 #pragma once  // Ensure that file is included only once in a single compilation.
 
-#include <tpp/tpp_assert.hxx>
 #include <tpp/compile_time_tricks.hxx>
+#include <tpp/tpp_assert.hxx>
 
 namespace TPP
 {
-
 /*!*************************************************************************************************
  * \brief   Namespace for auxiliary functions and classes needed for struct shap_function.
  *
@@ -90,8 +89,8 @@ struct Legendre
    ************************************************************************************************/
   template <typename return_t, typename input_t>
   static constexpr return_t fct_val(const unsigned int index,
-                                 const input_t& x_val,
-                                 const bool normalized = true)
+                                    const input_t& x_val,
+                                    const bool normalized = true)
   {
     // Transform x value from reference interval [0,1] -> [-1,1].
     const return_t x = 2. * (return_t)x_val - 1.;
@@ -133,9 +132,9 @@ struct Legendre
    ************************************************************************************************/
   template <typename return_t, typename input_t>
   static constexpr return_t der_val(const unsigned int index,
-                                 const input_t& x_val,
-                                 const bool normalized = true,
-                                 const bool unit_interval = true)
+                                    const input_t& x_val,
+                                    const bool normalized = true,
+                                    const bool unit_interval = true)
   {
     if (index == 0)
       return (return_t)0.;
@@ -167,4 +166,4 @@ struct Legendre
 
 }  // end of namespace ShapeType
 
-} // end of namespace TPP
+}  // end of namespace TPP

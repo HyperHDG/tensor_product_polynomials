@@ -26,7 +26,6 @@
 
 namespace TPP
 {
-
 #ifndef NDEBUG
 
 #include <iostream>
@@ -71,4 +70,4 @@ inline void __TPP_Assert(const char* exp_str, bool exp, const char* file, int li
 /// \endcond
 // -------------------------------------------------------------------------------------------------
 
-} // end of namespace TPP
+}  // end of namespace TPP

@@ -4,7 +4,6 @@
 
 namespace TPP
 {
-
 /*!*************************************************************************************************
  * \brief   Struct that handles different types of evaluation of shape functions.
  *
@@ -44,8 +43,8 @@ struct ShapeFunction
    ************************************************************************************************/
   template <typename return_t, typename point_t>
   static constexpr return_t der_val(const unsigned int index,
-                                 const point_t& point,
-                                 const unsigned int der_dim)
+                                    const point_t& point,
+                                    const unsigned int der_dim)
   {
     return shape_t::template der_val<return_t>(index, point, der_dim);
   }
@@ -97,8 +96,8 @@ struct ShapeFunction
    ************************************************************************************************/
   template <typename return_t, typename coeffs_t, typename point_t>
   static constexpr return_t lin_comb_der_val(const coeffs_t& coeffs,
-                                          const point_t& point,
-                                          const unsigned int der_dim)
+                                             const point_t& point,
+                                             const unsigned int der_dim)
   {
     static_assert(point_t::size() == dim(), "Point needs to have correct dimension.");
     static_assert(coeffs_t::size() == n_fun(), "Coeffs size must coincide with poly space!");
@@ -110,4 +109,4 @@ struct ShapeFunction
   }
 };  // end of struct ShapeFunction
 
-} // end of namespace TPP
+}  // end of namespace TPP

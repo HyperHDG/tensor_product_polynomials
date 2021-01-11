@@ -4,7 +4,6 @@
 
 namespace TPP
 {
-
 /*!*************************************************************************************************
  * \brief   Calculate the non-negative square-root of a non-negative number at compile time.
  *
@@ -32,4 +31,4 @@ static constexpr float_t heron_root(const float_t square)
   return 0.5 * (lower_root + upper_root);
 }
 
-} // end of namespace TPP
+}  // end of namespace TPP
