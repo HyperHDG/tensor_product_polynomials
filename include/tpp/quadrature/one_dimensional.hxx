@@ -39,7 +39,7 @@ struct Gaussian
   template<typename array_t>
   static constexpr array_t transform_points(array_t& points)
   {
-    for (unsigned int index = 0; index < arary_t::size(); ++index)
+    for (unsigned int index = 0; index < array_t::size(); ++index)
       points[index] = 0.5 * (points[index] + 1.);
     return points;
   }
