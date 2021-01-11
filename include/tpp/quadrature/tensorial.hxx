@@ -1005,7 +1005,7 @@ class Tensorial
         quad_weight *= quad_weights[dec_q[dim]];
         for (unsigned int i = 0; i < n_coeff; ++i)
         {
-          dec_i = Hypercube<dim()>::index_decompose(i, n_fun_1D);
+          dec_i = Hypercube<geom_t::hyEdge_dim()>::index_decompose(i, n_fun_1D);
           quad_val[i] *= shape_fcts_at_quad[dec_i[dim]][dec_q[dim]];
         }
       }
