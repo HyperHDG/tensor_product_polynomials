@@ -507,7 +507,7 @@ class Tensorial
    * \param   time          Time at which function is evaluated.
    * \retval  integral      Integral of product of both shape functions.
    ************************************************************************************************/
-  template <typename point_t typename geom_t, return_t fun(const point_t&, const return_t)>
+  template <typename point_t, typename geom_t, return_t fun(const point_t&, const return_t)>
   static return_t integrate_vol_phifunc(const unsigned int i,
                                         geom_t& geom,
                                         const return_t time = 0.)
