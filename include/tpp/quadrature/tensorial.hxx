@@ -335,16 +335,14 @@ class Tensorial
   {
     static_assert(geom_t::hyEdge_dim() == dim(), "Dimension of hyperedge must fit to quadrature!");
     return_t integral = 0., quad_val;
-    std::array<unsigned int, geom_t::hyEdge_dim()> dec_i =
-      Hypercube<geom_t::hyEdge_dim()>::index_decompose(i, n_fun_1D);
-    std::array<unsigned int, geom_t::hyEdge_dim()> dec_j =
-      Hypercube<geom_t::hyEdge_dim()>::index_decompose(j, n_fun_1D);
-    std::array<unsigned int, geom_t::hyEdge_dim()> dec_q;
+    std::array<unsigned int, dim()> dec_i = Hypercube<dim()>::index_decompose(i, n_fun_1D);
+    std::array<unsigned int, dim()> dec_j = Hypercube<dim()>::index_decompose(j, n_fun_1D);
+    std::array<unsigned int, dim()> dec_q;
     point_t quad_pt;
 
     for (unsigned int q = 0; q < std::pow(quad_weights.size(), geom_t::hyEdge_dim()); ++q)
     {
-      dec_q = Hypercube<geom_t::hyEdge_dim()>::index_decompose(q, quadrature_t::n_points());
+      dec_q = Hypercube<dim()>::index_decompose(q, quadrature_t::n_points());
       quad_val = 1.;
       for (unsigned int dim = 0; dim < geom_t::hyEdge_dim(); ++dim)
       {
@@ -380,17 +378,15 @@ class Tensorial
   {
     static_assert(geom_t::hyEdge_dim() == dim(), "Dimension of hyperedge must fit to quadrature!");
     return_t integral = 0., quad_val;
-    std::array<unsigned int, geom_t::hyEdge_dim()> dec_i =
-      Hypercube<geom_t::hyEdge_dim()>::index_decompose(i, n_fun_1D);
-    std::array<unsigned int, geom_t::hyEdge_dim()> dec_j =
-      Hypercube<geom_t::hyEdge_dim()>::index_decompose(j, n_fun_1D);
-    std::array<unsigned int, geom_t::hyEdge_dim()> dec_q;
+    std::array<unsigned int, dim()> dec_i = Hypercube<dim()>::index_decompose(i, n_fun_1D);
+    std::array<unsigned int, dim()> dec_j = Hypercube<dim()>::index_decompose(j, n_fun_1D);
+    std::array<unsigned int, dim()> dec_q;
     point_t quad_pt;
     const auto mat_q = geom.mat_q();
 
     for (unsigned int q = 0; q < std::pow(quad_weights.size(), geom_t::hyEdge_dim()); ++q)
     {
-      dec_q = Hypercube<geom_t::hyEdge_dim()>::index_decompose(q, quadrature_t::n_points());
+      dec_q = Hypercube<dim()>::index_decompose(q, quadrature_t::n_points());
       quad_val = 1.;
       for (unsigned int dim = 0; dim < geom_t::hyEdge_dim(); ++dim)
       {
@@ -418,10 +414,8 @@ class Tensorial
   {
     static_assert(geom_t::hyEdge_dim() == dim(), "Dimension of hyperedge must fit to quadrature!");
     return_t integral = 1.;
-    std::array<unsigned int, geom_t::hyEdge_dim()> dec_i =
-      Hypercube<geom_t::hyEdge_dim()>::index_decompose(i, n_fun_1D);
-    std::array<unsigned int, geom_t::hyEdge_dim()> dec_j =
-      Hypercube<geom_t::hyEdge_dim()>::index_decompose(j, n_fun_1D);
+    std::array<unsigned int, dim()> dec_i = Hypercube<dim()>::index_decompose(i, n_fun_1D);
+    std::array<unsigned int, dim()> dec_j = Hypercube<dim()>::index_decompose(j, n_fun_1D);
     for (unsigned int dim_fct = 0; dim_fct < dim(); ++dim_fct)
       integral *= integrate_1D_phiphi(dec_i[dim_fct], dec_j[dim_fct]);
     return integral * geom.area();
@@ -445,11 +439,11 @@ class Tensorial
     static_assert(geom_t::hyEdge_dim() == dim(), "Dimension of hyperedge must fit to quadrature!");
     return_t integral = 0., quad_val, is_val, js_val, val_helper;
 
-    std::array<unsigned int, geom_t::hyEdge_dim()> dec_k, dec_q;
+    std::array<unsigned int, dim()> dec_k, dec_q;
 
     for (unsigned int q = 0; q < std::pow(quad_weights.size(), geom_t::hyEdge_dim()); ++q)
     {
-      dec_q = Hypercube<geom_t::hyEdge_dim()>::index_decompose(q, quadrature_t::n_points());
+      dec_q = Hypercube<dim()>::index_decompose(q, quadrature_t::n_points());
       quad_val = 1.;
       is_val = 0.;
       js_val = 0.;
@@ -459,7 +453,7 @@ class Tensorial
 
       for (unsigned int k = 0; k < array_size; ++k)
       {
-        dec_k = Hypercube<geom_t::hyEdge_dim()>::index_decompose(k, n_fun_1D);
+        dec_k = Hypercube<dim()>::index_decompose(k, n_fun_1D);
         val_helper = 1.;
         for (unsigned int dim = 0; dim < geom_t::hyEdge_dim(); ++dim)
           val_helper *= shape_fcts_at_quad[dec_k[dim]][dec_q[dim]];
@@ -487,14 +481,13 @@ class Tensorial
   {
     static_assert(geom_t::hyEdge_dim() == dim(), "Dimension of hyperedge must fit to quadrature!");
     return_t integral = 0., quad_val;
-    std::array<unsigned int, geom_t::hyEdge_dim()> dec_i =
-      Hypercube<geom_t::hyEdge_dim()>::index_decompose(i, n_fun_1D);
-    std::array<unsigned int, geom_t::hyEdge_dim()> dec_q;
+    std::array<unsigned int, dim()> dec_i = Hypercube<dim()>::index_decompose(i, n_fun_1D);
+    std::array<unsigned int, dim()> dec_q;
     point_t quad_pt;
 
     for (unsigned int q = 0; q < std::pow(quad_weights.size(), geom_t::hyEdge_dim()); ++q)
     {
-      dec_q = Hypercube<geom_t::hyEdge_dim()>::index_decompose(q, quadrature_t::n_points());
+      dec_q = Hypercube<dim()>::index_decompose(q, quadrature_t::n_points());
       quad_val = 1.;
       for (unsigned int dim = 0; dim < geom_t::hyEdge_dim(); ++dim)
       {
@@ -522,14 +515,13 @@ class Tensorial
   {
     static_assert(geom_t::hyEdge_dim() == dim(), "Dimension of hyperedge must fit to quadrature!");
     return_t integral = 0., quad_val;
-    std::array<unsigned int, geom_t::hyEdge_dim()> dec_i =
-      Hypercube<geom_t::hyEdge_dim()>::index_decompose(i, n_fun_1D);
-    std::array<unsigned int, geom_t::hyEdge_dim()> dec_q;
+    std::array<unsigned int, dim()> dec_i = Hypercube<dim()>::index_decompose(i, n_fun_1D);
+    std::array<unsigned int, dim()> dec_q;
     point_t quad_pt;
 
     for (unsigned int q = 0; q < std::pow(quad_weights.size(), geom_t::hyEdge_dim()); ++q)
     {
-      dec_q = Hypercube<geom_t::hyEdge_dim()>::index_decompose(q, quadrature_t::n_points());
+      dec_q = Hypercube<dim()>::index_decompose(q, quadrature_t::n_points());
       quad_val = 1.;
       for (unsigned int dim = 0; dim < geom_t::hyEdge_dim(); ++dim)
       {
@@ -568,10 +560,8 @@ class Tensorial
     static_assert(poly_deg_i <= shape_t::degree() && poly_deg_j <= shape_t::degree(),
                   "The maximum polynomial degrees must be larger than or equal to the given ones.");
     smallVec_t integral(1.);
-    std::array<unsigned int, geom_t::hyEdge_dim()> dec_i =
-      Hypercube<geom_t::hyEdge_dim()>::index_decompose(i, poly_deg_i + 1);
-    std::array<unsigned int, geom_t::hyEdge_dim()> dec_j =
-      Hypercube<geom_t::hyEdge_dim()>::index_decompose(j, poly_deg_j + 1);
+    std::array<unsigned int, dim()> dec_i = Hypercube<dim()>::index_decompose(i, poly_deg_i + 1);
+    std::array<unsigned int, dim()> dec_j = Hypercube<dim()>::index_decompose(j, poly_deg_j + 1);
     for (unsigned int dim = 0; dim < geom_t::hyEdge_dim(); ++dim)
       for (unsigned int dim_fct = 0; dim_fct < geom_t::hyEdge_dim(); ++dim_fct)
         if (dim == dim_fct)
@@ -602,18 +592,16 @@ class Tensorial
   {
     static_assert(geom_t::hyEdge_dim() == dim(), "Dimension of hyperedge must fit to quadrature!");
     return_t integral = 0., quad_weight;
-    std::array<unsigned int, geom_t::hyEdge_dim()> dec_i =
-      Hypercube<geom_t::hyEdge_dim()>::index_decompose(i, n_fun_1D);
-    std::array<unsigned int, geom_t::hyEdge_dim()> dec_j =
-      Hypercube<geom_t::hyEdge_dim()>::index_decompose(j, n_fun_1D);
-    std::array<unsigned int, geom_t::hyEdge_dim()> dec_q;
+    std::array<unsigned int, dim()> dec_i = Hypercube<dim()>::index_decompose(i, n_fun_1D);
+    std::array<unsigned int, dim()> dec_j = Hypercube<dim()>::index_decompose(j, n_fun_1D);
+    std::array<unsigned int, dim()> dec_q;
     point_t quad_pt;
     smallVec_t nabla_phi_i, nabla_phi_j;
     const auto rrT = mat_times_transposed_mat(geom.mat_r(), geom.mat_r());
 
     for (unsigned int q = 0; q < std::pow(quad_weights.size(), geom_t::hyEdge_dim()); ++q)
     {
-      dec_q = Hypercube<geom_t::hyEdge_dim()>::index_decompose(q, n_fun_1D);
+      dec_q = Hypercube<dim()>::index_decompose(q, n_fun_1D);
       quad_weight = 1.;
       nabla_phi_i = 1.;
       nabla_phi_j = 1.;
@@ -662,16 +650,15 @@ class Tensorial
   {
     static_assert(geom_t::hyEdge_dim() == dim(), "Dimension of hyperedge must fit to quadrature!");
     return_t integral = 0., quad_weight;
-    std::array<unsigned int, geom_t::hyEdge_dim()> dec_i =
-      Hypercube<geom_t::hyEdge_dim()>::index_decompose(i, n_fun_1D);
-    std::array<unsigned int, geom_t::hyEdge_dim()> dec_q;
+    std::array<unsigned int, dim()> dec_i = Hypercube<dim()>::index_decompose(i, n_fun_1D);
+    std::array<unsigned int, dim()> dec_q;
     point_t quad_pt;
     smallVec_t nabla_phi_i;
     const auto rT = transposed(geom.mat_r());
 
     for (unsigned int q = 0; q < std::pow(quad_weights.size(), geom_t::hyEdge_dim()); ++q)
     {
-      dec_q = Hypercube<geom_t::hyEdge_dim()>::index_decompose(q, n_fun_1D);
+      dec_q = Hypercube<dim()>::index_decompose(q, n_fun_1D);
       quad_weight = 1.;
       nabla_phi_i = 1.;
       for (unsigned int dim = 0; dim < geom_t::hyEdge_dim(); ++dim)
@@ -716,11 +703,9 @@ class Tensorial
   {
     static_assert(geom_t::hyEdge_dim() == dim(), "Dimension of hyperedge must fit to quadrature!");
     return_t integral = 0., quad_weight, phi_j;
-    std::array<unsigned int, geom_t::hyEdge_dim()> dec_i =
-      Hypercube<geom_t::hyEdge_dim()>::index_decompose(i, n_fun_1D);
-    std::array<unsigned int, geom_t::hyEdge_dim()> dec_j =
-      Hypercube<geom_t::hyEdge_dim()>::index_decompose(j, n_fun_1D);
-    std::array<unsigned int, std::max(geom_t::hyEdge_dim() - 1, 1U)> dec_q;
+    std::array<unsigned int, dim()> dec_i = Hypercube<dim()>::index_decompose(i, n_fun_1D);
+    std::array<unsigned int, dim()> dec_j = Hypercube<dim()>::index_decompose(j, n_fun_1D);
+    std::array<unsigned int, std::max(1U, dim() - 1)> dec_q;
     point_t quad_pt;
     smallVec_t nabla_phi_i, normal;
     const auto rT = transposed(geom.mat_r());
@@ -728,7 +713,7 @@ class Tensorial
 
     for (unsigned int q = 0; q < std::pow(quad_weights.size(), geom_t::hyEdge_dim() - 1); ++q)
     {
-      dec_q = Hypercube<geom_t::hyEdge_dim() - 1>::index_decompose(q, n_fun_1D);
+      dec_q = Hypercube<dim() - 1>::index_decompose(q, n_fun_1D);
       quad_weight = 1.;
       phi_j = 1.;
       nabla_phi_i = 1.;
@@ -790,11 +775,10 @@ class Tensorial
   {
     static_assert(geom_t::hyEdge_dim() == dim(), "Dimension of hyperedge must fit to quadrature!");
     return_t integral = 0., quad_weight, phi_j;
-    std::array<unsigned int, geom_t::hyEdge_dim()> dec_i =
-      Hypercube<geom_t::hyEdge_dim()>::index_decompose(i, n_fun_1D);
-    std::array<unsigned int, std::max(geom_t::hyEdge_dim() - 1, 1U)> dec_j =
-      Hypercube<geom_t::hyEdge_dim() - 1>::index_decompose(j, n_fun_1D);
-    std::array<unsigned int, std::max(geom_t::hyEdge_dim() - 1, 1U)> dec_q;
+    std::array<unsigned int, dim()> dec_i = Hypercube<dim()>::index_decompose(i, n_fun_1D);
+    std::array<unsigned int, std::max(1U, dim() - 1)> dec_j =
+      Hypercube<dim() - 1>::index_decompose(j, n_fun_1D);
+    std::array<unsigned int, std::max(1U, dim() - 1)> dec_q;
     point_t quad_pt;
     smallVec_t nabla_phi_i, normal;
     const auto rT = transposed(geom.mat_r());
@@ -802,7 +786,7 @@ class Tensorial
 
     for (unsigned int q = 0; q < std::pow(quad_weights.size(), geom_t::hyEdge_dim() - 1); ++q)
     {
-      dec_q = Hypercube<geom_t::hyEdge_dim() - 1>::index_decompose(q, n_fun_1D);
+      dec_q = Hypercube<dim() - 1>::index_decompose(q, n_fun_1D);
       quad_weight = 1.;
       phi_j = 1.;
       nabla_phi_i = 1.;
@@ -856,10 +840,8 @@ class Tensorial
   {
     static_assert(geom_t::hyEdge_dim() == dim(), "Dimension of hyperedge must fit to quadrature!");
     return_t integral = 1.;
-    std::array<unsigned int, geom_t::hyEdge_dim()> dec_i =
-      Hypercube<geom_t::hyEdge_dim()>::index_decompose(i, n_fun_1D);
-    std::array<unsigned int, geom_t::hyEdge_dim()> dec_j =
-      Hypercube<geom_t::hyEdge_dim()>::index_decompose(j, n_fun_1D);
+    std::array<unsigned int, dim()> dec_i = Hypercube<dim()>::index_decompose(i, n_fun_1D);
+    std::array<unsigned int, dim()> dec_j = Hypercube<dim()>::index_decompose(j, n_fun_1D);
     unsigned int dim = bdr / 2, bdr_ind = bdr % 2;
     for (unsigned int dim_fct = 0; dim_fct < geom_t::hyEdge_dim(); ++dim_fct)
       if (dim == dim_fct)
@@ -887,10 +869,9 @@ class Tensorial
   {
     static_assert(geom_t::hyEdge_dim() == dim(), "Dimension of hyperedge must fit to quadrature!");
     return_t integral = 1.;
-    std::array<unsigned int, geom_t::hyEdge_dim()> dec_i =
-      Hypercube<geom_t::hyEdge_dim()>::index_decompose(i, n_fun_1D);
-    std::array<unsigned int, std::max(geom_t::hyEdge_dim() - 1, 1U)> dec_j =
-      Hypercube<geom_t::hyEdge_dim() - 1>::index_decompose(j, n_fun_1D);
+    std::array<unsigned int, dim()> dec_i = Hypercube<dim()>::index_decompose(i, n_fun_1D);
+    std::array<unsigned int, std::max(1U, dim() - 1)> dec_j =
+      Hypercube<dim() - 1>::index_decompose(j, n_fun_1D);
     unsigned int dim = bdr / 2, bdr_ind = bdr % 2;
     for (unsigned int dim_fct = 0; dim_fct < geom_t::hyEdge_dim(); ++dim_fct)
       if (dim == dim_fct)
@@ -918,15 +899,14 @@ class Tensorial
   {
     static_assert(geom_t::hyEdge_dim() == dim(), "Dimension of hyperedge must fit to quadrature!");
     return_t integral = 0., quad_val;
-    std::array<unsigned int, geom_t::hyEdge_dim()> dec_i =
-      Hypercube<geom_t::hyEdge_dim()>::index_decompose(i, n_fun_1D);
-    std::array<unsigned int, std::max(1U, geom_t::hyEdge_dim() - 1)> dec_q;
+    std::array<unsigned int, dim()> dec_i = Hypercube<dim()>::index_decompose(i, n_fun_1D);
+    std::array<unsigned int, std::max(1U, dim() - 1)> dec_q;
     point_t quad_pt;
     unsigned int dim_bdr = bdr / 2, bdr_ind = bdr % 2;
 
     for (unsigned int q = 0; q < std::pow(quad_weights.size(), geom_t::hyEdge_dim() - 1); ++q)
     {
-      dec_q = Hypercube<geom_t::hyEdge_dim() - 1>::index_decompose(q, n_fun_1D);
+      dec_q = Hypercube<dim() - 1>::index_decompose(q, n_fun_1D);
       quad_val = 1.;
       for (unsigned int dim = 0; dim < geom_t::hyEdge_dim(); ++dim)
       {
@@ -965,14 +945,14 @@ class Tensorial
   {
     static_assert(geom_t::hyEdge_dim() == dim(), "Dimension of hyperedge must fit to quadrature!");
     return_t integral = 0., quad_val;
-    std::array<unsigned int, std::max(1U, geom_t::hyEdge_dim() - 1)> dec_q,
-      dec_i = Hypercube<geom_t::hyEdge_dim() - 1>::index_decompose(i, n_fun_1D);
+    std::array<unsigned int, std::max(1U, dim() - 1)> dec_q,
+      dec_i = Hypercube<dim() - 1>::index_decompose(i, n_fun_1D);
     point_t quad_pt;
     unsigned int dim_bdr = bdr / 2, bdr_ind = bdr % 2;
 
     for (unsigned int q = 0; q < std::pow(quad_weights.size(), geom_t::hyEdge_dim() - 1); ++q)
     {
-      dec_q = Hypercube<geom_t::hyEdge_dim() - 1>::index_decompose(q, n_fun_1D);
+      dec_q = Hypercube<dim() - 1>::index_decompose(q, n_fun_1D);
       quad_val = 1.;
       for (unsigned int dim = 0; dim < geom_t::hyEdge_dim(); ++dim)
       {
@@ -1010,13 +990,13 @@ class Tensorial
   {
     static_assert(geom_t::hyEdge_dim() == dim(), "Dimension of hyperedge must fit to quadrature!");
     return_t integral = 0., quad_weight;
-    std::array<unsigned int, geom_t::hyEdge_dim()> dec_i, dec_q;
+    std::array<unsigned int, dim()> dec_i, dec_q;
     std::array<return_t, n_coeff> quad_val;
     point_t quad_pt;
 
     for (unsigned int q = 0; q < std::pow(quad_weights.size(), geom_t::hyEdge_dim()); ++q)
     {
-      dec_q = Hypercube<geom_t::hyEdge_dim()>::index_decompose(q, n_fun_1D);
+      dec_q = Hypercube<dim()>::index_decompose(q, n_fun_1D);
       quad_weight = 1.;
       quad_val = coeffs;
       for (unsigned int dim = 0; dim < geom_t::hyEdge_dim(); ++dim)
@@ -1025,7 +1005,7 @@ class Tensorial
         quad_weight *= quad_weights[dec_q[dim]];
         for (unsigned int i = 0; i < n_coeff; ++i)
         {
-          dec_i = Hypercube<geom_t::hyEdge_dim()>::index_decompose(i, n_fun_1D);
+          dec_i = Hypercube<dim()>::index_decompose(i, n_fun_1D);
           quad_val[i] *= shape_fcts_at_quad[dec_i[dim]][dec_q[dim]];
         }
       }
