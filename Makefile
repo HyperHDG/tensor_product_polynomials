@@ -1,5 +1,8 @@
 PROJECT     	= TensorProductPolynomials
-.PHONY:       	doxygen format
+.PHONY:       	clean doxygen format
+
+clean:
+	rm -rf doxygen/html doxygen/latex
 
 doxygen:
 	cd doxygen; doxygen Doxyfile
