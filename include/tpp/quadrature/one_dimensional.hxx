@@ -96,10 +96,10 @@ struct Gaussian
         static_cast<return_t>(0.3123470770400029), static_cast<return_t>(0.2606106964029354),
         static_cast<return_t>(0.2606106964029354)};
 
-    //tpp_assert(n_points() == quad_points.size(),
+    /*tpp_assert(n_points() == quad_points.size(),
               "The number of points should equal the size of the array to be returned. In this "
                 << "case the number of points is " << n_points() << " and the size of the array is "
-                << quad_points.size());
+                << quad_points.size());*/
 
     // Transform quadrature points from [-1,1] -> [0,1]
     //for (unsigned int index = 0; index < quad_points.size(); ++index)
