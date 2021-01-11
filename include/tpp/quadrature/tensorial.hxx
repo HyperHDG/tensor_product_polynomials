@@ -321,14 +321,18 @@ class Tensorial
    *
    * \tparam  point_t       Type of point which is the first argument of the function.
    * \tparam  geom_t        Geometry which is the integration domain.
-   * \tparam  func          Function that is also to be integrated.
+   * \tparam  fun           Function that is also to be integrated.
+   * \tparam  smallVec_t    Type of local point with respect to hyperedge. Defaults to point_t.
    * \param   i             Local index of local shape function.
    * \param   j             Local index of local shape function.
    * \param   geom          Geometrical information.
    * \param   f_param       Function parameter (e.g. time) with respect to which it is evaluated.
    * \retval  integral      Integral of product of both shape functions.
    ************************************************************************************************/
-  template <typename point_t, typename geom_t, return_t fun(const auto&, const return_t)>
+  template <typename point_t,
+            typename geom_t,
+            return_t fun(const point_t&, const return_t),
+            typename smallVec_t = point_t>
   static return_t integrate_vol_phiphifunc(const unsigned int i,
                                            const unsigned int j,
                                            geom_t& geom,
@@ -339,7 +343,7 @@ class Tensorial
     std::array<unsigned int, dim()> dec_i = Hypercube<dim()>::index_decompose(i, n_fun_1D);
     std::array<unsigned int, dim()> dec_j = Hypercube<dim()>::index_decompose(j, n_fun_1D);
     std::array<unsigned int, dim()> dec_q;
-    point_t quad_pt;
+    smallVec_t quad_pt;
 
     for (unsigned int q = 0; q < std::pow(quad_weights.size(), geom_t::hyEdge_dim()); ++q)
     {
@@ -361,7 +365,8 @@ class Tensorial
    * \tparam  smallVec_t    Type of vector which is returned by the function.
    * \tparam  point_t       Type of point which is the first argument of the function.
    * \tparam  geom_t        Geometry which is the integration domain.
-   * \tparam  func          Function that is also to be integrated.
+   * \tparam  fun           Function that is also to be integrated.
+   * \tparam  smallVec_t    Type of local point with respect to hyperedge. Defaults to point_t.
    * \param   i             Local index of local shape function.
    * \param   j             Local index of local shape function.
    * \param   dimension     Local dimension with respect to which the vector-function is integrated.
@@ -369,10 +374,10 @@ class Tensorial
    * \param   f_param       Function parameter (e.g. time) with respect to which it is evaluated.
    * \retval  integral      Integral of product of both shape functions.
    ************************************************************************************************/
-  template <typename smallVec_t,
-            typename point_t,
+  template <typename point_t,
             typename geom_t,
-            smallVec_t fun(const point_t&, const return_t)>
+            point_t fun(const point_t&, const return_t),
+            typename smallVec_t = point_t>
   static return_t integrate_vol_phiphivecfunc(const unsigned int i,
                                               const unsigned int j,
                                               const unsigned int dimension,
@@ -384,7 +389,7 @@ class Tensorial
     std::array<unsigned int, dim()> dec_i = Hypercube<dim()>::index_decompose(i, n_fun_1D);
     std::array<unsigned int, dim()> dec_j = Hypercube<dim()>::index_decompose(j, n_fun_1D);
     std::array<unsigned int, dim()> dec_q;
-    point_t quad_pt;
+    smallVec_t quad_pt;
     const auto mat_q = geom.mat_q();
 
     for (unsigned int q = 0; q < std::pow(quad_weights.size(), geom_t::hyEdge_dim()); ++q)
@@ -473,12 +478,16 @@ class Tensorial
    * \tparam  point_t       Type of point which is the first argument of the function.
    * \tparam  geom_t        Geometry which is the integration domain.
    * \tparam  fun           Function whose product with shape function is integrated.
+   * \tparam  smallVec_t    Type of local point with respect to hyperedge. Defaults to point_t.
    * \param   i             Local index of local shape function.
    * \param   geom          Geometrical information.
    * \param   f_param       Function parameter (e.g. time) with respect to which it is evaluated.
    * \retval  integral      Integral of product of both shape functions.
    ************************************************************************************************/
-  template <typename point_t, typename geom_t, return_t fun(const auto&, const return_t)>
+  template <typename point_t,
+            typename geom_t,
+            return_t fun(const point_t&, const return_t),
+            typename smallVec_t = point_t>
   static return_t integrate_vol_phifunc(const unsigned int i,
                                         geom_t& geom,
                                         const return_t f_param = 0.)
@@ -487,7 +496,7 @@ class Tensorial
     return_t integral = 0., quad_val;
     std::array<unsigned int, dim()> dec_i = Hypercube<dim()>::index_decompose(i, n_fun_1D);
     std::array<unsigned int, dim()> dec_q;
-    point_t quad_pt;
+    smallVec_t quad_pt;
 
     for (unsigned int q = 0; q < std::pow(quad_weights.size(), geom_t::hyEdge_dim()); ++q)
     {
@@ -508,12 +517,16 @@ class Tensorial
    * \tparam  point_t       Type of point which is the first argument of the function.
    * \tparam  geom_t        Geometry which is the integration domain.
    * \tparam  fun           Function whose product with shape function is integrated.
+   * \tparam  smallVec_t    Type of local point with respect to hyperedge. Defaults to point_t.
    * \param   i             Local index of local shape function.
    * \param   geom          Geometrical information.
    * \param   f_param       Function parameter (e.g. time) with respect to which it is evaluated.
    * \retval  integral      Integral of product of both shape functions.
    ************************************************************************************************/
-  template <typename point_t, typename geom_t, return_t fun(const auto&, const return_t)>
+  template <typename point_t,
+            typename geom_t,
+            return_t fun(const point_t&, const return_t),
+            typename smallVec_t = point_t>
   static return_t integrate_volUni_phifunc(const unsigned int i,
                                            geom_t& geom,
                                            const return_t f_param = 0.)
@@ -522,7 +535,7 @@ class Tensorial
     return_t integral = 0., quad_val;
     std::array<unsigned int, dim()> dec_i = Hypercube<dim()>::index_decompose(i, n_fun_1D);
     std::array<unsigned int, dim()> dec_q;
-    point_t quad_pt;
+    smallVec_t quad_pt;
 
     for (unsigned int q = 0; q < std::pow(quad_weights.size(), geom_t::hyEdge_dim()); ++q)
     {
@@ -580,7 +593,7 @@ class Tensorial
    * \tparam  point_t       Type of point which is the first argument of the function.
    * \tparam  geom_t        Geometry which is the integration domain.
    * \tparam  fun           Weight function that is additionally integrated.
-   * \tparam  smallVecT     Vector type of a gradient (evaluated at some point).
+   * \tparam  smallVec_t    Type of local point with respect to hyperedge. Defaults to point_t.
    * \param   i             Local index of local shape function.
    * \param   j             Local index of local shape function.
    * \param   geom          Geometrical information.
@@ -589,7 +602,7 @@ class Tensorial
    ************************************************************************************************/
   template <typename point_t,
             typename geom_t,
-            return_t fun(const auto&, const return_t),
+            return_t fun(const point_t&, const return_t),
             typename smallVec_t = point_t>
   static return_t integrate_vol_nablaphinablaphifunc(const unsigned int i,
                                                      const unsigned int j,
@@ -601,8 +614,7 @@ class Tensorial
     std::array<unsigned int, dim()> dec_i = Hypercube<dim()>::index_decompose(i, n_fun_1D);
     std::array<unsigned int, dim()> dec_j = Hypercube<dim()>::index_decompose(j, n_fun_1D);
     std::array<unsigned int, dim()> dec_q;
-    point_t quad_pt;
-    smallVec_t nabla_phi_i, nabla_phi_j;
+    smallVec_t quad_pt, nabla_phi_i, nabla_phi_j;
     const auto rrT = mat_times_transposed_mat(geom.mat_r(), geom.mat_r());
 
     for (unsigned int q = 0; q < std::pow(quad_weights.size(), geom_t::hyEdge_dim()); ++q)
@@ -639,8 +651,8 @@ class Tensorial
    *
    * \tparam  point_t       Type of point which is the first argument of the function.
    * \tparam  geom_t        Geometry which is the integration domain.
-   * \tparam  smallVec_t    Type of the gradient.
    * \tparam  fun           Weight function that is additionally integrated.
+   * \tparam  smallVec_t    Type of local point with respect to hyperedge. Defaults to point_t.
    * \param   i             Local index of local shape function.
    * \param   dim_der       Dimension with respect to which derivative is calculated.
    * \param   geom          Geometrical information.
@@ -649,7 +661,7 @@ class Tensorial
    ************************************************************************************************/
   template <typename point_t,
             typename geom_t,
-            return_t fun(const auto&, const return_t),
+            return_t fun(const point_t&, const return_t),
             typename smallVec_t = point_t>
   static return_t integrate_vol_derphifunc(const unsigned int i,
                                            const unsigned int dim_der,
@@ -660,8 +672,7 @@ class Tensorial
     return_t integral = 0., quad_weight;
     std::array<unsigned int, dim()> dec_i = Hypercube<dim()>::index_decompose(i, n_fun_1D);
     std::array<unsigned int, dim()> dec_q;
-    point_t quad_pt;
-    smallVec_t nabla_phi_i;
+    smallVec_t quad_pt, nabla_phi_i;
     const auto rT = transposed(geom.mat_r());
 
     for (unsigned int q = 0; q < std::pow(quad_weights.size(), geom_t::hyEdge_dim()); ++q)
@@ -693,7 +704,7 @@ class Tensorial
    * \tparam  point_t       Type of point which is the first argument of the function.
    * \tparam  geom_t        Geometry which is the integration domain.
    * \tparam  fun           Weight function that is additionally integrated.
-   * \tparam  smallVec_t    Type of the gradient.
+   * \tparam  smallVec_t    Type of local point with respect to hyperedge. Defaults to point_t.
    * \param   i             Local index of local shape function with gradient.
    * \param   j             Local index of local shape function.
    * \param   bdr           Index of the boundatry face to integrate over.
@@ -703,7 +714,7 @@ class Tensorial
    ************************************************************************************************/
   template <typename point_t,
             typename geom_t,
-            return_t fun(const auto&, const return_t),
+            return_t fun(const point_t&, const return_t),
             typename smallVec_t = point_t>
   static return_t integrate_bdr_nablaphiphinufunc(const unsigned int i,
                                                   const unsigned int j,
@@ -716,8 +727,7 @@ class Tensorial
     std::array<unsigned int, dim()> dec_i = Hypercube<dim()>::index_decompose(i, n_fun_1D);
     std::array<unsigned int, dim()> dec_j = Hypercube<dim()>::index_decompose(j, n_fun_1D);
     std::array<unsigned int, std::max(1U, dim() - 1)> dec_q;
-    point_t quad_pt;
-    smallVec_t nabla_phi_i, normal;
+    smallVec_t quad_pt, nabla_phi_i, normal;
     const auto rT = transposed(geom.mat_r());
     const unsigned int bdr_dim = bdr / 2, bdr_ind = bdr % 2;
 
@@ -767,6 +777,7 @@ class Tensorial
    * \tparam  point_t       Type of point which is the first argument of the function.
    * \tparam  geom_t        Geometry which is the integration domain.
    * \tparam  fun           Weight function that is additionally integrated.
+   * \tparam  smallVec_t    Type of local point with respect to hyperedge. Defaults to point_t.
    * \param   i             Local index of local shape function with gradient.
    * \param   j             Local index of local shape function.
    * \param   bdr           Index of the boundatry face to integrate over.
@@ -776,7 +787,7 @@ class Tensorial
    ************************************************************************************************/
   template <typename point_t,
             typename geom_t,
-            return_t fun(const auto&, const return_t),
+            return_t fun(const point_t&, const return_t),
             typename smallVec_t = point_t>
   static return_t integrate_bdr_nablaphipsinufunc(const unsigned int i,
                                                   const unsigned int j,
@@ -790,8 +801,7 @@ class Tensorial
     std::array<unsigned int, std::max(1U, dim() - 1)> dec_j =
       Hypercube<dim() - 1>::index_decompose(j, n_fun_1D);
     std::array<unsigned int, std::max(1U, dim() - 1)> dec_q;
-    point_t quad_pt;
-    smallVec_t nabla_phi_i, normal;
+    smallVec_t quad_pt, nabla_phi_i, normal;
     const auto rT = transposed(geom.mat_r());
     const unsigned int bdr_dim = bdr / 2, bdr_ind = bdr % 2;
 
@@ -836,7 +846,7 @@ class Tensorial
   /*!***********************************************************************************************
    * \brief   Integrate product of shape functions over boundary face.
    *
-   * \tparam  geom_t         Geometry which is the integration domain.
+   * \tparam  geom_t        Geometry which is the integration domain.
    * \param   i             Local index of local shape function.
    * \param   j             Local index of local shape function.
    * \param   bdr           Boundary face index.
@@ -865,7 +875,7 @@ class Tensorial
   /*!***********************************************************************************************
    * \brief   Integrate product of shape functions of volumen and skeletal over boundary face.
    *
-   * \tparam  geom_t         Geometry which is the integration domain.
+   * \tparam  geom_t        Geometry which is the integration domain.
    * \param   i             Local index of local volumne shape function.
    * \param   j             Local index of local skeletal shape function.
    * \param   bdr           Boundary face index.
@@ -894,15 +904,19 @@ class Tensorial
   /*!***********************************************************************************************
    * \brief   Integrate product of shape functions times some function over boundary face.
    *
-   * \tparam  geom_t         Geometry which is the integration domain.
-   * \tparam  func          Function that is multiplied by shape function.
+   * \tparam  geom_t        Geometry which is the integration domain.
+   * \tparam  fun           Function that is multiplied by shape function.
+   * \tparam  smallVec_t    Type of local point with respect to hyperedge. Defaults to point_t.
    * \param   i             Local index of local shape function.
    * \param   bdr           Boundary face index.
    * \param   geom          Geometrical information.
-   * \param   f_param          Time at which the function is evaluated.
+   * \param   f_param       Function parameter (e.g. time) with respect to which it is evaluated.
    * \retval  integral      Integral of product of both shape functions.
    ************************************************************************************************/
-  template <typename point_t, typename geom_t, return_t fun(const auto&, const return_t)>
+  template <typename point_t,
+            typename geom_t,
+            return_t fun(const point_t&, const return_t),
+            typename smallVec_t = point_t>
   static return_t integrate_bdr_phifunc(const unsigned int i,
                                         const unsigned int bdr,
                                         geom_t& geom,
@@ -912,7 +926,7 @@ class Tensorial
     return_t integral = 0., quad_val;
     std::array<unsigned int, dim()> dec_i = Hypercube<dim()>::index_decompose(i, n_fun_1D);
     std::array<unsigned int, std::max(1U, dim() - 1)> dec_q;
-    point_t quad_pt;
+    smallVec_t quad_pt;
     unsigned int dim_bdr = bdr / 2, bdr_ind = bdr % 2;
 
     for (unsigned int q = 0; q < std::pow(quad_weights.size(), geom_t::hyEdge_dim() - 1); ++q)
@@ -940,15 +954,19 @@ class Tensorial
   /*!***********************************************************************************************
    * \brief   Average integral of product of skeletal shape functions times some function.
    *
-   * \tparam  geom_t         Geometry which is the integration domain.
-   * \tparam  func          Function that is multiplied by shape function.
+   * \tparam  geom_t        Geometry which is the integration domain.
+   * \tparam  fun           Function that is multiplied by shape function.
+   * \tparam  smallVec_t    Type of local point with respect to hyperedge. Defaults to point_t.
    * \param   i             Local index of local shape function.
    * \param   bdr           Boundary face index.
    * \param   geom          Geometrical information.
-   * \param   f_param          Time at which the function is evaluated.
+   * \param   f_param       Function parameter (e.g. time) with respect to which it is evaluated.
    * \retval  integral      Integral of product of both shape functions.
    ************************************************************************************************/
-  template <typename point_t, typename geom_t, return_t fun(const auto&, const return_t)>
+  template <typename point_t,
+            typename geom_t,
+            return_t fun(const point_t&, const return_t),
+            typename smallVec_t = point_t>
   static return_t integrate_bdrUni_psifunc(const unsigned int i,
                                            const unsigned int bdr,
                                            geom_t& geom,
@@ -958,7 +976,7 @@ class Tensorial
     return_t integral = 0., quad_val;
     std::array<unsigned int, std::max(1U, dim() - 1)> dec_q,
       dec_i = Hypercube<dim() - 1>::index_decompose(i, n_fun_1D);
-    point_t quad_pt;
+    smallVec_t quad_pt;
     unsigned int dim_bdr = bdr / 2, bdr_ind = bdr % 2;
 
     for (unsigned int q = 0; q < std::pow(quad_weights.size(), geom_t::hyEdge_dim() - 1); ++q)
@@ -984,16 +1002,18 @@ class Tensorial
   /*!***********************************************************************************************
    * \brief   Squared L2 distance of some function and an discrete function on volume.
    *
-   * \tparam  geom_t         Geometry which is the integration domain.
-   * \tparam  func          Function whose distance is measured.
+   * \tparam  geom_t        Geometry which is the integration domain.
+   * \tparam  fun           Function whose distance is measured.
+   * \tparam  smallVec_t    Type of local point with respect to hyperedge. Defaults to point_t.
    * \param   coeffs        Coefficients of discrete function.
    * \param   geom          Geometrical information.
-   * \param   f_param          Time at which the function is evaluated.
+   * \param   f_param       Function parameter (e.g. time) with respect to which it is evaluated.
    * \retval  integral      Squared distance of functions.
    ************************************************************************************************/
   template <typename point_t,
             typename geom_t,
-            return_t fun(const auto&, const return_t),
+            return_t fun(const point_t&, const return_t),
+            typename smallVec_t,
             std::size_t n_coeff>
   static return_t integrate_vol_diffsquare_discana(const std::array<return_t, n_coeff> coeffs,
                                                    geom_t& geom,
@@ -1003,7 +1023,7 @@ class Tensorial
     return_t integral = 0., quad_weight;
     std::array<unsigned int, dim()> dec_i, dec_q;
     std::array<return_t, n_coeff> quad_val;
-    point_t quad_pt;
+    smallVec_t quad_pt;
 
     for (unsigned int q = 0; q < std::pow(quad_weights.size(), geom_t::hyEdge_dim()); ++q)
     {
