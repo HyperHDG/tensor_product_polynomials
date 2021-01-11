@@ -36,6 +36,7 @@ struct Gaussian
     return amount;
   }
 
+  template <typename return_t>
   static constexpr std::array<return_t, n_points()> transform_points(std::array<return_t, n_points()>& points)
   {
     for (unsigned int index = 0; index < n_points(); ++index)
