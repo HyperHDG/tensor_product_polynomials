@@ -25,8 +25,9 @@ namespace Quadrature
  * \authors   Andreas Rupp, Heidelberg University, 2020.
  **************************************************************************************************/
 template <typename quadrature_t, typename shape_t, typename return_t = double>
-struct Tensorial
+class Tensorial
 {
+ public:
   typedef shape_t shape_fun_t;
   static constexpr unsigned int dim() { return shape_t::dim(); }
   static constexpr unsigned int n_fun_1D = shape_t::shape_fun_t::shape_fun_1d::n_fun();
@@ -67,9 +68,10 @@ struct Tensorial
    * \tparam  return_t          Floating type specification. Default is double.
    * \retval  quad_weights      \c std::array containing the quadrature weights.
    ************************************************************************************************/
-  static inline std::array<return_t, quadrature_t::n_points()> quad_weights =
+  static constexpr std::array<return_t, quadrature_t::n_points()> quad_weights =
     quadrature_t::template weights<return_t>();
 
+ private:
   // Shape functions & their derivatives evaluated at quadrature's points:
 
   /*!***********************************************************************************************
@@ -155,11 +157,14 @@ struct Tensorial
     return result;
   }
 
+ public:
   static constexpr std::array<std::array<return_t, quadrature_t::n_points()>, n_fun_1D>
     shape_fcts_at_quad = shape_fcts_at_quad_points(),
     shape_ders_at_quad = shape_ders_at_quad_points();
-  const std::array<std::array<return_t, 2>, n_fun_1D> shape_fcts_at_bdr = shape_fcts_at_bdrs(),
-                                                      shape_ders_at_bdr = shape_ders_at_bdrs();
+  static constexpr std::array<std::array<return_t, 2>, n_fun_1D> shape_fcts_at_bdr =
+                                                                   shape_fcts_at_bdrs(),
+                                                                 shape_ders_at_bdr =
+                                                                   shape_ders_at_bdrs();
   /*!***********************************************************************************************
    * \brief   Integrate product of one-dimensional shape functions.
    *
@@ -167,7 +172,7 @@ struct Tensorial
    * \param   j             Local index of local one-dimensional shape function.
    * \retval  integral      Integral of product of both shape functions.
    ************************************************************************************************/
-  inline return_t integrate_1D_phiphi(const unsigned int i, const unsigned int j) const
+  static constexpr return_t integrate_1D_phiphi(const unsigned int i, const unsigned int j)
   {
     tpp_assert(i < shape_fcts_at_quad.size() && j < shape_fcts_at_quad.size(),
                "Indices of shape functions must be smaller than amount of shape functions.");
@@ -185,7 +190,7 @@ struct Tensorial
    * \param   j             Local index of local one-dimensional shape function (with derivative).
    * \retval  integral      Integral of product of both shape functions.
    ************************************************************************************************/
-  inline return_t integrate_1D_phiDphi(const unsigned int i, const unsigned int j) const
+  static constexpr return_t integrate_1D_phiDphi(const unsigned int i, const unsigned int j)
   {
     tpp_assert(i < shape_fcts_at_quad.size() && j < shape_fcts_at_quad.size(),
                "Indices of shape functions must be smaller than amount of shape functions.");
@@ -203,7 +208,7 @@ struct Tensorial
    * \param   j             Local index of local one-dimensional shape function.
    * \retval  integral      Integral of product of both shape functions.
    ************************************************************************************************/
-  inline return_t integrate_1D_Dphiphi(const unsigned int i, const unsigned int j) const
+  static constexpr return_t integrate_1D_Dphiphi(const unsigned int i, const unsigned int j)
   {
     tpp_assert(i < shape_fcts_at_quad.size() && j < shape_fcts_at_quad.size(),
                "Indices of shape functions must be smaller than amount of shape functions.");
@@ -221,7 +226,7 @@ struct Tensorial
    * \param   j             Local index of local one-dimensional shape function (with derivative).
    * \retval  integral      Integral of product of both shape functions.
    ************************************************************************************************/
-  inline return_t integrate_1D_DphiDphi(const unsigned int i, const unsigned int j) const
+  static constexpr return_t integrate_1D_DphiDphi(const unsigned int i, const unsigned int j)
   {
     tpp_assert(i < shape_fcts_at_quad.size() && j < shape_fcts_at_quad.size(),
                "Indices of shape functions must be smaller than amount of shape functions.");
@@ -239,7 +244,7 @@ struct Tensorial
    * \param   j             Local index of local shape function.
    * \retval  integral      Integral of product of both shape functions.
    ************************************************************************************************/
-  return_t integrate_vol_phiphi(const unsigned int i, const unsigned int j) const
+  static constexpr return_t integrate_vol_phiphi(const unsigned int i, const unsigned int j)
   {
     return_t integral = 1.;
     std::array<unsigned int, dim()> dec_i = Hypercube<dim()>::index_decompose(i, n_fun_1D);
@@ -256,9 +261,9 @@ struct Tensorial
    * \param   dim_der       Dimension of the derivative.
    * \retval  integral      Integral of product of both shape functions.
    ************************************************************************************************/
-  return_t integrate_vol_phiDphi(const unsigned int i,
-                                 const unsigned int j,
-                                 const unsigned int dim_der) const
+  static constexpr return_t integrate_vol_phiDphi(const unsigned int i,
+                                                  const unsigned int j,
+                                                  const unsigned int dim_der)
   {
     return_t integral = 1.;
     std::array<unsigned int, dim()> dec_i = Hypercube<dim()>::index_decompose(i, n_fun_1D);
@@ -278,9 +283,9 @@ struct Tensorial
    * \param   dim_der       Dimension of the derivative.
    * \retval  integral      Integral of product of both shape functions.
    ************************************************************************************************/
-  return_t integrate_vol_Dphiphi(const unsigned int i,
-                                 const unsigned int j,
-                                 const unsigned int dim_der) const
+  static constexpr return_t integrate_vol_Dphiphi(const unsigned int i,
+                                                  const unsigned int j,
+                                                  const unsigned int dim_der)
   {
     return_t integral = 1.;
     std::array<unsigned int, dim()> dec_i = Hypercube<dim()>::index_decompose(i, n_fun_1D);
@@ -300,9 +305,9 @@ struct Tensorial
    * \param   bdr           Boundary face index.
    * \retval  integral      Integral of product of both shape functions.
    ************************************************************************************************/
-  return_t integrate_bdr_phiphi(const unsigned int i,
-                                const unsigned int j,
-                                const unsigned int bdr) const
+  static constexpr return_t integrate_bdr_phiphi(const unsigned int i,
+                                                 const unsigned int j,
+                                                 const unsigned int bdr)
   {
     return_t integral = 1.;
     std::array<unsigned int, dim()> dec_i = Hypercube<dim()>::index_decompose(i, n_fun_1D);
@@ -325,9 +330,9 @@ struct Tensorial
    * \param   bdr           Boundary face index.
    * \retval  integral      Integral of product of both shape functions.
    ************************************************************************************************/
-  return_t integrate_bdr_phipsi(const unsigned int i,
-                                const unsigned int j,
-                                const unsigned int bdr) const
+  static constexpr return_t integrate_bdr_phipsi(const unsigned int i,
+                                                 const unsigned int j,
+                                                 const unsigned int bdr)
   {
     return_t integral = 1.;
     std::array<unsigned int, dim()> dec_i = Hypercube<dim()>::index_decompose(i, n_fun_1D);
@@ -355,10 +360,10 @@ struct Tensorial
    ************************************************************************************************/
   template <typename GeomT,
             return_t fun(const Point<GeomT::space_dim(), return_t>&, const return_t)>
-  return_t integrate_vol_phiphifunc(const unsigned int i,
-                                    const unsigned int j,
-                                    GeomT& geom,
-                                    const return_t time = 0.) const
+  static return_t integrate_vol_phiphifunc(const unsigned int i,
+                                           const unsigned int j,
+                                           GeomT& geom,
+                                           const return_t time = 0.)
   {
     return_t integral = 0., quad_val;
     std::array<unsigned int, GeomT::hyEdge_dim()> dec_i =
@@ -397,11 +402,11 @@ struct Tensorial
   template <typename GeomT,
             SmallVec<GeomT::space_dim(), return_t> fun(const Point<GeomT::space_dim(), return_t>&,
                                                        const return_t)>
-  return_t integrate_vol_phiphivecfunc(const unsigned int i,
-                                       const unsigned int j,
-                                       const unsigned int dimension,
-                                       GeomT& geom,
-                                       const return_t time = 0.) const
+  static return_t integrate_vol_phiphivecfunc(const unsigned int i,
+                                              const unsigned int j,
+                                              const unsigned int dimension,
+                                              GeomT& geom,
+                                              const return_t time = 0.)
   {
     return_t integral = 0., quad_val;
     std::array<unsigned int, GeomT::hyEdge_dim()> dec_i =
@@ -439,7 +444,7 @@ struct Tensorial
    * \retval  integral      Integral of product of both shape functions.
    ************************************************************************************************/
   template <typename GeomT>
-  return_t integrate_vol_phiphi(const unsigned int i, const unsigned int j, GeomT& geom) const
+  static return_t integrate_vol_phiphi(const unsigned int i, const unsigned int j, GeomT& geom)
   {
     constexpr unsigned int dimT = GeomT::hyEdge_dim();
     return_t integral = 1.;
@@ -463,9 +468,9 @@ struct Tensorial
    * \retval  integral      Integral of product of lineat combinations of shape functions.
    ************************************************************************************************/
   template <typename GeomT, std::size_t array_size, typename floating_t>
-  return_t integrate_vol_phiphi(const std::array<floating_t, array_size>& is,
-                                const std::array<floating_t, array_size>& js,
-                                GeomT& geom) const
+  static return_t integrate_vol_phiphi(const std::array<floating_t, array_size>& is,
+                                       const std::array<floating_t, array_size>& js,
+                                       GeomT& geom)
   {
     return_t integral = 0., quad_val, is_val, js_val, val_helper;
 
@@ -506,7 +511,7 @@ struct Tensorial
    ************************************************************************************************/
   template <typename GeomT,
             return_t fun(const Point<GeomT::space_dim(), return_t>&, const return_t)>
-  return_t integrate_vol_phifunc(const unsigned int i, GeomT& geom, const return_t time = 0.) const
+  static return_t integrate_vol_phifunc(const unsigned int i, GeomT& geom, const return_t time = 0.)
   {
     return_t integral = 0., quad_val;
     std::array<unsigned int, GeomT::hyEdge_dim()> dec_i =
@@ -539,9 +544,9 @@ struct Tensorial
    ************************************************************************************************/
   template <typename GeomT,
             return_t fun(const Point<GeomT::space_dim(), return_t>&, const return_t)>
-  return_t integrate_volUni_phifunc(const unsigned int i,
-                                    GeomT& geom,
-                                    const return_t time = 0.) const
+  static return_t integrate_volUni_phifunc(const unsigned int i,
+                                           GeomT& geom,
+                                           const return_t time = 0.)
   {
     return_t integral = 0., quad_val;
     std::array<unsigned int, GeomT::hyEdge_dim()> dec_i =
@@ -581,9 +586,9 @@ struct Tensorial
   template <typename GeomT,
             unsigned int poly_deg_i = shape_t::degree(),
             unsigned int poly_deg_j = shape_t::degree()>
-  SmallVec<GeomT::hyEdge_dim(), return_t> integrate_vol_nablaphiphi(const unsigned int i,
-                                                                    const unsigned int j,
-                                                                    GeomT& geom) const
+  static SmallVec<GeomT::hyEdge_dim(), return_t> integrate_vol_nablaphiphi(const unsigned int i,
+                                                                           const unsigned int j,
+                                                                           GeomT& geom)
   {
     static_assert(poly_deg_i <= shape_t::degree() && poly_deg_j <= shape_t::degree(),
                   "The maximum polynomial degrees must be larger than or equal to the given ones.");
@@ -613,10 +618,10 @@ struct Tensorial
    ************************************************************************************************/
   template <typename GeomT,
             return_t fun(const Point<GeomT::space_dim(), return_t>&, const return_t)>
-  return_t integrate_vol_nablaphinablaphifunc(const unsigned int i,
-                                              const unsigned int j,
-                                              GeomT& geom,
-                                              return_t time = 0.) const
+  static return_t integrate_vol_nablaphinablaphifunc(const unsigned int i,
+                                                     const unsigned int j,
+                                                     GeomT& geom,
+                                                     return_t time = 0.)
   {
     return_t integral = 0., quad_weight;
     std::array<unsigned int, GeomT::hyEdge_dim()> dec_i =
@@ -670,10 +675,10 @@ struct Tensorial
    ************************************************************************************************/
   template <typename GeomT,
             return_t fun(const Point<GeomT::space_dim(), return_t>&, const return_t)>
-  return_t integrate_vol_derphifunc(const unsigned int i,
-                                    const unsigned int dim_der,
-                                    GeomT& geom,
-                                    return_t time = 0.) const
+  static return_t integrate_vol_derphifunc(const unsigned int i,
+                                           const unsigned int dim_der,
+                                           GeomT& geom,
+                                           return_t time = 0.)
   {
     return_t integral = 0., quad_weight;
     std::array<unsigned int, GeomT::hyEdge_dim()> dec_i =
@@ -719,11 +724,11 @@ struct Tensorial
    ************************************************************************************************/
   template <typename GeomT,
             return_t fun(const Point<GeomT::space_dim(), return_t>&, const return_t)>
-  return_t integrate_bdr_nablaphiphinufunc(const unsigned int i,
-                                           const unsigned int j,
-                                           const unsigned int bdr,
-                                           GeomT& geom,
-                                           return_t time = 0.) const
+  static return_t integrate_bdr_nablaphiphinufunc(const unsigned int i,
+                                                  const unsigned int j,
+                                                  const unsigned int bdr,
+                                                  GeomT& geom,
+                                                  return_t time = 0.)
   {
     return_t integral = 0., quad_weight, phi_j;
     std::array<unsigned int, GeomT::hyEdge_dim()> dec_i =
@@ -790,11 +795,11 @@ struct Tensorial
    ************************************************************************************************/
   template <typename GeomT,
             return_t fun(const Point<GeomT::space_dim(), return_t>&, const return_t)>
-  return_t integrate_bdr_nablaphipsinufunc(const unsigned int i,
-                                           const unsigned int j,
-                                           const unsigned int bdr,
-                                           GeomT& geom,
-                                           return_t time = 0.) const
+  static return_t integrate_bdr_nablaphipsinufunc(const unsigned int i,
+                                                  const unsigned int j,
+                                                  const unsigned int bdr,
+                                                  GeomT& geom,
+                                                  return_t time = 0.)
   {
     return_t integral = 0., quad_weight, phi_j;
     std::array<unsigned int, GeomT::hyEdge_dim()> dec_i =
@@ -856,10 +861,10 @@ struct Tensorial
    * \retval  integral      Integral of product of both shape functions.
    ************************************************************************************************/
   template <typename GeomT>
-  return_t integrate_bdr_phiphi(const unsigned int i,
-                                const unsigned int j,
-                                const unsigned int bdr,
-                                GeomT& geom) const
+  static return_t integrate_bdr_phiphi(const unsigned int i,
+                                       const unsigned int j,
+                                       const unsigned int bdr,
+                                       GeomT& geom)
   {
     return_t integral = 1.;
     std::array<unsigned int, GeomT::hyEdge_dim()> dec_i =
@@ -886,10 +891,10 @@ struct Tensorial
    * \retval  integral      Integral of product of both shape functions.
    ************************************************************************************************/
   template <typename GeomT>
-  return_t integrate_bdr_phipsi(const unsigned int i,
-                                const unsigned int j,
-                                const unsigned int bdr,
-                                GeomT& geom) const
+  static return_t integrate_bdr_phipsi(const unsigned int i,
+                                       const unsigned int j,
+                                       const unsigned int bdr,
+                                       GeomT& geom)
   {
     return_t integral = 1.;
     std::array<unsigned int, GeomT::hyEdge_dim()> dec_i =
@@ -917,10 +922,10 @@ struct Tensorial
    ************************************************************************************************/
   template <typename GeomT,
             return_t fun(const Point<GeomT::space_dim(), return_t>&, const return_t)>
-  return_t integrate_bdr_phifunc(const unsigned int i,
-                                 const unsigned int bdr,
-                                 GeomT& geom,
-                                 const return_t time = 0.) const
+  static return_t integrate_bdr_phifunc(const unsigned int i,
+                                        const unsigned int bdr,
+                                        GeomT& geom,
+                                        const return_t time = 0.)
   {
     return_t integral = 0., quad_val;
     std::array<unsigned int, GeomT::hyEdge_dim()> dec_i =
@@ -999,10 +1004,10 @@ struct Tensorial
    ************************************************************************************************/
   template <typename GeomT,
             return_t fun(const Point<GeomT::space_dim(), return_t>&, const return_t)>
-  return_t integrate_bdrUni_psifunc(const unsigned int i,
-                                    const unsigned int bdr,
-                                    GeomT& geom,
-                                    const return_t time = 0.) const
+  static return_t integrate_bdrUni_psifunc(const unsigned int i,
+                                           const unsigned int bdr,
+                                           GeomT& geom,
+                                           const return_t time = 0.)
   {
     return_t integral = 0., quad_val;
     std::array<unsigned int, std::max(1U, GeomT::hyEdge_dim() - 1)> dec_q,
@@ -1043,9 +1048,9 @@ struct Tensorial
   template <typename GeomT,
             return_t fun(const Point<GeomT::space_dim(), return_t>&, const return_t),
             std::size_t n_coeff>
-  return_t integrate_vol_diffsquare_discana(const std::array<return_t, n_coeff> coeffs,
-                                            GeomT& geom,
-                                            const return_t time = 0.) const
+  static return_t integrate_vol_diffsquare_discana(const std::array<return_t, n_coeff> coeffs,
+                                                   GeomT& geom,
+                                                   const return_t time = 0.)
   {
     return_t integral = 0., quad_weight;
     std::array<unsigned int, GeomT::hyEdge_dim()> dec_i, dec_q;
