@@ -55,22 +55,23 @@ struct Gaussian
     if constexpr (n_points() == 1)
       return {static_cast<return_t>(0.)};
     if constexpr (n_points() == 2)
-      return {static_cast<return_t>(-std::sqrt(1. / 3.)),
-                     static_cast<return_t>(std::sqrt(1. / 3.))};
+      return {-heron_root<return_t>(1. / 3.),
+              heron_root<return_t>(1. / 3.)};
     if constexpr (n_points() == 3)
-      return {static_cast<return_t>(-std::sqrt(3. / 5.)), static_cast<return_t>(0.),
-                     static_cast<return_t>(std::sqrt(3. / 5.))};
+      return {-heron_root<return_t>(3. / 5.),
+              static_cast<return_t>(0.),
+              heron_root<return_t>(3. / 5.)};
     if constexpr (n_points() == 4)
-      return {static_cast<return_t>(-std::sqrt(3. / 7. + 2. / 7. * std::sqrt(6. / 5.))),
-                     static_cast<return_t>(-std::sqrt(3. / 7. - 2. / 7. * std::sqrt(6. / 5.))),
-                     static_cast<return_t>(std::sqrt(3. / 7. - 2. / 7. * std::sqrt(6. / 5.))),
-                     static_cast<return_t>(std::sqrt(3. / 7. + 2. / 7. * std::sqrt(6. / 5.)))};
+      return {-heron_root<return_t>(3. / 7. + 2. / 7. * heron_root<return_t>(6. / 5.)),
+              -heron_root<return_t>(3. / 7. - 2. / 7. * heron_root<return_t>(6. / 5.)),
+                     heron_root<return_t>(3. / 7. - 2. / 7. * heron_root<return_t>(6. / 5.)),
+                     heron_root<return_t>(3. / 7. + 2. / 7. * heron_root<return_t>(6. / 5.))};
     if constexpr (n_points() == 5)
-      return {static_cast<return_t>(-std::sqrt(5. + 2. * std::sqrt(10. / 7.)) / 3.),
-                     static_cast<return_t>(-std::sqrt(5. - 2. * std::sqrt(10. / 7.)) / 3.),
+      return {static_cast<return_t>(-heron_root<return_t>(5. + 2. * heron_root<return_t>(10. / 7.)) / 3.),
+                     static_cast<return_t>(-heron_root<return_t>(5. - 2. * heron_root<return_t>(10. / 7.)) / 3.),
                      static_cast<return_t>(0.),
-                     static_cast<return_t>(std::sqrt(5. - 2. * std::sqrt(10. / 7.)) / 3.),
-                     static_cast<return_t>(std::sqrt(5. + 2. * std::sqrt(10. / 7.)) / 3.)};
+                     static_cast<return_t>(heron_root<return_t>(5. - 2. * heron_root<return_t>(10. / 7.)) / 3.),
+                     static_cast<return_t>(heron_root<return_t>(5. + 2. * heron_root<return_t>(10. / 7.)) / 3.)};
     if constexpr (n_points() == 6)
       return {
         static_cast<return_t>(0.6612093864662645),  static_cast<return_t>(-0.6612093864662645),
@@ -134,16 +135,16 @@ struct Gaussian
       quad_weights = {static_cast<return_t>(5. / 9.), static_cast<return_t>(8. / 9.),
                       static_cast<return_t>(5. / 9.)};
     if constexpr (n_points() == 4)
-      quad_weights = {static_cast<return_t>(1. / 36. * (18. - std::sqrt(30.))),
-                      static_cast<return_t>(1. / 36. * (18. + std::sqrt(30.))),
-                      static_cast<return_t>(1. / 36. * (18. + std::sqrt(30.))),
-                      static_cast<return_t>(1. / 36. * (18. - std::sqrt(30.)))};
+      quad_weights = {static_cast<return_t>(1. / 36. * (18. - heron_root<return_t>(30.))),
+                      static_cast<return_t>(1. / 36. * (18. + heron_root<return_t>(30.))),
+                      static_cast<return_t>(1. / 36. * (18. + heron_root<return_t>(30.))),
+                      static_cast<return_t>(1. / 36. * (18. - heron_root<return_t>(30.)))};
     if constexpr (n_points() == 5)
-      quad_weights = {static_cast<return_t>(1. / 900. * (322. - 13. * std::sqrt(70.))),
-                      static_cast<return_t>(1. / 900. * (322. + 13. * std::sqrt(70.))),
+      quad_weights = {static_cast<return_t>(1. / 900. * (322. - 13. * heron_root<return_t>(70.))),
+                      static_cast<return_t>(1. / 900. * (322. + 13. * heron_root<return_t>(70.))),
                       static_cast<return_t>(1. / 900. * (322. + 190.)),
-                      static_cast<return_t>(1. / 900. * (322. + 13. * std::sqrt(70.))),
-                      static_cast<return_t>(1. / 900. * (322. - 13. * std::sqrt(70.)))};
+                      static_cast<return_t>(1. / 900. * (322. + 13. * heron_root<return_t>(70.))),
+                      static_cast<return_t>(1. / 900. * (322. - 13. * heron_root<return_t>(70.)))};
     if constexpr (n_points() == 6)
       quad_weights = {
         static_cast<return_t>(0.3607615730481386), static_cast<return_t>(0.3607615730481386),
