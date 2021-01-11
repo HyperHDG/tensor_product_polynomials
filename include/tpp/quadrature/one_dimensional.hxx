@@ -63,44 +63,44 @@ struct Gaussian
     static_assert(n_points() < 10, "Amount of points needs to be smaller than 10!");
 
     if constexpr (n_points() == 1)
-      return transform_points<return_t>({ static_cast<return_t>(0.) });
+      return transform_points({ static_cast<return_t>(0.) });
     if constexpr (n_points() == 2)
-      return transform_points<return_t>({-heron_root<return_t>(1. / 3.),
-              heron_root<return_t>(1. / 3.)});
+      return transform_points(std::array<return_t, n_points()>({-heron_root<return_t>(1. / 3.),
+              heron_root<return_t>(1. / 3.)}));
     if constexpr (n_points() == 3)
-      return transform_points<return_t>({-heron_root<return_t>(3. / 5.),
+      return transform_points({-heron_root<return_t>(3. / 5.),
               static_cast<return_t>(0.),
               heron_root<return_t>(3. / 5.)});
     if constexpr (n_points() == 4)
-      return transform_points<return_t>({-heron_root<return_t>(3. / 7. + 2. / 7. * heron_root<return_t>(6. / 5.)),
+      return transform_points({-heron_root<return_t>(3. / 7. + 2. / 7. * heron_root<return_t>(6. / 5.)),
               -heron_root<return_t>(3. / 7. - 2. / 7. * heron_root<return_t>(6. / 5.)),
                      heron_root<return_t>(3. / 7. - 2. / 7. * heron_root<return_t>(6. / 5.)),
                      heron_root<return_t>(3. / 7. + 2. / 7. * heron_root<return_t>(6. / 5.))});
     if constexpr (n_points() == 5)
-      return transform_points<return_t>({static_cast<return_t>(-heron_root<return_t>(5. + 2. * heron_root<return_t>(10. / 7.)) / 3.),
+      return transform_points({static_cast<return_t>(-heron_root<return_t>(5. + 2. * heron_root<return_t>(10. / 7.)) / 3.),
               static_cast<return_t>(-heron_root<return_t>(5. - 2. * heron_root<return_t>(10. / 7.)) / 3.),
               static_cast<return_t>(0.),
               static_cast<return_t>(heron_root<return_t>(5. - 2. * heron_root<return_t>(10. / 7.)) / 3.),
               static_cast<return_t>(heron_root<return_t>(5. + 2. * heron_root<return_t>(10. / 7.)) / 3.)});
     if constexpr (n_points() == 6)
-      return transform_points<return_t>({
+      return transform_points({
         static_cast<return_t>(0.6612093864662645),  static_cast<return_t>(-0.6612093864662645),
         static_cast<return_t>(-0.2386191860831969), static_cast<return_t>(0.2386191860831969),
         static_cast<return_t>(-0.9324695142031521), static_cast<return_t>(0.9324695142031521)});
     if constexpr (n_points() == 7)
-      return transform_points<return_t>({
+      return transform_points({
         static_cast<return_t>(0.0000000000000000),  static_cast<return_t>(0.4058451513773972),
         static_cast<return_t>(-0.4058451513773972), static_cast<return_t>(-0.7415311855993945),
         static_cast<return_t>(0.7415311855993945),  static_cast<return_t>(-0.9491079123427585),
         static_cast<return_t>(0.9491079123427585)});
     if constexpr (n_points() == 8)
-      return transform_points<return_t>({
+      return transform_points({
         static_cast<return_t>(-0.1834346424956498), static_cast<return_t>(0.1834346424956498),
         static_cast<return_t>(-0.5255324099163290), static_cast<return_t>(0.5255324099163290),
         static_cast<return_t>(-0.7966664774136267), static_cast<return_t>(0.7966664774136267),
         static_cast<return_t>(-0.9602898564975363), static_cast<return_t>(0.9602898564975363)});
     if constexpr (n_points() == 9)
-      return transform_points<return_t>({
+      return transform_points({
         static_cast<return_t>(0.0000000000000000), static_cast<return_t>(-0.8360311073266358),
         static_cast<return_t>(0.8360311073266358), static_cast<return_t>(-0.9681602395076261),
         static_cast<return_t>(0.9681602395076261), static_cast<return_t>(-0.3242534234038089),
