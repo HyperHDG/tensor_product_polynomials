@@ -328,7 +328,7 @@ class Tensorial
    * \param   f_param       Function parameter (e.g. time) with respect to which it is evaluated.
    * \retval  integral      Integral of product of both shape functions.
    ************************************************************************************************/
-  template <typename point_t, typename geom_t, return_t fun(const point_t&, const return_t)>
+  template <typename point_t, typename geom_t, return_t fun(const auto&, const return_t)>
   static return_t integrate_vol_phiphifunc(const unsigned int i,
                                            const unsigned int j,
                                            geom_t& geom,
@@ -478,7 +478,7 @@ class Tensorial
    * \param   f_param       Function parameter (e.g. time) with respect to which it is evaluated.
    * \retval  integral      Integral of product of both shape functions.
    ************************************************************************************************/
-  template <typename point_t, typename geom_t, return_t fun(const point_t&, const return_t)>
+  template <typename point_t, typename geom_t, return_t fun(const auto&, const return_t)>
   static return_t integrate_vol_phifunc(const unsigned int i,
                                         geom_t& geom,
                                         const return_t f_param = 0.)
@@ -513,7 +513,7 @@ class Tensorial
    * \param   f_param       Function parameter (e.g. time) with respect to which it is evaluated.
    * \retval  integral      Integral of product of both shape functions.
    ************************************************************************************************/
-  template <typename point_t, typename geom_t, return_t fun(const point_t&, const return_t)>
+  template <typename point_t, typename geom_t, return_t fun(const auto&, const return_t)>
   static return_t integrate_volUni_phifunc(const unsigned int i,
                                            geom_t& geom,
                                            const return_t f_param = 0.)
@@ -589,7 +589,7 @@ class Tensorial
    ************************************************************************************************/
   template <typename point_t,
             typename geom_t,
-            return_t fun(const point_t&, const return_t),
+            return_t fun(const auto&, const return_t),
             typename smallVec_t = point_t>
   static return_t integrate_vol_nablaphinablaphifunc(const unsigned int i,
                                                      const unsigned int j,
@@ -649,7 +649,7 @@ class Tensorial
    ************************************************************************************************/
   template <typename point_t,
             typename geom_t,
-            return_t fun(const point_t&, const return_t),
+            return_t fun(const auto&, const return_t),
             typename smallVec_t = point_t>
   static return_t integrate_vol_derphifunc(const unsigned int i,
                                            const unsigned int dim_der,
@@ -703,7 +703,7 @@ class Tensorial
    ************************************************************************************************/
   template <typename point_t,
             typename geom_t,
-            return_t fun(const point_t&, const return_t),
+            return_t fun(const auto&, const return_t),
             typename smallVec_t = point_t>
   static return_t integrate_bdr_nablaphiphinufunc(const unsigned int i,
                                                   const unsigned int j,
@@ -776,7 +776,7 @@ class Tensorial
    ************************************************************************************************/
   template <typename point_t,
             typename geom_t,
-            return_t fun(const point_t&, const return_t),
+            return_t fun(const auto&, const return_t),
             typename smallVec_t = point_t>
   static return_t integrate_bdr_nablaphipsinufunc(const unsigned int i,
                                                   const unsigned int j,
@@ -902,7 +902,7 @@ class Tensorial
    * \param   f_param          Time at which the function is evaluated.
    * \retval  integral      Integral of product of both shape functions.
    ************************************************************************************************/
-  template <typename point_t, typename geom_t, return_t fun(const point_t&, const return_t)>
+  template <typename point_t, typename geom_t, return_t fun(const auto&, const return_t)>
   static return_t integrate_bdr_phifunc(const unsigned int i,
                                         const unsigned int bdr,
                                         geom_t& geom,
@@ -948,7 +948,7 @@ class Tensorial
    * \param   f_param          Time at which the function is evaluated.
    * \retval  integral      Integral of product of both shape functions.
    ************************************************************************************************/
-  template <typename point_t, typename geom_t, return_t fun(const point_t&, const return_t)>
+  template <typename point_t, typename geom_t, return_t fun(const auto&, const return_t)>
   static return_t integrate_bdrUni_psifunc(const unsigned int i,
                                            const unsigned int bdr,
                                            geom_t& geom,
@@ -993,7 +993,7 @@ class Tensorial
    ************************************************************************************************/
   template <typename point_t,
             typename geom_t,
-            return_t fun(const point_t&, const return_t),
+            return_t fun(const auto&, const return_t),
             std::size_t n_coeff>
   static return_t integrate_vol_diffsquare_discana(const std::array<return_t, n_coeff> coeffs,
                                                    geom_t& geom,
