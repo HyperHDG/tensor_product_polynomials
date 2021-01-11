@@ -18,11 +18,3 @@ jobs:
       # 3. Create the doxygen pages.
       - name: Create the doxygen
         run: make doxygen
-      # 4. Run the deployment script for which the secret token CI_REPO_TOKEN is named REPO_TOKEN
-      #    if the previous step succeeded, and the event is a push to master branch.
-      - name: Run deploy_doxygen script
-        env:
-          REPO_TOKEN: ${{ secrets.CI_REPO_TOKEN }}
-        run: chmod 700 .ci/deploy_doxygen.sh; .ci/deploy_doxygen.sh
-        shell: bash
-        if: ${{ success() && github.ref == 'refs/heads/master' }}
