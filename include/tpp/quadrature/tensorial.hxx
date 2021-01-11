@@ -143,7 +143,7 @@ class Tensorial
    ************************************************************************************************/
   static constexpr return_t integrate_1D_phiphi(const unsigned int i, const unsigned int j)
   {
-    tpp_assert(i < shape_fcts_at_quad.size() && j < shape_fcts_at_quad.size(),
+    tpp_assert(i < n_fun_1D && j < n_fun_1D,
                "Indices of shape functions must be smaller than amount of shape functions.");
     return_t result = 0.;
 
@@ -161,7 +161,7 @@ class Tensorial
    ************************************************************************************************/
   static constexpr return_t integrate_1D_phiDphi(const unsigned int i, const unsigned int j)
   {
-    tpp_assert(i < shape_fcts_at_quad.size() && j < shape_fcts_at_quad.size(),
+    tpp_assert(i < n_fun_1D && j < n_fun_1D,
                "Indices of shape functions must be smaller than amount of shape functions.");
     return_t result = 0.;
 
@@ -179,7 +179,7 @@ class Tensorial
    ************************************************************************************************/
   static constexpr return_t integrate_1D_Dphiphi(const unsigned int i, const unsigned int j)
   {
-    tpp_assert(i < shape_fcts_at_quad.size() && j < shape_fcts_at_quad.size(),
+    tpp_assert(i < n_fun_1D && j < n_fun_1D,
                "Indices of shape functions must be smaller than amount of shape functions.");
     return_t result = 0.;
 
@@ -197,7 +197,7 @@ class Tensorial
    ************************************************************************************************/
   static constexpr return_t integrate_1D_DphiDphi(const unsigned int i, const unsigned int j)
   {
-    tpp_assert(i < shape_fcts_at_quad.size() && j < shape_fcts_at_quad.size(),
+    tpp_assert(i < n_fun_1D && j < n_fun_1D,
                "Indices of shape functions must be smaller than amount of shape functions.");
     return_t result = 0.;
 
