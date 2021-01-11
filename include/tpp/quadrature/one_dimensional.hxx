@@ -19,6 +19,23 @@ namespace Quadrature
 template <unsigned int quad_deg>
 class GaussLegendre
 {
+ public:
+  /*!***********************************************************************************************
+   * \brief   Calculate the amount of quadrature points at compile time.
+   *
+   * Naive implementation to calculate the amount of needed quadrature points if a rule of accuracy
+   * \c quad_deg is desired in one dimension.
+   *
+   * \retval  n_quad_points       Amount of needed quadrature points.
+   ************************************************************************************************/
+  static constexpr unsigned int n_points()
+  {
+    unsigned int amount = 1;
+    for (; 2 * amount - 1 < quad_deg; ++amount)
+      ;
+    return amount;
+  }
+
  private:
   /*!***********************************************************************************************
    * \brief   Transform array of quadrature points in interval \f$[-1,1]\f$ to \f$[0,1]\f$.
@@ -44,21 +61,6 @@ class GaussLegendre
   }
 
  public:
-  /*!***********************************************************************************************
-   * \brief   Calculate the amount of quadrature points at compile time.
-   *
-   * Naive implementation to calculate the amount of needed quadrature points if a rule of accuracy
-   * \c quad_deg is desired in one dimension.
-   *
-   * \retval  n_quad_points       Amount of needed quadrature points.
-   ************************************************************************************************/
-  static constexpr unsigned int n_points()
-  {
-    unsigned int amount = 1;
-    for (; 2 * amount - 1 < quad_deg; ++amount)
-      ;
-    return amount;
-  }
   /*!***********************************************************************************************
    * \brief   Gauss--Legendre quadrature points on one-dimensional unit interval.
    *
