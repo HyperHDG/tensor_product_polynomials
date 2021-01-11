@@ -20,8 +20,7 @@ namespace Quadrature
  * \param   shape_t           Type of one-dimensional shape functions.
  * \tparam  return_t          Floating type specification. Default is double.
  *
- * \authors   Guido Kanschat, Heidelberg University, 2020.
- * \authors   Andreas Rupp, Heidelberg University, 2020.
+ * \authors   Andreas Rupp, Heidelberg University, 2021.
  **************************************************************************************************/
 template <typename quadrature_t, typename shape_t, typename return_t = double>
 class Tensorial

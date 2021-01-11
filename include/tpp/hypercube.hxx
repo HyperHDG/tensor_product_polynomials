@@ -37,12 +37,10 @@ struct Hypercube
   /*!***********************************************************************************************
    * \brief   Decompose global index of tensorial structure with respect to its dimensions.
    *
-   * \tparam  return_t      The typename of the array to be returned.
    * \param   index         Local tensorial index (e.g. of the shape function or point).
    * \param   range         Range (maximum, excluded) of the 1D indices.
    * \retval  decomposition Array consisting of respective one-dimensional indices.
    ************************************************************************************************/
-  // template <typename return_t>
   static constexpr std::array<unsigned int, std::max(dimT, 1U)> index_decompose(
     unsigned int index,
     const unsigned int range)
@@ -59,6 +57,8 @@ struct Hypercube
   /*!***********************************************************************************************
    * \brief   Generate tensorial point whose entries are elements of an array.
    *
+   * \tparam  point_t       The typename of the point to be returned.
+   * \tparam  array_t       The typename of the array of one-dimensional points.
    * \param   index         Local tensorial index (e.g. of the shape function or point).
    * \param   points        Array of possible values of point components.
    * \retval  point         Tensorial point of given index.

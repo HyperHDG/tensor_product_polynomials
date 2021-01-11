@@ -13,7 +13,6 @@ namespace Quadrature
  *
  * \tparam  quad_deg  Desired degree of accuracy.
  *
- * \authors   Guido Kanschat, Heidelberg University, 2021.
  * \authors   Andreas Rupp, Heidelberg University, 2021.
  **************************************************************************************************/
 template <unsigned int quad_deg>

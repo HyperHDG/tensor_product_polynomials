@@ -7,7 +7,7 @@ namespace TPP
 /*!*************************************************************************************************
  * \brief   Struct that handles different types of evaluation of shape functions.
  *
- * \tparam  shape_t           Type of shape functions.
+ * \tparam  shape_t   Type of shape functions.
  *
  * \authors   Andreas Rupp, Heidelberg University, 2021.
  **************************************************************************************************/

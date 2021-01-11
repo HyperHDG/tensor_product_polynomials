@@ -5,11 +5,6 @@
 
 namespace TPP
 {
-/*!*************************************************************************************************
- * \brief   Namespace for auxiliary functions and classes needed for struct shap_function.
- *
- * \authors   Andreas Rupp, Heidelberg University, 2021.
- **************************************************************************************************/
 namespace ShapeType
 {
 /*!*************************************************************************************************
@@ -25,7 +20,6 @@ namespace ShapeType
  * \tparam  poly_deg  The maximum degree of the polynomial.
  *
  * \authors   Andreas Rupp, Heidelberg University, 2021.
- * \authors   Guido Kanschat, Heidelberg University, 2021.
  **************************************************************************************************/
 template <unsigned int poly_deg>
 struct Legendre
