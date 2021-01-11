@@ -37,9 +37,6 @@ struct Tensorial
    * \param   max_quad_degree   Desired degree of accuracy.
    * \param   local_dimensions  Dimension of the underlying domain. Defaullt is one.
    * \retval  n_quad_points     Amount of needed quadrature points.
-   *
-   * \authors   Guido Kanschat, Heidelberg University, 2020.
-   * \authors   Andreas Rupp, Heidelberg University, 2020.
    ************************************************************************************************/
   static constexpr unsigned int n_quad_points()
   {
@@ -56,9 +53,6 @@ struct Tensorial
    * \tparam  quadrature_t      The quadrature rule applied.
    * \tparam  return_t          Floating type specification. Default is double.
    * \retval  quad_points       \c std::array containing the quadrature points.
-   *
-   * \authors   Guido Kanschat, Heidelberg University, 2020.
-   * \authors   Andreas Rupp, Heidelberg University, 2020.
    ************************************************************************************************/
   static constexpr std::array<return_t, quadrature_t::n_points()> quad_points =
     quadrature_t::template points<return_t>();
@@ -72,9 +66,6 @@ struct Tensorial
    * \tparam  quadrature_t      The quadrature rule applied.
    * \tparam  return_t          Floating type specification. Default is double.
    * \retval  quad_weights      \c std::array containing the quadrature weights.
-   *
-   * \authors   Guido Kanschat, Heidelberg University, 2020.
-   * \authors   Andreas Rupp, Heidelberg University, 2020.
    ************************************************************************************************/
   static inline std::array<return_t, quadrature_t::n_points()> quad_weights =
     quadrature_t::template weights<return_t>();
@@ -91,7 +82,7 @@ struct Tensorial
    * \tparam  max_poly_degree   Maximum degree of evaluated polynomials.
    * \tparam  max_quad_degree   Desired degree of accuracy.
    * \tparam  quadrature_t      The quadrature rule applied.
-   * \tparam   shape_t           Type of one-dimensional shape functions.
+   * \tparam  shape_t           Type of one-dimensional shape functions.
    * \tparam  return_t          Floating type specification. Default is double.
    * \retval  quad_vals         \c std::array of polynomial degrees containing \c std::array of
    *                            quadrature points (the shape functions are evaluated at).
@@ -99,7 +90,7 @@ struct Tensorial
    * \authors   Guido Kanschat, Heidelberg University, 2020.
    * \authors   Andreas Rupp, Heidelberg University, 2020.
    ************************************************************************************************/
-  static inline std::array<std::array<return_t, quadrature_t::n_points()>, n_fun_1D>
+  static constexpr std::array<std::array<return_t, quadrature_t::n_points()>, n_fun_1D>
   shape_fcts_at_quad_points()
   {
     std::array<std::array<return_t, quadrature_t::n_points()>, n_fun_1D> result;
@@ -111,6 +102,10 @@ struct Tensorial
 
     return result;
   }
+
+  static constexpr std::array<std::array<return_t, quadrature_t::n_points()>, n_fun_1D>
+    shape_fcts_at_quad = shape_fcts_at_quad_points();
+
   /*!***********************************************************************************************
    * \brief   Derivatives of shape functions evaluated at quadrature points.
    *
