@@ -1,8 +1,8 @@
 #pragma once  // Ensure that file is included only once in a single compilation.
 
 #include <HyperHDG/dense_la.hxx>
-#include <HyperHDG/tpp_assert.hxx>
 #include <tpp/quadrature/one_dimensional.hxx>
+#include <tpp/tpp_assert.hxx>
 
 #include <array>
 #include <cmath>
