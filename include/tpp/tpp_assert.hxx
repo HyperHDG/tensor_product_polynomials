@@ -42,7 +42,11 @@ namespace TPP
  * This function is \b not to be used in regular code. It only / solely is defined to allow the use
  * of function \c tpp_assert( \c Expr, \c Msg) which is implemented as a macro in file HyAssert.hxx.
  **************************************************************************************************/
-inline void __TPP_Assert(const char* exp_str, bool exp, const char* file, int line, const char* msg)
+constexpr void __TPP_Assert(const char* exp_str,
+                            bool exp,
+                            const char* file,
+                            int line,
+                            const char* msg)
 {
   if (!exp)
   {
