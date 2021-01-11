@@ -17,8 +17,33 @@ namespace Quadrature
  * \authors   Andreas Rupp, Heidelberg University, 2021.
  **************************************************************************************************/
 template <unsigned int quad_deg>
-struct GaussLegendre
+class GaussLegendre
 {
+ private:
+  /*!***********************************************************************************************
+   * \brief   Transform array of quadrature points in interval \f$[-1,1]\f$ to \f$[0,1]\f$.
+   ************************************************************************************************/
+  template <typename return_t>
+  static constexpr std::array<return_t, n_points()> transform_points(
+    std::array<return_t, n_points()> points)
+  {
+    for (unsigned int index = 0; index < n_points(); ++index)
+      points[index] = 0.5 * (points[index] + 1.);
+    return points;
+  }
+  /*!***********************************************************************************************
+   * \brief   Transform array of quadrature weights for interval \f$[-1,1]\f$ to \f$[0,1]\f$.
+   ************************************************************************************************/
+  template <typename return_t>
+  static constexpr std::array<return_t, n_points()> transform_weights(
+    std::array<return_t, n_points()> weights)
+  {
+    for (unsigned int index = 0; index < n_points(); ++index)
+      weights[index] *= 0.5;
+    return weights;
+  }
+
+ public:
   /*!***********************************************************************************************
    * \brief   Calculate the amount of quadrature points at compile time.
    *
@@ -33,18 +58,6 @@ struct GaussLegendre
     for (; 2 * amount - 1 < quad_deg; ++amount)
       ;
     return amount;
-  }
-
-  /*!***********************************************************************************************
-   * \brief   Transform array of quadrature points in interval \f$[-1,1]\f$ to \f$[0,1]\f$.
-   ************************************************************************************************/
-  template <typename return_t>
-  static constexpr std::array<return_t, n_points()> transform_points(
-    std::array<return_t, n_points()> points)
-  {
-    for (unsigned int index = 0; index < n_points(); ++index)
-      points[index] = 0.5 * (points[index] + 1.);
-    return points;
   }
   /*!***********************************************************************************************
    * \brief   Gauss--Legendre quadrature points on one-dimensional unit interval.
@@ -109,18 +122,6 @@ struct GaussLegendre
          static_cast<return_t>(0.9681602395076261), static_cast<return_t>(-0.3242534234038089),
          static_cast<return_t>(0.3123470770400029), static_cast<return_t>(0.2606106964029354),
          static_cast<return_t>(0.2606106964029354)}));
-  }
-
-  /*!***********************************************************************************************
-   * \brief   Transform array of quadrature weights for interval \f$[-1,1]\f$ to \f$[0,1]\f$.
-   ************************************************************************************************/
-  template <typename return_t>
-  static constexpr std::array<return_t, n_points()> transform_weights(
-    std::array<return_t, n_points()> weights)
-  {
-    for (unsigned int index = 0; index < n_points(); ++index)
-      weights[index] *= 0.5;
-    return weights;
   }
   /*!***********************************************************************************************
    * \brief   Gauss--Legendre quadrature weights on one-dimensional unit interval.

@@ -102,10 +102,6 @@ struct Tensorial
 
     return result;
   }
-
-  static constexpr std::array<std::array<return_t, quadrature_t::n_points()>, n_fun_1D>
-    shape_fcts_at_quad = shape_fcts_at_quad_points();
-
   /*!***********************************************************************************************
    * \brief   Derivatives of shape functions evaluated at quadrature points.
    *
@@ -159,24 +155,11 @@ struct Tensorial
     return result;
   }
 
-  const std::array<std::array<return_t, quadrature_t::n_points()>, n_fun_1D> shape_ders_at_quad_;
-  const std::array<std::array<return_t, 2>, n_fun_1D> trial_bdr_, trial_der_bdr_;
-  /*!***********************************************************************************************
-   * \brief   Constructor for general integrator class.
-   ************************************************************************************************/
-  Tensorial()
-  : shape_ders_at_quad_(shape_ders_at_quad_points()),
-    trial_bdr_(shape_fcts_at_bdrs()),
-    trial_der_bdr_(shape_ders_at_bdrs())
-  {
-    tpp_assert(shape_fcts_at_quad.size() == shape_ders_at_quad_.size(),
-               "Number of shape functions and their derivatives must be equal!");
-    for (unsigned int i = 0; i < shape_fcts_at_quad.size(); ++i)
-      tpp_assert(quad_points.size() == shape_fcts_at_quad[i].size() &&
-                   shape_fcts_at_quad[i].size() == shape_ders_at_quad_[i].size(),
-                 "Number of quadrature points needs to be equal in all cases!");
-  }
-
+  static constexpr std::array<std::array<return_t, quadrature_t::n_points()>, n_fun_1D>
+    shape_fcts_at_quad = shape_fcts_at_quad_points(),
+    shape_ders_at_quad = shape_ders_at_quad_points();
+  const std::array<std::array<return_t, 2>, n_fun_1D> shape_fcts_at_bdr = shape_fcts_at_bdrs(),
+                                                      shape_ders_at_bdr = shape_ders_at_bdrs();
   /*!***********************************************************************************************
    * \brief   Integrate product of one-dimensional shape functions.
    *
@@ -209,7 +192,7 @@ struct Tensorial
     return_t result = 0.;
 
     for (unsigned int q = 0; q < quad_weights.size(); ++q)
-      result += quad_weights[q] * shape_fcts_at_quad[i][q] * shape_ders_at_quad_[j][q];
+      result += quad_weights[q] * shape_fcts_at_quad[i][q] * shape_ders_at_quad[j][q];
 
     return result;
   }
@@ -227,7 +210,7 @@ struct Tensorial
     return_t result = 0.;
 
     for (unsigned int q = 0; q < quad_weights.size(); ++q)
-      result += quad_weights[q] * shape_ders_at_quad_[i][q] * shape_fcts_at_quad[j][q];
+      result += quad_weights[q] * shape_ders_at_quad[i][q] * shape_fcts_at_quad[j][q];
 
     return result;
   }
@@ -245,7 +228,7 @@ struct Tensorial
     return_t result = 0.;
 
     for (unsigned int q = 0; q < quad_weights.size(); ++q)
-      result += quad_weights[q] * shape_ders_at_quad_[i][q] * shape_ders_at_quad_[j][q];
+      result += quad_weights[q] * shape_ders_at_quad[i][q] * shape_ders_at_quad[j][q];
 
     return result;
   }
@@ -327,7 +310,8 @@ struct Tensorial
     unsigned int bdr_dim = bdr / 2, bdr_ind = bdr % 2;
     for (unsigned int dim_fct = 0; dim_fct < dim(); ++dim_fct)
       if (bdr_dim == dim_fct)
-        integral *= trial_bdr_[dec_i[dim_fct]][bdr_ind] * trial_bdr_[dec_j[dim_fct]][bdr_ind];
+        integral *=
+          shape_fcts_at_bdr[dec_i[dim_fct]][bdr_ind] * shape_fcts_at_bdr[dec_j[dim_fct]][bdr_ind];
       else
         integral *= integrate_1D_phiphi(dec_i[dim_fct], dec_j[dim_fct]);
     return integral;
@@ -352,7 +336,7 @@ struct Tensorial
     unsigned int bdr_dim = bdr / 2, bdr_ind = bdr % 2;
     for (unsigned int dim_fct = 0; dim_fct < dim(); ++dim_fct)
       if (bdr_dim == dim_fct)
-        integral *= trial_bdr_[dec_i[dim_fct]][bdr_ind];
+        integral *= shape_fcts_at_bdr[dec_i[dim_fct]][bdr_ind];
       else
         integral *= integrate_1D_phiphi(dec_i[dim_fct], dec_j[dim_fct - (dim_fct > bdr_dim)]);
     return integral;
@@ -658,8 +642,8 @@ struct Tensorial
         {
           if (dim == dim_fct)
           {
-            nabla_phi_i[dim_fct] *= shape_ders_at_quad_[dec_i[dim]][dec_q[dim]];
-            nabla_phi_j[dim_fct] *= shape_ders_at_quad_[dec_j[dim]][dec_q[dim]];
+            nabla_phi_i[dim_fct] *= shape_ders_at_quad[dec_i[dim]][dec_q[dim]];
+            nabla_phi_j[dim_fct] *= shape_ders_at_quad[dec_j[dim]][dec_q[dim]];
           }
           else
           {
@@ -710,7 +694,7 @@ struct Tensorial
         for (unsigned int dim_fct = 0; dim_fct < GeomT::hyEdge_dim(); ++dim_fct)
         {
           if (dim == dim_fct)
-            nabla_phi_i[dim_fct] *= shape_ders_at_quad_[dec_i[dim]][dec_q[dim]];
+            nabla_phi_i[dim_fct] *= shape_ders_at_quad[dec_i[dim]][dec_q[dim]];
           else
             nabla_phi_i[dim_fct] *= shape_fcts_at_quad[dec_i[dim]][dec_q[dim]];
         }
@@ -764,7 +748,7 @@ struct Tensorial
         {
           normal[dim] = 2. * bdr_ind - 1.;
           quad_pt[dim] = (return_t)bdr_ind;
-          phi_j *= trial_bdr_[dec_j[dim]][bdr_ind];
+          phi_j *= shape_fcts_at_bdr[dec_j[dim]][bdr_ind];
         }
         else
         {
@@ -776,11 +760,11 @@ struct Tensorial
         for (unsigned int dim_fct = 0; dim_fct < GeomT::hyEdge_dim(); ++dim_fct)
         {
           if (dim == dim_fct && dim == bdr_dim)
-            nabla_phi_i[dim_fct] *= trial_der_bdr_[dec_i[dim]][bdr_ind];
+            nabla_phi_i[dim_fct] *= shape_ders_at_bdr[dec_i[dim]][bdr_ind];
           else if (dim == dim_fct)
-            nabla_phi_i[dim_fct] *= shape_ders_at_quad_[dec_i[dim]][dec_q[dim - (dim > bdr_dim)]];
+            nabla_phi_i[dim_fct] *= shape_ders_at_quad[dec_i[dim]][dec_q[dim - (dim > bdr_dim)]];
           else if (dim == bdr_dim)
-            nabla_phi_i[dim_fct] *= trial_bdr_[dec_i[dim]][bdr_ind];
+            nabla_phi_i[dim_fct] *= shape_fcts_at_bdr[dec_i[dim]][bdr_ind];
           else
             nabla_phi_i[dim_fct] *= shape_fcts_at_quad[dec_i[dim]][dec_q[dim - (dim > bdr)]];
         }
@@ -846,11 +830,11 @@ struct Tensorial
         for (unsigned int dim_fct = 0; dim_fct < GeomT::hyEdge_dim(); ++dim_fct)
         {
           if (dim == dim_fct && dim == bdr_dim)
-            nabla_phi_i[dim_fct] *= trial_der_bdr_[dec_i[dim]][bdr_ind];
+            nabla_phi_i[dim_fct] *= shape_ders_at_bdr[dec_i[dim]][bdr_ind];
           else if (dim == dim_fct)
-            nabla_phi_i[dim_fct] *= shape_ders_at_quad_[dec_i[dim]][dec_q[dim - (dim > bdr_dim)]];
+            nabla_phi_i[dim_fct] *= shape_ders_at_quad[dec_i[dim]][dec_q[dim - (dim > bdr_dim)]];
           else if (dim == bdr_dim)
-            nabla_phi_i[dim_fct] *= trial_bdr_[dec_i[dim]][bdr_ind];
+            nabla_phi_i[dim_fct] *= shape_fcts_at_bdr[dec_i[dim]][bdr_ind];
           else
             nabla_phi_i[dim_fct] *= shape_fcts_at_quad[dec_i[dim]][dec_q[dim - (dim > bdr_dim)]];
         }
@@ -885,7 +869,8 @@ struct Tensorial
     unsigned int dim = bdr / 2, bdr_ind = bdr % 2;
     for (unsigned int dim_fct = 0; dim_fct < GeomT::hyEdge_dim(); ++dim_fct)
       if (dim == dim_fct)
-        integral *= trial_bdr_[dec_i[dim_fct]][bdr_ind] * trial_bdr_[dec_j[dim_fct]][bdr_ind];
+        integral *=
+          shape_fcts_at_bdr[dec_i[dim_fct]][bdr_ind] * shape_fcts_at_bdr[dec_j[dim_fct]][bdr_ind];
       else
         integral *= integrate_1D_phiphi(dec_i[dim_fct], dec_j[dim_fct]);
     return integral * geom.face_area(bdr);
@@ -914,7 +899,7 @@ struct Tensorial
     unsigned int dim = bdr / 2, bdr_ind = bdr % 2;
     for (unsigned int dim_fct = 0; dim_fct < GeomT::hyEdge_dim(); ++dim_fct)
       if (dim == dim_fct)
-        integral *= trial_bdr_[dec_i[dim_fct]][bdr_ind];
+        integral *= shape_fcts_at_bdr[dec_i[dim_fct]][bdr_ind];
       else
         integral *= integrate_1D_phiphi(dec_i[dim_fct], dec_j[dim_fct - (dim_fct > dim)]);
     return integral * geom.face_area(bdr);
@@ -953,7 +938,7 @@ struct Tensorial
         if (dim == dim_bdr)
         {
           quad_pt[dim] = bdr_ind;
-          quad_val *= trial_bdr_[dec_i[dim]][bdr_ind];
+          quad_val *= shape_fcts_at_bdr[dec_i[dim]][bdr_ind];
         }
         else
         {
@@ -988,7 +973,7 @@ struct Tensorial
         if (dim == dim_bdr)
         {
           quad_pt[dim] = bdr_ind;
-          quad_val *= trial_bdr_[dec_i[dim]][bdr_ind];
+          quad_val *= shape_fcts_at_bdr[dec_i[dim]][bdr_ind];
         }
         else
         {
