@@ -8,6 +8,9 @@
 #include <cmath>
 #include <numeric>
 
+namespace TPP
+{
+
 namespace Quadrature
 {
 /*!*************************************************************************************************
@@ -1105,3 +1108,5 @@ struct Tensorial
 };  // end of class Integrator
 
 }  // end of namespace Quadrature
+
+} // end of namespace TPP

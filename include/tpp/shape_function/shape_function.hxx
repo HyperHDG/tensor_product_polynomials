@@ -2,6 +2,9 @@
 
 #include <tpp/shape_function/tensorial.hxx>
 
+namespace TPP
+{
+
 /*!*************************************************************************************************
  * \brief   Struct that handles different types of evaluation of shape functions.
  *
@@ -32,7 +35,7 @@ struct ShapeFunction
    * \brief   Evaluate value of shape function.
    ************************************************************************************************/
   template <typename return_t, typename point_t>
-  static inline return_t fct_val(const unsigned int index, const point_t& point)
+  static constexpr return_t fct_val(const unsigned int index, const point_t& point)
   {
     return shape_t::template fct_val<return_t>(index, point);
   }
@@ -40,7 +43,7 @@ struct ShapeFunction
    * \brief   Evaluate value of partial derivative of shape function.
    ************************************************************************************************/
   template <typename return_t, typename point_t>
-  static inline return_t der_val(const unsigned int index,
+  static constexpr return_t der_val(const unsigned int index,
                                  const point_t& point,
                                  const unsigned int der_dim)
   {
@@ -51,7 +54,7 @@ struct ShapeFunction
    * \brief   Evaluate value of gradient of shape function.
    ************************************************************************************************/
   template <typename return_t, typename point_t>
-  static inline return_t grad_val(const unsigned int index, const point_t& point)
+  static constexpr return_t grad_val(const unsigned int index, const point_t& point)
   {
     static_assert(return_t::size() == point_t::size(), "Gradient and point have same dimension.");
     static_assert(point_t::size() == dim(), "Gradient and dimension need to be equal.");
@@ -65,7 +68,7 @@ struct ShapeFunction
    * \brief   Evaluate value of divergence of shape function
    ************************************************************************************************/
   template <typename return_t, typename point_t>
-  static inline return_t div_val(const unsigned int index, const point_t& point)
+  static constexpr return_t div_val(const unsigned int index, const point_t& point)
   {
     static_assert(point_t::size() == dim(), "Gradient and dimension need to be equal.");
 
@@ -79,7 +82,7 @@ struct ShapeFunction
    * \brief   Evaluate value linear combination of shape functions.
    ************************************************************************************************/
   template <typename return_t, typename coeffs_t, typename point_t>
-  static inline return_t lin_comb_fct_val(const coeffs_t& coeffs, const point_t& point)
+  static constexpr return_t lin_comb_fct_val(const coeffs_t& coeffs, const point_t& point)
   {
     static_assert(point_t::size() == dim(), "Point needs to have correct dimension.");
     static_assert(coeffs_t::size() == n_fun(), "Coeffs size must coincide with poly space!");
@@ -93,7 +96,7 @@ struct ShapeFunction
    * \brief   Evaluate value of partial derivative of linear combination of shape functions.
    ************************************************************************************************/
   template <typename return_t, typename coeffs_t, typename point_t>
-  static inline return_t lin_comb_der_val(const coeffs_t& coeffs,
+  static constexpr return_t lin_comb_der_val(const coeffs_t& coeffs,
                                           const point_t& point,
                                           const unsigned int der_dim)
   {
@@ -106,3 +109,5 @@ struct ShapeFunction
     return value;
   }
 };  // end of struct ShapeFunction
+
+} // end of namespace TPP

@@ -3,6 +3,9 @@
 #include <tpp/tpp_assert.hxx>
 #include <tpp/compile_time_tricks.hxx>
 
+namespace TPP
+{
+
 /*!*************************************************************************************************
  * \brief   Namespace for auxiliary functions and classes needed for struct shap_function.
  *
@@ -163,3 +166,5 @@ struct Legendre
 };  // end of struct Legendre
 
 }  // end of namespace ShapeType
+
+} // end of namespace TPP

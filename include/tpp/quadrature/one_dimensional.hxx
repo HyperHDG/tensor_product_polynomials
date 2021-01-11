@@ -1,9 +1,12 @@
 #pragma once  // Ensure that file is included only once in a single compilation.
 
-#include <HyperHDG/hy_assert.hxx>
+#include <tpp/tpp_assert.hxx>
 
 #include <array>
 #include <cmath>
+
+namespace TPP
+{
 
 namespace Quadrature
 {
@@ -94,7 +97,7 @@ struct Gaussian
         static_cast<return_t>(0.3123470770400029), static_cast<return_t>(0.2606106964029354),
         static_cast<return_t>(0.2606106964029354)};
 
-    hy_assert(n_points() == quad_points.size(),
+    tpp_assert(n_points() == quad_points.size(),
               "The number of points should equal the size of the array to be returned. In this "
                 << "case the number of points is " << n_points() << " and the size of the array is "
                 << quad_points.size());
@@ -167,7 +170,7 @@ struct Gaussian
         static_cast<return_t>(0.3123470770400029), static_cast<return_t>(0.2606106964029354),
         static_cast<return_t>(0.2606106964029354)};
 
-    hy_assert(n_points() == quad_weights.size(),
+    tpp_assert(n_points() == quad_weights.size(),
               "The number of points should equal the size of the array to be returned. In this "
                 << "case the number of points is " << n_points() << " and the size of the array is "
                 << quad_weights.size());
@@ -181,3 +184,5 @@ struct Gaussian
 };  // end of struct Gaussian
 
 }  // end of namespace Quadrature
+
+} // end of namespace TPP

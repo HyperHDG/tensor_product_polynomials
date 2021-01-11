@@ -1,4 +1,4 @@
-PROJECT     	= HyperHDG
+PROJECT     	= TensorProductPolynomials
 .PHONY:       	build clean distclean clean_build clean_domains clean_doxygen clean_output \
 								clean_pycache doxygen format submodules test_all_compilers test_github test_compiler
 
@@ -48,12 +48,7 @@ doxygen:
 
 
 format:
-	clang-format -i reproducables_python/parameters/*.hxx examples/parameters/*.hxx examples/*.cxx \
-		tests_c++/*.cxx include/HyperHDG/*.hxx include/HyperHDG/*/*.hxx
-
-
-submodules:
-	git submodule update --init --recursive
+	clang-format -i include/tpp/*.hxx include/tpp/*/*.hxx
 
 
 test_all_compilers:

@@ -6,6 +6,9 @@
 
 #include <array>
 
+namespace TPP
+{
+
 /*!*************************************************************************************************
  * \brief   Namespace for auxiliary functions and classes needed for struct shap_function.
  *
@@ -53,7 +56,7 @@ struct Tensorial
    * \retval  fct_value     Evaluated value of shape function.
    ************************************************************************************************/
   template <typename return_t, typename point_t>
-  static inline return_t fct_val(__attribute__((unused)) const unsigned int index,
+  static constexpr return_t fct_val(__attribute__((unused)) const unsigned int index,
                                  __attribute__((unused)) const point_t& point)
   {
     static_assert(point_t::size() == dim(), "Point needs to have correct dimension.");
@@ -84,12 +87,12 @@ struct Tensorial
    * \retval  fct_value     Evaluated value of shape function's derivative.
    ************************************************************************************************/
   template <typename return_t, typename point_t>
-  static inline return_t der_val(const unsigned int index,
+  static constexpr return_t der_val(const unsigned int index,
                                  const point_t& point,
                                  const unsigned int der_dim)
   {
     static_assert(point_t::size() == dim(), "Point needs to have correct dimension.");
-    hy_assert(der_dim < dimT, "The derivative needs to be with respect to a valid dimension.");
+    tpp_assert(der_dim < dimT, "The derivative needs to be with respect to a valid dimension.");
 
     return_t value = 0.;
     std::array<unsigned int, std::max(dimT, 1U)> index_dim =
@@ -105,3 +108,5 @@ struct Tensorial
 };  // end of struct Tensorial
 
 }  // end of namespace ShapeType
+
+} // end of namespace TPP
