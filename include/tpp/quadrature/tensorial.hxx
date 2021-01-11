@@ -62,7 +62,7 @@ struct Tensorial
    * \authors   Andreas Rupp, Heidelberg University, 2020.
    ************************************************************************************************/
   static constexpr std::array<return_t, quadrature_t::n_points()> quad_points =
-    uadrature_t::template points<return_t>();
+    quadrature_t::template points<return_t>();
 
   static inline std::array<return_t, quadrature_t::n_points()> quad_points()
   {
