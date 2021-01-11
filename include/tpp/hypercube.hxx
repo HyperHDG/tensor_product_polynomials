@@ -7,7 +7,7 @@ namespace TPP
 /*!*************************************************************************************************
  * \brief   Helper class containing numbers and functions related to hypercubes.
  *
- * \tparam  dim     Unsigned integer indicating the dimension of the considered hypercube.
+ * \tparam  dimT  Unsigned integer indicating the dimension of the considered hypercube.
  *
  * \authors   Guido Kanschat, Heidelberg University, 2019--2020.
  * \authors   Andreas Rupp, Heidelberg University, 2019--2020.

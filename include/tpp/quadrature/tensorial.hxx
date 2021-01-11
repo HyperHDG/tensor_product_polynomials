@@ -1,7 +1,7 @@
 #pragma once  // Ensure that file is included only once in a single compilation.
 
 #include <HyperHDG/dense_la.hxx>
-#include <HyperHDG/hy_assert.hxx>
+#include <HyperHDG/tpp_assert.hxx>
 #include <tpp/quadrature/one_dimensional.hxx>
 
 #include <array>
@@ -76,10 +76,8 @@ struct Tensorial
    * \authors   Guido Kanschat, Heidelberg University, 2020.
    * \authors   Andreas Rupp, Heidelberg University, 2020.
    ************************************************************************************************/
-  static inline std::array<return_t, quadrature_t::n_points()> quad_weights()
-  {
-    return quadrature_t::template weights<return_t>();
-  }
+  static inline std::array<return_t, quadrature_t::n_points()> quad_weights =
+    quadrature_t::template weights<return_t>();
 
   // Shape functions & their derivatives evaluated at quadrature's points:
 
@@ -166,7 +164,6 @@ struct Tensorial
     return result;
   }
 
-  const std::array<return_t, quadrature_t::n_points()> quad_weights_;
   const std::array<std::array<return_t, quadrature_t::n_points()>, n_fun_1D> shape_fcts_at_quad_,
     shape_ders_at_quad_;
   const std::array<std::array<return_t, 2>, n_fun_1D> trial_bdr_, trial_der_bdr_;
@@ -174,18 +171,17 @@ struct Tensorial
    * \brief   Constructor for general integrator class.
    ************************************************************************************************/
   Tensorial()
-  : quad_weights_(quad_weights()),
-    shape_fcts_at_quad_(shape_fcts_at_quad_points()),
+  : shape_fcts_at_quad_(shape_fcts_at_quad_points()),
     shape_ders_at_quad_(shape_ders_at_quad_points()),
     trial_bdr_(shape_fcts_at_bdrs()),
     trial_der_bdr_(shape_ders_at_bdrs())
   {
-    hy_assert(shape_fcts_at_quad_.size() == shape_ders_at_quad_.size(),
-              "Number of shape functions and their derivatives must be equal!");
+    tpp_assert(shape_fcts_at_quad_.size() == shape_ders_at_quad_.size(),
+               "Number of shape functions and their derivatives must be equal!");
     for (unsigned int i = 0; i < shape_fcts_at_quad_.size(); ++i)
-      hy_assert(quad_points.size() == shape_fcts_at_quad_[i].size() &&
-                  shape_fcts_at_quad_[i].size() == shape_ders_at_quad_[i].size(),
-                "Number of quadrature points needs to be equal in all cases!");
+      tpp_assert(quad_points.size() == shape_fcts_at_quad_[i].size() &&
+                   shape_fcts_at_quad_[i].size() == shape_ders_at_quad_[i].size(),
+                 "Number of quadrature points needs to be equal in all cases!");
   }
 
   /*!***********************************************************************************************
@@ -197,12 +193,12 @@ struct Tensorial
    ************************************************************************************************/
   inline return_t integrate_1D_phiphi(const unsigned int i, const unsigned int j) const
   {
-    hy_assert(i < shape_fcts_at_quad_.size() && j < shape_fcts_at_quad_.size(),
-              "Indices of shape functions must be smaller than amount of shape functions.");
+    tpp_assert(i < shape_fcts_at_quad_.size() && j < shape_fcts_at_quad_.size(),
+               "Indices of shape functions must be smaller than amount of shape functions.");
     return_t result = 0.;
 
-    for (unsigned int q = 0; q < quad_weights_.size(); ++q)
-      result += quad_weights_[q] * shape_fcts_at_quad_[i][q] * shape_fcts_at_quad_[j][q];
+    for (unsigned int q = 0; q < quad_weights.size(); ++q)
+      result += quad_weights[q] * shape_fcts_at_quad_[i][q] * shape_fcts_at_quad_[j][q];
 
     return result;
   }
@@ -215,12 +211,12 @@ struct Tensorial
    ************************************************************************************************/
   inline return_t integrate_1D_phiDphi(const unsigned int i, const unsigned int j) const
   {
-    hy_assert(i < shape_fcts_at_quad_.size() && j < shape_fcts_at_quad_.size(),
-              "Indices of shape functions must be smaller than amount of shape functions.");
+    tpp_assert(i < shape_fcts_at_quad_.size() && j < shape_fcts_at_quad_.size(),
+               "Indices of shape functions must be smaller than amount of shape functions.");
     return_t result = 0.;
 
-    for (unsigned int q = 0; q < quad_weights_.size(); ++q)
-      result += quad_weights_[q] * shape_fcts_at_quad_[i][q] * shape_ders_at_quad_[j][q];
+    for (unsigned int q = 0; q < quad_weights.size(); ++q)
+      result += quad_weights[q] * shape_fcts_at_quad_[i][q] * shape_ders_at_quad_[j][q];
 
     return result;
   }
@@ -233,12 +229,12 @@ struct Tensorial
    ************************************************************************************************/
   inline return_t integrate_1D_Dphiphi(const unsigned int i, const unsigned int j) const
   {
-    hy_assert(i < shape_fcts_at_quad_.size() && j < shape_fcts_at_quad_.size(),
-              "Indices of shape functions must be smaller than amount of shape functions.");
+    tpp_assert(i < shape_fcts_at_quad_.size() && j < shape_fcts_at_quad_.size(),
+               "Indices of shape functions must be smaller than amount of shape functions.");
     return_t result = 0.;
 
-    for (unsigned int q = 0; q < quad_weights_.size(); ++q)
-      result += quad_weights_[q] * shape_ders_at_quad_[i][q] * shape_fcts_at_quad_[j][q];
+    for (unsigned int q = 0; q < quad_weights.size(); ++q)
+      result += quad_weights[q] * shape_ders_at_quad_[i][q] * shape_fcts_at_quad_[j][q];
 
     return result;
   }
@@ -251,12 +247,12 @@ struct Tensorial
    ************************************************************************************************/
   inline return_t integrate_1D_DphiDphi(const unsigned int i, const unsigned int j) const
   {
-    hy_assert(i < shape_fcts_at_quad_.size() && j < shape_fcts_at_quad_.size(),
-              "Indices of shape functions must be smaller than amount of shape functions.");
+    tpp_assert(i < shape_fcts_at_quad_.size() && j < shape_fcts_at_quad_.size(),
+               "Indices of shape functions must be smaller than amount of shape functions.");
     return_t result = 0.;
 
-    for (unsigned int q = 0; q < quad_weights_.size(); ++q)
-      result += quad_weights_[q] * shape_ders_at_quad_[i][q] * shape_ders_at_quad_[j][q];
+    for (unsigned int q = 0; q < quad_weights.size(); ++q)
+      result += quad_weights[q] * shape_ders_at_quad_[i][q] * shape_ders_at_quad_[j][q];
 
     return result;
   }
@@ -395,14 +391,14 @@ struct Tensorial
     std::array<unsigned int, GeomT::hyEdge_dim()> dec_q;
     Point<GeomT::hyEdge_dim(), return_t> quad_pt;
 
-    for (unsigned int q = 0; q < std::pow(quad_weights_.size(), GeomT::hyEdge_dim()); ++q)
+    for (unsigned int q = 0; q < std::pow(quad_weights.size(), GeomT::hyEdge_dim()); ++q)
     {
       dec_q = Hypercube<GeomT::hyEdge_dim()>::index_decompose(q, quadrature_t::n_points());
       quad_val = 1.;
       for (unsigned int dim = 0; dim < GeomT::hyEdge_dim(); ++dim)
       {
         quad_pt[dim] = quad_points[dec_q[dim]];
-        quad_val *= quad_weights_[dec_q[dim]] * shape_fcts_at_quad_[dec_i[dim]][dec_q[dim]] *
+        quad_val *= quad_weights[dec_q[dim]] * shape_fcts_at_quad_[dec_i[dim]][dec_q[dim]] *
                     shape_fcts_at_quad_[dec_j[dim]][dec_q[dim]];
       }
       integral += fun(geom.map_ref_to_phys(quad_pt), time) * quad_val;
@@ -440,14 +436,14 @@ struct Tensorial
     const SmallSquareMat<GeomT::space_dim(), return_t> mat_q =
       (SmallSquareMat<GeomT::space_dim(), return_t>)geom.mat_q();
 
-    for (unsigned int q = 0; q < std::pow(quad_weights_.size(), GeomT::hyEdge_dim()); ++q)
+    for (unsigned int q = 0; q < std::pow(quad_weights.size(), GeomT::hyEdge_dim()); ++q)
     {
       dec_q = Hypercube<GeomT::hyEdge_dim()>::index_decompose(q, quadrature_t::n_points());
       quad_val = 1.;
       for (unsigned int dim = 0; dim < GeomT::hyEdge_dim(); ++dim)
       {
         quad_pt[dim] = quad_points[dec_q[dim]];
-        quad_val *= quad_weights_[dec_q[dim]] * shape_fcts_at_quad_[dec_i[dim]][dec_q[dim]] *
+        quad_val *= quad_weights[dec_q[dim]] * shape_fcts_at_quad_[dec_i[dim]][dec_q[dim]] *
                     shape_fcts_at_quad_[dec_j[dim]][dec_q[dim]];
       }
       integral +=
@@ -498,7 +494,7 @@ struct Tensorial
 
     std::array<unsigned int, GeomT::hyEdge_dim()> dec_k, dec_q;
 
-    for (unsigned int q = 0; q < std::pow(quad_weights_.size(), GeomT::hyEdge_dim()); ++q)
+    for (unsigned int q = 0; q < std::pow(quad_weights.size(), GeomT::hyEdge_dim()); ++q)
     {
       dec_q = Hypercube<GeomT::hyEdge_dim()>::index_decompose(q, quadrature_t::n_points());
       quad_val = 1.;
@@ -506,7 +502,7 @@ struct Tensorial
       js_val = 0.;
 
       for (unsigned int dim = 0; dim < GeomT::hyEdge_dim(); ++dim)
-        quad_val *= quad_weights_[dec_q[dim]];
+        quad_val *= quad_weights[dec_q[dim]];
 
       for (unsigned int k = 0; k < array_size; ++k)
       {
@@ -541,14 +537,14 @@ struct Tensorial
     std::array<unsigned int, GeomT::hyEdge_dim()> dec_q;
     Point<GeomT::hyEdge_dim(), return_t> quad_pt;
 
-    for (unsigned int q = 0; q < std::pow(quad_weights_.size(), GeomT::hyEdge_dim()); ++q)
+    for (unsigned int q = 0; q < std::pow(quad_weights.size(), GeomT::hyEdge_dim()); ++q)
     {
       dec_q = Hypercube<GeomT::hyEdge_dim()>::index_decompose(q, quadrature_t::n_points());
       quad_val = 1.;
       for (unsigned int dim = 0; dim < GeomT::hyEdge_dim(); ++dim)
       {
         quad_pt[dim] = quad_points[dec_q[dim]];
-        quad_val *= quad_weights_[dec_q[dim]] * shape_fcts_at_quad_[dec_i[dim]][dec_q[dim]];
+        quad_val *= quad_weights[dec_q[dim]] * shape_fcts_at_quad_[dec_i[dim]][dec_q[dim]];
       }
       integral += fun(geom.map_ref_to_phys(quad_pt), time) * quad_val;
     }
@@ -576,14 +572,14 @@ struct Tensorial
     std::array<unsigned int, GeomT::hyEdge_dim()> dec_q;
     Point<GeomT::hyEdge_dim(), return_t> quad_pt;
 
-    for (unsigned int q = 0; q < std::pow(quad_weights_.size(), GeomT::hyEdge_dim()); ++q)
+    for (unsigned int q = 0; q < std::pow(quad_weights.size(), GeomT::hyEdge_dim()); ++q)
     {
       dec_q = Hypercube<GeomT::hyEdge_dim()>::index_decompose(q, quadrature_t::n_points());
       quad_val = 1.;
       for (unsigned int dim = 0; dim < GeomT::hyEdge_dim(); ++dim)
       {
         quad_pt[dim] = quad_points[dec_q[dim]];
-        quad_val *= quad_weights_[dec_q[dim]] * shape_fcts_at_quad_[dec_i[dim]][dec_q[dim]];
+        quad_val *= quad_weights[dec_q[dim]] * shape_fcts_at_quad_[dec_i[dim]][dec_q[dim]];
       }
       integral += fun(geom.map_ref_to_phys(quad_pt), time) * quad_val;
     }
@@ -655,7 +651,7 @@ struct Tensorial
     const SmallMat<GeomT::hyEdge_dim(), GeomT::hyEdge_dim(), return_t> rrT =
       mat_times_transposed_mat(geom.mat_r(), geom.mat_r());
 
-    for (unsigned int q = 0; q < std::pow(quad_weights_.size(), GeomT::hyEdge_dim()); ++q)
+    for (unsigned int q = 0; q < std::pow(quad_weights.size(), GeomT::hyEdge_dim()); ++q)
     {
       dec_q = Hypercube<GeomT::hyEdge_dim()>::index_decompose(q, n_fun_1D);
       quad_weight = 1.;
@@ -664,7 +660,7 @@ struct Tensorial
       for (unsigned int dim = 0; dim < GeomT::hyEdge_dim(); ++dim)
       {
         quad_pt[dim] = quad_points[dec_q[dim]];
-        quad_weight *= quad_weights_[dec_q[dim]];
+        quad_weight *= quad_weights[dec_q[dim]];
         for (unsigned int dim_fct = 0; dim_fct < GeomT::hyEdge_dim(); ++dim_fct)
         {
           if (dim == dim_fct)
@@ -709,7 +705,7 @@ struct Tensorial
     Point<GeomT::hyEdge_dim(), return_t> quad_pt, nabla_phi_i;
     const SmallSquareMat<GeomT::hyEdge_dim(), return_t> rT = transposed(geom.mat_r());
 
-    for (unsigned int q = 0; q < std::pow(quad_weights_.size(), GeomT::hyEdge_dim()); ++q)
+    for (unsigned int q = 0; q < std::pow(quad_weights.size(), GeomT::hyEdge_dim()); ++q)
     {
       dec_q = Hypercube<GeomT::hyEdge_dim()>::index_decompose(q, n_fun_1D);
       quad_weight = 1.;
@@ -717,7 +713,7 @@ struct Tensorial
       for (unsigned int dim = 0; dim < GeomT::hyEdge_dim(); ++dim)
       {
         quad_pt[dim] = quad_points[dec_q[dim]];
-        quad_weight *= quad_weights_[dec_q[dim]];
+        quad_weight *= quad_weights[dec_q[dim]];
         for (unsigned int dim_fct = 0; dim_fct < GeomT::hyEdge_dim(); ++dim_fct)
         {
           if (dim == dim_fct)
@@ -763,7 +759,7 @@ struct Tensorial
       transposed(geom.mat_r());
     const unsigned int bdr_dim = bdr / 2, bdr_ind = bdr % 2;
 
-    for (unsigned int q = 0; q < std::pow(quad_weights_.size(), GeomT::hyEdge_dim() - 1); ++q)
+    for (unsigned int q = 0; q < std::pow(quad_weights.size(), GeomT::hyEdge_dim() - 1); ++q)
     {
       dec_q = Hypercube<GeomT::hyEdge_dim() - 1>::index_decompose(q, n_fun_1D);
       quad_weight = 1.;
@@ -782,7 +778,7 @@ struct Tensorial
           normal[dim] = 0.;
           quad_pt[dim] = quad_points[dec_q[dim - (dim > bdr_dim)]];
           phi_j *= shape_fcts_at_quad_[dec_j[dim]][dec_q[dim - (dim > bdr_dim)]];
-          quad_weight *= quad_weights_[dec_q[dim - (dim > bdr_dim)]];
+          quad_weight *= quad_weights[dec_q[dim - (dim > bdr_dim)]];
         }
         for (unsigned int dim_fct = 0; dim_fct < GeomT::hyEdge_dim(); ++dim_fct)
         {
@@ -834,7 +830,7 @@ struct Tensorial
       transposed(geom.mat_r());
     const unsigned int bdr_dim = bdr / 2, bdr_ind = bdr % 2;
 
-    for (unsigned int q = 0; q < std::pow(quad_weights_.size(), GeomT::hyEdge_dim() - 1); ++q)
+    for (unsigned int q = 0; q < std::pow(quad_weights.size(), GeomT::hyEdge_dim() - 1); ++q)
     {
       dec_q = Hypercube<GeomT::hyEdge_dim() - 1>::index_decompose(q, n_fun_1D);
       quad_weight = 1.;
@@ -852,7 +848,7 @@ struct Tensorial
           normal[dim] = 0.;
           quad_pt[dim] = quad_points[dec_q[dim - (dim > bdr_dim)]];
           phi_j *= shape_fcts_at_quad_[dec_j[dim - (dim > bdr_dim)]][dec_q[dim - (dim > bdr_dim)]];
-          quad_weight *= quad_weights_[dec_q[dim - (dim > bdr_dim)]];
+          quad_weight *= quad_weights[dec_q[dim - (dim > bdr_dim)]];
         }
         for (unsigned int dim_fct = 0; dim_fct < GeomT::hyEdge_dim(); ++dim_fct)
         {
@@ -955,7 +951,7 @@ struct Tensorial
     Point<GeomT::hyEdge_dim(), return_t> quad_pt;
     unsigned int dim_bdr = bdr / 2, bdr_ind = bdr % 2;
 
-    for (unsigned int q = 0; q < std::pow(quad_weights_.size(), GeomT::hyEdge_dim() - 1); ++q)
+    for (unsigned int q = 0; q < std::pow(quad_weights.size(), GeomT::hyEdge_dim() - 1); ++q)
     {
       dec_q = Hypercube<GeomT::hyEdge_dim() - 1>::index_decompose(q, n_fun_1D);
       quad_val = 1.;
@@ -969,7 +965,7 @@ struct Tensorial
         else
         {
           quad_pt[dim] = quad_points[dec_q[dim - (dim > dim_bdr)]];
-          quad_val *= quad_weights_[dec_q[dim - (dim > dim_bdr)]] *
+          quad_val *= quad_weights[dec_q[dim - (dim > dim_bdr)]] *
                       shape_fcts_at_quad_[dec_i[dim]][dec_q[dim - (dim > dim_bdr)]];
         }
       }
@@ -989,7 +985,7 @@ struct Tensorial
     Point<GeomT::hyEdge_dim(), return_t> quad_pt;
     unsigned int dim_bdr = bdr / 2 , bdr_ind = bdr % 2;
 
-    for (unsigned int q = 0; q < std::pow(quad_weights_.size(), GeomT::hyEdge_dim()-1); ++q)
+    for (unsigned int q = 0; q < std::pow(quad_weights.size(), GeomT::hyEdge_dim()-1); ++q)
     {
       dec_q = index_decompose
                 <GeomT::hyEdge_dim()-1,quadrature_t::compute_n_quad_points(max_quad_degree)>(q);
@@ -1004,7 +1000,7 @@ struct Tensorial
         else
         {
           quad_pt[dim] = quad_points[dec_q[dim - (dim > dim_bdr)]];
-          quad_val *= quad_weights_[dec_q[dim - (dim > dim_bdr)]]
+          quad_val *= quad_weights[dec_q[dim - (dim > dim_bdr)]]
                         * shape_fcts_at_quad_[dec_i[dim]][dec_q[dim - (dim > dim_bdr)]];
         }
       }
@@ -1036,7 +1032,7 @@ struct Tensorial
     Point<GeomT::hyEdge_dim(), return_t> quad_pt;
     unsigned int dim_bdr = bdr / 2, bdr_ind = bdr % 2;
 
-    for (unsigned int q = 0; q < std::pow(quad_weights_.size(), GeomT::hyEdge_dim() - 1); ++q)
+    for (unsigned int q = 0; q < std::pow(quad_weights.size(), GeomT::hyEdge_dim() - 1); ++q)
     {
       dec_q = Hypercube<GeomT::hyEdge_dim() - 1>::index_decompose(q, n_fun_1D);
       quad_val = 1.;
@@ -1048,7 +1044,7 @@ struct Tensorial
         {
           quad_pt[dim] = quad_points[dec_q[dim - (dim > dim_bdr)]];
           quad_val *=
-            quad_weights_[dec_q[dim - (dim > dim_bdr)]] *
+            quad_weights[dec_q[dim - (dim > dim_bdr)]] *
             shape_fcts_at_quad_[dec_i[dim - (dim > dim_bdr)]][dec_q[dim - (dim > dim_bdr)]];
         }
       }
@@ -1078,7 +1074,7 @@ struct Tensorial
     std::array<return_t, n_coeff> quad_val;
     Point<GeomT::hyEdge_dim(), return_t> quad_pt;
 
-    for (unsigned int q = 0; q < std::pow(quad_weights_.size(), GeomT::hyEdge_dim()); ++q)
+    for (unsigned int q = 0; q < std::pow(quad_weights.size(), GeomT::hyEdge_dim()); ++q)
     {
       dec_q = Hypercube<GeomT::hyEdge_dim()>::index_decompose(q, n_fun_1D);
       quad_weight = 1.;
@@ -1086,7 +1082,7 @@ struct Tensorial
       for (unsigned int dim = 0; dim < GeomT::hyEdge_dim(); ++dim)
       {
         quad_pt[dim] = quad_points[dec_q[dim]];
-        quad_weight *= quad_weights_[dec_q[dim]];
+        quad_weight *= quad_weights[dec_q[dim]];
         for (unsigned int i = 0; i < n_coeff; ++i)
         {
           dec_i = Hypercube<GeomT::hyEdge_dim()>::index_decompose(i, n_fun_1D);
