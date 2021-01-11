@@ -121,7 +121,7 @@ struct Tensorial
    * \authors   Andreas Rupp, Heidelberg University, 2020.
    ************************************************************************************************/
   std::array<std::array<return_t, quadrature_t::n_points()>,
-             n_fun_1D> static inline shape_ders_at_quad_points()
+             n_fun_1D> static constexpr shape_ders_at_quad_points()
   {
     std::array<std::array<return_t, quadrature_t::n_points()>, n_fun_1D> result;
 
@@ -133,7 +133,7 @@ struct Tensorial
     return result;
   }
 
-  std::array<std::array<return_t, 2>, n_fun_1D> static inline shape_fcts_at_bdrs()
+  std::array<std::array<return_t, 2>, n_fun_1D> static constexpr shape_fcts_at_bdrs()
   {
     std::array<std::array<return_t, 2>, n_fun_1D> result;
 
@@ -144,7 +144,7 @@ struct Tensorial
     return result;
   }
 
-  std::array<std::array<return_t, 2>, n_fun_1D> static inline shape_ders_at_bdrs()
+  std::array<std::array<return_t, 2>, n_fun_1D> static constexpr shape_ders_at_bdrs()
   {
     std::array<std::array<return_t, 2>, n_fun_1D> result;
 
