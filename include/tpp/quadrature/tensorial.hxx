@@ -1013,7 +1013,7 @@ class Tensorial
   template <typename point_t,
             typename geom_t,
             return_t fun(const point_t&, const return_t),
-            typename smallVec_t,
+            typename smallVec_t = point_t,
             std::size_t n_coeff>
   static return_t integrate_vol_diffsquare_discana(const std::array<return_t, n_coeff> coeffs,
                                                    geom_t& geom,
