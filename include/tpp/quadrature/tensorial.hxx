@@ -4,8 +4,8 @@
 #include <tpp/tpp_assert.hxx>
 
 #include <array>
-//#include <cmath>
-//#include <numeric>
+#include <cmath>
+#include <numeric>
 
 namespace TPP
 {
