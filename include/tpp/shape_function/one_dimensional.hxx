@@ -49,7 +49,7 @@ struct Legendre
    * \brief   Evaluate variable beta of the Clenshaw algorithm.
    ************************************************************************************************/
   template <typename return_t, typename input_t>
-  static constexpr return_t clenshaw_beta(const unsigned int k, const input_t& UNUSED(x))
+  static constexpr return_t clenshaw_beta(const unsigned int k, const input_t&)
   {
     return -((return_t)k) / ((return_t)(k + 1));
   }
