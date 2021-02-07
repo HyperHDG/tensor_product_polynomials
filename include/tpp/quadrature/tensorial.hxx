@@ -697,6 +697,383 @@ class Tensorial
     }
     return geom.area() * integral;
   }
+
+  /*!***********************************************************************************************
+   * \brief   Integrate product of shape functions times some function over some geometry.
+   *
+   * \todo    ALL INCLUDING CHECKING
+   *
+   * \tparam  smallVec_t    Type of vector which is returned by the function.
+   * \tparam  point_t       Type of point which is the first argument of the function.
+   * \tparam  geom_t        Geometry which is the integration domain.
+   * \tparam  fun           Function that is also to be integrated.
+   * \tparam  smallVec_t    Type of local point with respect to hyperedge. Defaults to point_t.
+   * \param   i             Local index of local shape function.
+   * \param   j             Local index of local shape function.
+   * \param   dimension     Local dimension with respect to which the vector-function is integrated.
+   * \param   geom          Geometrical information.
+   * \param   f_param       Function parameter (e.g. time) with respect to which it is evaluated.
+   * \retval  integral      Integral of product of both shape functions.
+   ************************************************************************************************/
+  template <typename point_t,
+            typename geom_t,
+            point_t fun(const point_t&, const return_t),
+            typename smallVec_t = point_t>
+  static return_t integrate_vol_nablaphiphivecfunc(const unsigned int i,
+                                                   const unsigned int j,
+                                                   geom_t& geom,
+                                                   const return_t f_param = 0.)
+  {
+    static_assert(geom_t::hyEdge_dim() == dim(), "Dimension of hyperedge must fit to quadrature!");
+    return_t integral = 0., quad_val;
+    std::array<unsigned int, dim()> dec_i = Hypercube<dim()>::index_decompose(i, n_fun_1D);
+    std::array<unsigned int, dim()> dec_j = Hypercube<dim()>::index_decompose(j, n_fun_1D);
+    std::array<unsigned int, dim()> dec_q;
+    smallVec_t quad_pt, nabla_phi_i;
+    point_t fun_val;
+    const auto qT = transposed(geom.mat_q());
+    const auto rT = transposed(geom.mat_r());
+
+    for (unsigned int q = 0; q < std::pow(quad_weights.size(), geom_t::hyEdge_dim()); ++q)
+    {
+      dec_q = Hypercube<dim()>::index_decompose(q, quadrature_t::n_points());
+      quad_val = 1.;
+      nabla_phi_i = 1.;
+      for (unsigned int dim = 0; dim < geom_t::hyEdge_dim(); ++dim)
+      {
+        quad_pt[dim] = quad_points[dec_q[dim]];
+        quad_val *= quad_weights[dec_q[dim]] * shape_fcts_at_quad[dec_j[dim]][dec_q[dim]];
+        for (unsigned int dim_fct = 0; dim_fct < geom_t::hyEdge_dim(); ++dim_fct)
+        {
+          if (dim == dim_fct)
+            nabla_phi_i[dim_fct] *= shape_ders_at_quad[dec_i[dim]][dec_q[dim]];
+          else
+            nabla_phi_i[dim_fct] *= shape_fcts_at_quad[dec_i[dim]][dec_q[dim]];
+        }
+      }
+      nabla_phi_i = nabla_phi_i / rT;
+      fun_val = qT * fun(geom.map_ref_to_phys(quad_pt), f_param);
+      for (unsigned int dim = 0; dim < geom_t::hyEdge_dim(); ++dim)
+        integral += fun_val[dim] * nabla_phi_i[dim] * quad_val;
+    }
+    return integral * geom.area();
+  }
+  /*!***********************************************************************************************
+   * \brief   Integrate gradient of shape function times shape function times other function times
+   *          normal over some geometry's boundary.
+   *
+   * \todo    ALL INCLUDING CHECKING
+   *
+   * \tparam  point_t       Type of point which is the first argument of the function.
+   * \tparam  geom_t        Geometry which is the integration domain.
+   * \tparam  fun           Weight function that is additionally integrated.
+   * \tparam  smallVec_t    Type of local point with respect to hyperedge. Defaults to point_t.
+   * \param   i             Local index of local shape function with gradient.
+   * \param   j             Local index of local shape function.
+   * \param   bdr           Index of the boundatry face to integrate over.
+   * \param   geom          Geometrical information.
+   * \param   f_param       Time at which fun is evaluated.
+   * \retval  integral      Integral of product of both shape function's weighted gradients.
+   ************************************************************************************************/
+  template <typename point_t,
+            typename geom_t,
+            point_t fun(const point_t&, const return_t),
+            typename smallVec_t = point_t>
+  static return_t integrate_bdr_phiphinuvecfunc_cutwind(const unsigned int i,
+                                                        const unsigned int j,
+                                                        const unsigned int bdr,
+                                                        geom_t& geom,
+                                                        return_t f_param = 0.)
+  {
+    static_assert(geom_t::hyEdge_dim() == dim(), "Dimension of hyperedge must fit to quadrature!");
+    return_t integral = 0., quad_weight, phi_i, phi_j, winding;
+    std::array<unsigned int, dim()> dec_i = Hypercube<dim()>::index_decompose(i, n_fun_1D);
+    std::array<unsigned int, dim()> dec_j = Hypercube<dim()>::index_decompose(j, n_fun_1D);
+    std::array<unsigned int, std::max(1U, dim() - 1)> dec_q;
+    smallVec_t quad_pt, normal = geom.inner_normal(bdr);
+    const unsigned int bdr_dim = bdr / 2, bdr_ind = bdr % 2;
+
+    for (unsigned int q = 0; q < std::pow(quad_weights.size(), geom_t::hyEdge_dim() - 1); ++q)
+    {
+      dec_q = Hypercube<dim() - 1>::index_decompose(q, n_fun_1D);
+      quad_weight = 1.;
+      phi_i = 1.;
+      phi_j = 1.;
+      for (unsigned int dim = 0; dim < geom_t::hyEdge_dim(); ++dim)
+      {
+        if (dim == bdr_dim)
+        {
+          quad_pt[dim] = (return_t)bdr_ind;
+          phi_i *= shape_fcts_at_bdr[dec_i[dim]][bdr_ind];
+          phi_j *= shape_fcts_at_bdr[dec_j[dim]][bdr_ind];
+        }
+        else
+        {
+          quad_pt[dim] = quad_points[dec_q[dim - (dim > bdr_dim)]];
+          phi_i *= shape_fcts_at_quad[dec_i[dim]][dec_q[dim - (dim > bdr_dim)]];
+          phi_j *= shape_fcts_at_quad[dec_j[dim]][dec_q[dim - (dim > bdr_dim)]];
+          quad_weight *= quad_weights[dec_q[dim - (dim > bdr_dim)]];
+        }
+      }
+      winding = scalar_product(normal, fun(geom.map_ref_to_phys(quad_pt), f_param));
+      if (winding > 0)
+        integral += geom.face_area(bdr) * quad_weight * phi_i * phi_j * winding;
+    }
+
+    return integral;
+  }
+  /*!***********************************************************************************************
+   * \brief   Integrate gradient of shape function times shape function times other function times
+   *          normal over some geometry's boundary.
+   *
+   * \todo    ALL INCLUDING CHECKING
+   *
+   * \tparam  point_t       Type of point which is the first argument of the function.
+   * \tparam  geom_t        Geometry which is the integration domain.
+   * \tparam  fun           Weight function that is additionally integrated.
+   * \tparam  smallVec_t    Type of local point with respect to hyperedge. Defaults to point_t.
+   * \param   i             Local index of local shape function with gradient.
+   * \param   j             Local index of local shape function.
+   * \param   bdr           Index of the boundatry face to integrate over.
+   * \param   geom          Geometrical information.
+   * \param   f_param       Time at which fun is evaluated.
+   * \retval  integral      Integral of product of both shape function's weighted gradients.
+   ************************************************************************************************/
+  template <typename point_t,
+            typename geom_t,
+            point_t fun(const point_t&, const return_t),
+            typename smallVec_t = point_t>
+  static return_t integrate_bdr_phipsinuvecfunc_cutwind(const unsigned int i,
+                                                        const unsigned int j,
+                                                        const unsigned int bdr,
+                                                        geom_t& geom,
+                                                        return_t f_param = 0.)
+  {
+    static_assert(geom_t::hyEdge_dim() == dim(), "Dimension of hyperedge must fit to quadrature!");
+    return_t integral = 0., quad_weight, phi_i, psi_j, winding;
+    std::array<unsigned int, dim()> dec_i = Hypercube<dim()>::index_decompose(i, n_fun_1D);
+    std::array<unsigned int, std::max(1U, dim() - 1)> dec_j =
+      Hypercube<dim() - 1>::index_decompose(j, n_fun_1D);
+    std::array<unsigned int, std::max(1U, dim() - 1)> dec_q;
+    smallVec_t quad_pt, normal = geom.inner_normal(bdr);
+    const unsigned int bdr_dim = bdr / 2, bdr_ind = bdr % 2;
+
+    for (unsigned int q = 0; q < std::pow(quad_weights.size(), geom_t::hyEdge_dim() - 1); ++q)
+    {
+      dec_q = Hypercube<dim() - 1>::index_decompose(q, n_fun_1D);
+      quad_weight = 1.;
+      phi_i = 1.;
+      psi_j = 1.;
+      for (unsigned int dim = 0; dim < geom_t::hyEdge_dim(); ++dim)
+      {
+        if (dim == bdr_dim)
+        {
+          quad_pt[dim] = (return_t)bdr_ind;
+          phi_i *= shape_fcts_at_bdr[dec_i[dim]][bdr_ind];
+        }
+        else
+        {
+          quad_pt[dim] = quad_points[dec_q[dim - (dim > bdr_dim)]];
+          phi_i *= shape_fcts_at_quad[dec_i[dim]][dec_q[dim - (dim > bdr_dim)]];
+          psi_j *= shape_fcts_at_quad[dec_j[dim - (dim > bdr_dim)]][dec_q[dim - (dim > bdr_dim)]];
+          quad_weight *= quad_weights[dec_q[dim - (dim > bdr_dim)]];
+        }
+      }
+      winding = scalar_product(normal, fun(geom.map_ref_to_phys(quad_pt), f_param));
+
+      if (winding < 0)
+        integral += geom.face_area(bdr) * quad_weight * phi_i * psi_j * winding;
+    }
+
+    return integral;
+  }
+  /*!***********************************************************************************************
+   * \brief   Integrate gradient of shape function times shape function times other function times
+   *          normal over some geometry's boundary.
+   *
+   * \todo    ALL INCLUDING CHECKING
+   *
+   * \tparam  point_t       Type of point which is the first argument of the function.
+   * \tparam  geom_t        Geometry which is the integration domain.
+   * \tparam  fun           Weight function that is additionally integrated.
+   * \tparam  smallVec_t    Type of local point with respect to hyperedge. Defaults to point_t.
+   * \param   i             Local index of local shape function with gradient.
+   * \param   j             Local index of local shape function.
+   * \param   bdr           Index of the boundatry face to integrate over.
+   * \param   geom          Geometrical information.
+   * \param   f_param       Time at which fun is evaluated.
+   * \retval  integral      Integral of product of both shape function's weighted gradients.
+   ************************************************************************************************/
+  template <typename point_t,
+            typename geom_t,
+            point_t fun(const point_t&, const return_t),
+            typename smallVec_t = point_t>
+  static return_t integrate_bdr_psiphinuvecfunc_cutwind(const unsigned int i,
+                                                        const unsigned int j,
+                                                        const unsigned int bdr,
+                                                        geom_t& geom,
+                                                        return_t f_param = 0.)
+  {
+    static_assert(geom_t::hyEdge_dim() == dim(), "Dimension of hyperedge must fit to quadrature!");
+    return_t integral = 0., quad_weight, psi_i, phi_j, winding;
+    std::array<unsigned int, std::max(1U, dim() - 1)> dec_i =
+      Hypercube<dim() - 1>::index_decompose(i, n_fun_1D);
+    std::array<unsigned int, dim()> dec_j = Hypercube<dim()>::index_decompose(j, n_fun_1D);
+    std::array<unsigned int, std::max(1U, dim() - 1)> dec_q;
+    smallVec_t quad_pt, normal = geom.inner_normal(bdr);
+    const unsigned int bdr_dim = bdr / 2, bdr_ind = bdr % 2;
+
+    for (unsigned int q = 0; q < std::pow(quad_weights.size(), geom_t::hyEdge_dim() - 1); ++q)
+    {
+      dec_q = Hypercube<dim() - 1>::index_decompose(q, n_fun_1D);
+      quad_weight = 1.;
+      psi_i = 1.;
+      phi_j = 1.;
+      for (unsigned int dim = 0; dim < geom_t::hyEdge_dim(); ++dim)
+      {
+        if (dim == bdr_dim)
+        {
+          quad_pt[dim] = (return_t)bdr_ind;
+          phi_j *= shape_fcts_at_bdr[dec_j[dim]][bdr_ind];
+        }
+        else
+        {
+          quad_pt[dim] = quad_points[dec_q[dim - (dim > bdr_dim)]];
+          psi_i *= shape_fcts_at_quad[dec_i[dim - (dim > bdr_dim)]][dec_q[dim - (dim > bdr_dim)]];
+          phi_j *= shape_fcts_at_quad[dec_j[dim]][dec_q[dim - (dim > bdr_dim)]];
+          quad_weight *= quad_weights[dec_q[dim - (dim > bdr_dim)]];
+        }
+      }
+      winding = scalar_product(normal, fun(geom.map_ref_to_phys(quad_pt), f_param));
+      if (winding > 0)
+        integral += geom.face_area(bdr) * quad_weight * psi_i * phi_j * winding;
+    }
+    return integral;
+  }
+  /*!***********************************************************************************************
+   * \brief   Integrate gradient of shape function times shape function times other function times
+   *          normal over some geometry's boundary.
+   *
+   * \todo    ALL INCLUDING CHECKING
+   *
+   * \tparam  point_t       Type of point which is the first argument of the function.
+   * \tparam  geom_t        Geometry which is the integration domain.
+   * \tparam  fun           Weight function that is additionally integrated.
+   * \tparam  smallVec_t    Type of local point with respect to hyperedge. Defaults to point_t.
+   * \param   i             Local index of local shape function with gradient.
+   * \param   j             Local index of local shape function.
+   * \param   bdr           Index of the boundatry face to integrate over.
+   * \param   geom          Geometrical information.
+   * \param   f_param       Time at which fun is evaluated.
+   * \retval  integral      Integral of product of both shape function's weighted gradients.
+   ************************************************************************************************/
+  template <typename point_t,
+            typename geom_t,
+            point_t fun(const point_t&, const return_t),
+            typename smallVec_t = point_t>
+  static return_t integrate_bdr_psipsinuvecfunc_cutwind(const unsigned int i,
+                                                        const unsigned int j,
+                                                        const unsigned int bdr,
+                                                        geom_t& geom,
+                                                        return_t f_param = 0.)
+  {
+    static_assert(geom_t::hyEdge_dim() == dim(), "Dimension of hyperedge must fit to quadrature!");
+    return_t integral = 0., quad_weight, psi_i, psi_j, winding;
+    std::array<unsigned int, std::max(1U, dim() - 1)> dec_i =
+      Hypercube<dim() - 1>::index_decompose(i, n_fun_1D);
+    std::array<unsigned int, std::max(1U, dim() - 1)> dec_j =
+      Hypercube<dim() - 1>::index_decompose(j, n_fun_1D);
+    std::array<unsigned int, std::max(1U, dim() - 1)> dec_q;
+    smallVec_t quad_pt, normal = geom.inner_normal(bdr);
+    unsigned int bdr_dim = bdr / 2, bdr_ind = bdr % 2;
+
+    for (unsigned int q = 0; q < std::pow(quad_weights.size(), geom_t::hyEdge_dim() - 1); ++q)
+    {
+      dec_q = Hypercube<dim() - 1>::index_decompose(q, n_fun_1D);
+      quad_weight = 1.;
+      psi_i = 1.;
+      psi_j = 1.;
+      for (unsigned int dim = 0; dim < geom_t::hyEdge_dim(); ++dim)
+      {
+        if (dim == bdr_dim)
+        {
+          quad_pt[dim] = (return_t)bdr_ind;
+        }
+        else
+        {
+          quad_pt[dim] = quad_points[dec_q[dim - (dim > bdr_dim)]];
+          psi_i *= shape_fcts_at_quad[dec_i[dim]][dec_q[dim - (dim > bdr_dim)]];
+          psi_j *= shape_fcts_at_quad[dec_j[dim - (dim > bdr_dim)]][dec_q[dim - (dim > bdr_dim)]];
+          quad_weight *= quad_weights[dec_q[dim - (dim > bdr_dim)]];
+        }
+      }
+      winding = scalar_product(normal, fun(geom.map_ref_to_phys(quad_pt), f_param));
+      if (winding < 0)
+        integral += geom.face_area(bdr) * quad_weight * psi_i * psi_j * winding;
+    }
+    return integral;
+  }
+  /*!***********************************************************************************************
+   * \brief   Integrate gradient of shape function times shape function times other function times
+   *          normal over some geometry's boundary.
+   *
+   * \todo    ALL INCLUDING CHECKING
+   *
+   * \tparam  point_t       Type of point which is the first argument of the function.
+   * \tparam  geom_t        Geometry which is the integration domain.
+   * \tparam  fun           Weight function that is additionally integrated.
+   * \tparam  smallVec_t    Type of local point with respect to hyperedge. Defaults to point_t.
+   * \param   i             Local index of local shape function with gradient.
+   * \param   j             Local index of local shape function.
+   * \param   bdr           Index of the boundatry face to integrate over.
+   * \param   geom          Geometrical information.
+   * \param   f_param       Time at which fun is evaluated.
+   * \retval  integral      Integral of product of both shape function's weighted gradients.
+   ************************************************************************************************/
+  template <typename point_t,
+            typename geom_t,
+            return_t func(const point_t&, const return_t),
+            point_t fun(const point_t&, const return_t),
+            typename smallVec_t = point_t>
+  static return_t integrate_bdr_phifuncnuvecfunc_cutwind(const unsigned int i,
+                                                         const unsigned int bdr,
+                                                         geom_t& geom,
+                                                         return_t f_param = 0.)
+  {
+    static_assert(geom_t::hyEdge_dim() == dim(), "Dimension of hyperedge must fit to quadrature!");
+    return_t integral = 0., quad_weight, phi_i, winding;
+    std::array<unsigned int, dim()> dec_i = Hypercube<dim()>::index_decompose(i, n_fun_1D);
+    std::array<unsigned int, std::max(1U, dim() - 1)> dec_q;
+    smallVec_t quad_pt, normal = geom.inner_normal(bdr);
+    const unsigned int bdr_dim = bdr / 2, bdr_ind = bdr % 2;
+
+    for (unsigned int q = 0; q < std::pow(quad_weights.size(), geom_t::hyEdge_dim() - 1); ++q)
+    {
+      dec_q = Hypercube<dim() - 1>::index_decompose(q, n_fun_1D);
+      quad_weight = 1.;
+      phi_i = 1.;
+      for (unsigned int dim = 0; dim < geom_t::hyEdge_dim(); ++dim)
+      {
+        if (dim == bdr_dim)
+        {
+          quad_pt[dim] = (return_t)bdr_ind;
+          phi_i *= shape_fcts_at_bdr[dec_i[dim]][bdr_ind];
+        }
+        else
+        {
+          quad_pt[dim] = quad_points[dec_q[dim - (dim > bdr_dim)]];
+          phi_i *= shape_fcts_at_quad[dec_i[dim]][dec_q[dim - (dim > bdr_dim)]];
+          quad_weight *= quad_weights[dec_q[dim - (dim > bdr_dim)]];
+        }
+      }
+      winding = scalar_product(normal, fun(geom.map_ref_to_phys(quad_pt), f_param));
+      if (winding < 0)
+        integral += geom.face_area(bdr) * quad_weight * phi_i *
+                    func(geom.map_ref_to_phys(quad_pt), f_param) * winding;
+    }
+    return integral;
+  }
+
   /*!***********************************************************************************************
    * \brief   Integrate gradient of shape function times shape function times other function times
    *          normal over some geometry's boundary.
