@@ -699,18 +699,15 @@ class Tensorial
   }
 
   /*!***********************************************************************************************
-   * \brief   Integrate product of shape functions times some function over some geometry.
-   *
-   * \todo    ALL INCLUDING CHECKING
+   * \brief   Integrate gradient of shape function times other shape function times vector function.
    *
    * \tparam  smallVec_t    Type of vector which is returned by the function.
    * \tparam  point_t       Type of point which is the first argument of the function.
    * \tparam  geom_t        Geometry which is the integration domain.
    * \tparam  fun           Function that is also to be integrated.
    * \tparam  smallVec_t    Type of local point with respect to hyperedge. Defaults to point_t.
-   * \param   i             Local index of local shape function.
+   * \param   i             Local index of local gradient shape function.
    * \param   j             Local index of local shape function.
-   * \param   dimension     Local dimension with respect to which the vector-function is integrated.
    * \param   geom          Geometrical information.
    * \param   f_param       Function parameter (e.g. time) with respect to which it is evaluated.
    * \retval  integral      Integral of product of both shape functions.
@@ -759,10 +756,7 @@ class Tensorial
     return integral * geom.area();
   }
   /*!***********************************************************************************************
-   * \brief   Integrate gradient of shape function times shape function times other function times
-   *          normal over some geometry's boundary.
-   *
-   * \todo    ALL INCLUDING CHECKING
+   * \brief   Integrate shape function times shape function times vector function times normal.
    *
    * \tparam  point_t       Type of point which is the first argument of the function.
    * \tparam  geom_t        Geometry which is the integration domain.
@@ -825,10 +819,7 @@ class Tensorial
   }
 
   /*!***********************************************************************************************
-   * \brief   Integrate gradient of shape function times shape function times other function times
-   *          normal over some geometry's boundary.
-   *
-   * \todo    ALL INCLUDING CHECKING
+   * \brief   Integrate cut upwind of product of shape functions.
    *
    * \tparam  point_t       Type of point which is the first argument of the function.
    * \tparam  geom_t        Geometry which is the integration domain.
@@ -891,10 +882,7 @@ class Tensorial
   }
 
   /*!***********************************************************************************************
-   * \brief   Integrate gradient of shape function times shape function times other function times
-   *          normal over some geometry's boundary.
-   *
-   * \todo    ALL INCLUDING CHECKING
+   * \brief   Integrate cut upwind of shape function times skeletal shape function.
    *
    * \tparam  point_t       Type of point which is the first argument of the function.
    * \tparam  geom_t        Geometry which is the integration domain.
@@ -958,10 +946,7 @@ class Tensorial
   }
 
   /*!***********************************************************************************************
-   * \brief   Integrate gradient of shape function times shape function times other function times
-   *          normal over some geometry's boundary.
-   *
-   * \todo    ALL INCLUDING CHECKING
+   * \brief   Integrate cut downwind of shape function times skeletal shape function.
    *
    * \tparam  point_t       Type of point which is the first argument of the function.
    * \tparam  geom_t        Geometry which is the integration domain.
@@ -1025,10 +1010,7 @@ class Tensorial
   }
 
   /*!***********************************************************************************************
-   * \brief   Integrate gradient of shape function times shape function times other function times
-   *          normal over some geometry's boundary.
-   *
-   * \todo    ALL INCLUDING CHECKING
+   * \brief   Integrate cut upwind of skeletal shape function times shape function times vector fct.
    *
    * \tparam  point_t       Type of point which is the first argument of the function.
    * \tparam  geom_t        Geometry which is the integration domain.
@@ -1090,10 +1072,7 @@ class Tensorial
   }
 
   /*!***********************************************************************************************
-   * \brief   Integrate gradient of shape function times shape function times other function times
-   *          normal over some geometry's boundary.
-   *
-   * \todo    ALL INCLUDING CHECKING
+   * \brief   Integrate cut upwind of skeletal shape function times shape function.
    *
    * \tparam  point_t       Type of point which is the first argument of the function.
    * \tparam  geom_t        Geometry which is the integration domain.
@@ -1155,10 +1134,7 @@ class Tensorial
   }
 
   /*!***********************************************************************************************
-   * \brief   Integrate gradient of shape function times shape function times other function times
-   *          normal over some geometry's boundary.
-   *
-   * \todo    ALL INCLUDING CHECKING
+   * \brief   Integrate cut upwind of product of skeltal shape functions times vector function.
    *
    * \tparam  point_t       Type of point which is the first argument of the function.
    * \tparam  geom_t        Geometry which is the integration domain.
@@ -1219,10 +1195,7 @@ class Tensorial
     return integral;
   }
   /*!***********************************************************************************************
-   * \brief   Integrate gradient of shape function times shape function times other function times
-   *          normal over some geometry's boundary.
-   *
-   * \todo    ALL INCLUDING CHECKING
+   * \brief   Integrate cut downwind product of skeletal shape functions.
    *
    * \tparam  point_t       Type of point which is the first argument of the function.
    * \tparam  geom_t        Geometry which is the integration domain.
@@ -1283,17 +1256,13 @@ class Tensorial
     return integral;
   }
   /*!***********************************************************************************************
-   * \brief   Integrate gradient of shape function times shape function times other function times
-   *          normal over some geometry's boundary.
-   *
-   * \todo    ALL INCLUDING CHECKING
+   * \brief   Integrate cut upwind of shape function times function times vector function.
    *
    * \tparam  point_t       Type of point which is the first argument of the function.
    * \tparam  geom_t        Geometry which is the integration domain.
    * \tparam  fun           Weight function that is additionally integrated.
    * \tparam  smallVec_t    Type of local point with respect to hyperedge. Defaults to point_t.
    * \param   i             Local index of local shape function with gradient.
-   * \param   j             Local index of local shape function.
    * \param   bdr           Index of the boundatry face to integrate over.
    * \param   geom          Geometrical information.
    * \param   f_param       Time at which fun is evaluated.
@@ -1344,17 +1313,13 @@ class Tensorial
     return integral;
   }
   /*!***********************************************************************************************
-   * \brief   Integrate gradient of shape function times shape function times other function times
-   *          normal over some geometry's boundary.
-   *
-   * \todo    ALL INCLUDING CHECKING
+   * \brief   Integrate cut upwind of skeletal shape function times function times vector function.
    *
    * \tparam  point_t       Type of point which is the first argument of the function.
    * \tparam  geom_t        Geometry which is the integration domain.
    * \tparam  fun           Weight function that is additionally integrated.
    * \tparam  smallVec_t    Type of local point with respect to hyperedge. Defaults to point_t.
    * \param   i             Local index of local shape function with gradient.
-   * \param   j             Local index of local shape function.
    * \param   bdr           Index of the boundatry face to integrate over.
    * \param   geom          Geometrical information.
    * \param   f_param       Time at which fun is evaluated.
