@@ -10,9 +10,9 @@ namespace ShapeType
 /*!*************************************************************************************************
  * \brief   Struct that handles the evaluation of one-dimensional Legendre polynomials.
  *
- * We use Clenshaw's algorithm (cf. https://en.wikipedia.org/wiki/Clenshaw_algorithm; date: Jan, 09,
+ * We use Clenshaw's algorithm (cf. https://en.wikipedia.org/wiki/Clenshaw_algorithm; date: Jan. 09,
  * 2021) to evaluate the three-term recusion formula defining Legendre polynomials as defined on
- * https://en.wikipedia.org/wiki/Legendre_polynomials; date Jan, 09, 2021).
+ * https://en.wikipedia.org/wiki/Legendre_polynomials; date Jan. 09, 2021).
  *
  * The shape functions in this struct, however, are defined with respect to the unit interval [0,1]
  * and normalized to be L^2 orthonormal (not just orthogonal).
@@ -121,14 +121,12 @@ struct Legendre
    * \param   index         Index of evaluated shape function.
    * \param   x_val         Abscissa of evaluated shape function.
    * \param   normalized    Decide whether L^2 normalization is conducted. Defaults to true.
-   * \param   unit_interval Derivative is evaluated with respect to unit interval. Defauts to true.
    * \retval  fct_value     Evaluated value of shape function's derivative.
    ************************************************************************************************/
   template <typename return_t, typename input_t>
   static constexpr return_t der_val(const unsigned int index,
                                     const input_t& x_val,
-                                    const bool normalized = true,
-                                    const bool unit_interval = true)
+                                    const bool normalized = true)
   {
     if (index == 0)
       return (return_t)0.;
@@ -150,13 +148,100 @@ struct Legendre
     if (normalized)
       legendre_val *= TPP::heron_root((return_t)(2. * index + 1.));
 
-    // Derivatives with respect to unit interval must be multiplied by 2.
-    if (unit_interval)
-      legendre_val *= 2.;
-
-    return legendre_val;
+    return 2. * legendre_val;
   }
 };  // end of struct Legendre
+
+/*!*************************************************************************************************
+ * \brief   Struct that handles the evaluation of one-dimensional Lobatto polynomials.
+ *
+ * The \f$n\f$-th Lobatto polynomial \f$L_n\f$ is defined to be the definite integral of the
+ * \f$n-1\f$-st Legendre polynomial \f$P_n$, i.e.,  \f$L_n(x) = \int_0^x P_{n-1}(t) \; dt\f$. Thus,
+ * the Lobatto polynomials turn out to be \f$H^1\f$ orthonormal. They can be calculated according to
+ * \f$L_n(x) = \frac{1}{n} (x P_{n-1}(x) - P_{n-2}(x))\f$, which can be deduced from the derivation
+ * rules of the Legendre polynomials. The zeroth polynomial is constant.
+ *
+ * \tparam  poly_deg  The maximum degree of the polynomial.
+ *
+ * \authors   Andreas Rupp, Heidelberg University, 2021.
+ **************************************************************************************************/
+template <unsigned int poly_deg>
+struct Lobatto
+{
+  /*!***********************************************************************************************
+   * \brief   Number of shape functions that span the local polynomial space.
+   ************************************************************************************************/
+  static constexpr unsigned int n_fun() { return degree() + 1; }
+  /*!***********************************************************************************************
+   * \brief   Dimension of abscissas of the polynomials.
+   ************************************************************************************************/
+  static constexpr unsigned int dim() { return 1U; }
+  /*!***********************************************************************************************
+   * \brief   Maximum degree of all polynomials.
+   ************************************************************************************************/
+  static constexpr unsigned int degree() { return poly_deg; }
+
+  /*!***********************************************************************************************
+   * \brief   Evaluate value of one shape function.
+   *
+   * Evaluates value of the \c index one-dimensional shape function on the reference interval
+   * \f$[0,1]\f$ at abscissas \c x_val.
+   *
+   * \tparam  return_t      Floating type specification for return value.
+   * \tparam  input_t       Floating type specification for input value.
+   * \param   index         Index of evaluated shape function.
+   * \param   x_val         Abscissa of evaluated shape function.
+   * \param   normalized    Decide whether L^2 normalization is conducted. Defaults to true.
+   * \retval  fct_value     Evaluated value of shape function.
+   ************************************************************************************************/
+  template <typename return_t, typename input_t>
+  static constexpr return_t fct_val(const unsigned int index,
+                                    const input_t& x_val,
+                                    const bool normalized = true)
+  {
+    if (index == 0)
+      return 1.;
+    else if (index == 1)
+      return x_val;
+
+    // Transform x value from reference interval [0,1] -> [-1,1].
+    const return_t x = 2. * (return_t)x_val - 1.;
+
+    // Evaluate the value of the Lobatto polynomial at x.
+    return_t lobatto_val = (x * Legendre::fct_val(index - 1, x_val, false) -
+                            Legendre::fct_val(index - 2, x_val, false)) /
+                           (return_t)(index);
+
+    // Return L^2 normalized value.
+    if (normalized)
+      lobato_val *= TPP::heron_root((return_t)(2. * index - 1.));
+
+    return 0.5 * lobatto_val;
+  }
+  /*!***********************************************************************************************
+   * \brief   Evaluate value of the derivative of orthonormal shape function.
+   *
+   * Evaluates the value of the derivative of the \c index orthonormal, one-dimensional shape
+   * function on the reference interval \f$[0,1]\f$ at abscissa \c x_val.
+   *
+   * \tparam  return_t      Floating type specification for return value.
+   * \tparam  input_t       Floating type specification for input value.
+   * \param   index         Index of evaluated shape function.
+   * \param   x_val         Abscissa of evaluated shape function.
+   * \param   normalized    Decide whether L^2 normalization is conducted. Defaults to true.
+   * \retval  fct_value     Evaluated value of shape function's derivative.
+   ************************************************************************************************/
+  template <typename return_t, typename input_t>
+  static constexpr return_t der_val(const unsigned int index,
+                                    const input_t& x_val,
+                                    const bool normalized = true)
+  {
+    if (index == 0)
+      return 0.;
+
+    return Legendre::fct_val(index - 1, x_val, normalized);
+  }
+};  // end of struct Lobatto
 
 }  // end of namespace ShapeType
 
