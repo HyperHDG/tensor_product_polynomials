@@ -208,13 +208,14 @@ struct Lobatto
     const return_t x = 2. * (return_t)x_val - 1.;
 
     // Evaluate the value of the Lobatto polynomial at x.
-    return_t lobatto_val = (x * Legendre::fct_val(index - 1, x_val, false) -
-                            Legendre::fct_val(index - 2, x_val, false)) /
-                           (return_t)(index);
+    return_t lobatto_val =
+      (x * Legendre<poly_deg>::template fct_val<return_t>(index - 1, x_val, false) -
+       Legendre<poly_deg>::template fct_val<return_t>(index - 2, x_val, false)) /
+      (return_t)(index);
 
     // Return L^2 normalized value.
     if (normalized)
-      lobato_val *= TPP::heron_root((return_t)(2. * index - 1.));
+      lobatto_val *= TPP::heron_root((return_t)(2. * index - 1.));
 
     return 0.5 * lobatto_val;
   }
@@ -239,7 +240,7 @@ struct Lobatto
     if (index == 0)
       return 0.;
 
-    return Legendre::fct_val(index - 1, x_val, normalized);
+    return Legendre<poly_deg>::template fct_val<return_t>(index - 1, x_val, normalized);
   }
 };  // end of struct Lobatto
 
