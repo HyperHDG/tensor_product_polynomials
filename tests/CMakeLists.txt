@@ -1,9 +1,4 @@
-enable_testing()
-
-file (GLOB sources *.cxx)
-
-foreach(ccfile ${sources})
-  get_filename_component(file ${ccfile} NAME_WE)
-  add_executable(${file} ${ccfile})
-  add_test(NAME ${file} COMMAND "${file}" WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
-endforeach()
+# Add a the test executable and CTest test
+add_executable(one_dimensional one_dimensional.cxx)
+target_link_libraries(one_dimensional PUBLIC tpp)
+add_test(COMMAND one_dimensional)
