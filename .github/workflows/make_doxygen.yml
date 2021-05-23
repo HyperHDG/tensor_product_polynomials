@@ -17,4 +17,8 @@ jobs:
         run: sudo apt-get update; sudo apt-get install -y doxygen graphviz
       # 3. Create the doxygen pages.
       - name: Create the doxygen
-        run: make doxygen
+        run: |
+          mkdir build
+          cd build
+          cmake -DBUILD_DOC:BOOL=ON ..
+          make doxygen

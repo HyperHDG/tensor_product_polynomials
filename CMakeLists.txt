@@ -1,56 +1,68 @@
 cmake_minimum_required(VERSION 3.16)
-enable_testing()
-set(default_build_type "Debug")
+
+# Detect if we are running bundled into a larger project
+if(NOT DEFINED PROJECT_NAME)
+  set(SUBPROJECT OFF)
+else()
+  set(SUBPROJECT ON)
+endif()
 
 project(TensorProductPolynomials LANGUAGES CXX)
 
-## Prohibit configuration in source directory
+# Define an option to build documentation
+option(BUILD_DOC "Whether to build a Doxygen documentation" ON)
 
-if("${PROJECT_SOURCE_DIR}" STREQUAL "${PROJECT_BINARY_DIR}")
-   message(SEND_ERROR "In-source builds are not allowed.")
-endif("${PROJECT_SOURCE_DIR}" STREQUAL "${PROJECT_BINARY_DIR}")
+# Create a target that transports all the necessary information to downstream projects
+add_library(tpp INTERFACE)
 
-## Check whether appropriate compiler version is used
+# Add the correct include directories
+target_include_directories(
+  tpp
+  INTERFACE
+  $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include/>
+  $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
+)
 
-if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-  if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS 10)
-    message(
-      FATAL_ERROR
-      "Insufficient gcc/g++ version! Minimum version required is 10.
-       Consider setting variable CXX in Makefile or CMAKE_CXX_COMPILER in CMake, respectively."
-    )
-  endif()
-elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
-  if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS 10)
-    message(
-      FATAL_ERROR
-      "Insufficient clang/clang++ version! Minimum version required is 10.
-       Consider setting variable CXX in Makefile or CMAKE_CXX_COMPILER in CMake, respectively."
-    )
-  endif()
+# Add the necessary C++ standard requirement
+target_compile_features(
+  tpp
+  INTERFACE
+  cxx_std_20
+)
+
+# Add tests if requested through the BUILD_TESTING option (default: ON)
+include(CTest)
+if(BUILD_TESTING AND NOT SUBPROJECT)
+  enable_testing()
+  add_subdirectory(tests)
 endif()
 
-## Configure C++ standard.
+# Build documentation if requested through the BUILD_DOC option (default: ON)
+if(BUILD_DOC AND NOT SUBPROJECT)
+  add_subdirectory(doxygen)
+endif()
 
-set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
+# Add a namespaced alias target for the export
+add_library(HyperHDG::tpp ALIAS tpp)
 
-## Set the flags for the compiler and the linker.
+# Install targets, headers and configuration
+include(GNUInstallDirs)
+install(
+  TARGETS tpp
+  EXPORT tpp-config
+)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} \
-  -pthread -g -fwrapv -O2 -Wall -pedantic -Wextra -g \
-  -fstack-protector-strong -Wformat -Werror=format-security -Wdate-time -D_FORTIFY_SOURCE=2 -fPIC")
-set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} \
-  -pthread -shared -Wl,-O1 -Wl,-Bsymbolic-functions -Wl,-Bsymbolic-functions -Wl,-z,relro \
-  -Wl,-Bsymbolic-functions -Wl,-z,relro -g -fstack-protector-strong -Wformat \
-  -Werror=format-security -Wdate-time -D_FORTIFY_SOURCE=2")
+install(
+  EXPORT tpp-config
+  NAMESPACE HyperHDG::
+  DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/tpp
+)
 
-## Set directories to be included.
+install(
+  DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/include/
+  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+)
 
-include_directories(
-  ${PROJECT_SOURCE_DIR}
-  ${PROJECT_SOURCE_DIR}/include)
-
-## Add subdirectories of tests.
-
-add_subdirectory(tests)
+# Print a summary
+include(FeatureSummary)
+feature_summary(WHAT ALL)
