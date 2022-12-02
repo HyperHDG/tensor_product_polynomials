@@ -1183,7 +1183,7 @@ class Tensorial
         else
         {
           quad_pt[dim] = quad_points[dec_q[dim - (dim > bdr_dim)]];
-          psi_i *= shape_fcts_at_quad[dec_i[dim]][dec_q[dim - (dim > bdr_dim)]];
+          psi_i *= shape_fcts_at_quad[dec_i[dim - (dim > bdr_dim)]][dec_q[dim - (dim > bdr_dim)]];
           psi_j *= shape_fcts_at_quad[dec_j[dim - (dim > bdr_dim)]][dec_q[dim - (dim > bdr_dim)]];
           quad_weight *= quad_weights[dec_q[dim - (dim > bdr_dim)]];
         }
@@ -1244,7 +1244,7 @@ class Tensorial
         else
         {
           quad_pt[dim] = quad_points[dec_q[dim - (dim > bdr_dim)]];
-          psi_i *= shape_fcts_at_quad[dec_i[dim]][dec_q[dim - (dim > bdr_dim)]];
+          psi_i *= shape_fcts_at_quad[dec_i[dim - (dim > bdr_dim)]][dec_q[dim - (dim > bdr_dim)]];
           psi_j *= shape_fcts_at_quad[dec_j[dim - (dim > bdr_dim)]][dec_q[dim - (dim > bdr_dim)]];
           quad_weight *= quad_weights[dec_q[dim - (dim > bdr_dim)]];
         }
@@ -1434,7 +1434,7 @@ class Tensorial
           else if (dim == bdr_dim)
             nabla_phi_i[dim_fct] *= shape_fcts_at_bdr[dec_i[dim]][bdr_ind];
           else
-            nabla_phi_i[dim_fct] *= shape_fcts_at_quad[dec_i[dim]][dec_q[dim - (dim > bdr)]];
+            nabla_phi_i[dim_fct] *= shape_fcts_at_quad[dec_i[dim]][dec_q[dim - (dim > bdr_dim)]];
         }
       }
       integral += quad_weight * fun(geom.map_ref_to_phys(quad_pt), f_param) * phi_j *

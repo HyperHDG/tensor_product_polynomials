@@ -11,7 +11,8 @@ using namespace TPP::ShapeType;
 template <typename float_t>
 int legendre()
 {
-  auto legendre_val = [](const float_t x, const unsigned int index) -> float_t {
+  auto legendre_val = [](const float_t x, const unsigned int index) -> float_t
+  {
     switch (index)
     {
       case 0:
@@ -30,7 +31,8 @@ int legendre()
     return 0.;
   };
 
-  auto legendre_der = [](const float_t x, const unsigned int index) -> float_t {
+  auto legendre_der = [](const float_t x, const unsigned int index) -> float_t
+  {
     switch (index)
     {
       case 0:
@@ -81,7 +83,8 @@ int legendre()
 template <typename float_t>
 int lobatto()
 {
-  auto lobatto_val = [](const float_t x, const unsigned int index) -> float_t {
+  auto lobatto_val = [](const float_t x, const unsigned int index) -> float_t
+  {
     switch (index)
     {
       case 0:
@@ -103,7 +106,8 @@ int lobatto()
     return 0.;
   };
 
-  auto lobatto_der = [](const float_t x, const unsigned int index) -> float_t {
+  auto lobatto_der = [](const float_t x, const unsigned int index) -> float_t
+  {
     switch (index)
     {
       case 0:
