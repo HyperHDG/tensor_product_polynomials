@@ -1183,7 +1183,7 @@ class Tensorial
         else
         {
           quad_pt[dim] = quad_points[dec_q[dim - (dim > bdr_dim)]];
-          psi_i *= shape_fcts_at_quad[dec_i[dim]][dec_q[dim - (dim > bdr_dim)]];
+          psi_i *= shape_fcts_at_quad[dec_i[dim - (dim > bdr_dim)]][dec_q[dim - (dim > bdr_dim)]];
           psi_j *= shape_fcts_at_quad[dec_j[dim - (dim > bdr_dim)]][dec_q[dim - (dim > bdr_dim)]];
           quad_weight *= quad_weights[dec_q[dim - (dim > bdr_dim)]];
         }
@@ -1244,7 +1244,7 @@ class Tensorial
         else
         {
           quad_pt[dim] = quad_points[dec_q[dim - (dim > bdr_dim)]];
-          psi_i *= shape_fcts_at_quad[dec_i[dim]][dec_q[dim - (dim > bdr_dim)]];
+          psi_i *= shape_fcts_at_quad[dec_i[dim - (dim > bdr_dim)]][dec_q[dim - (dim > bdr_dim)]];
           psi_j *= shape_fcts_at_quad[dec_j[dim - (dim > bdr_dim)]][dec_q[dim - (dim > bdr_dim)]];
           quad_weight *= quad_weights[dec_q[dim - (dim > bdr_dim)]];
         }
