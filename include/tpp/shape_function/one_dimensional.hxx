@@ -286,11 +286,11 @@ struct Foruier
     switch (index)
     {
       case 0:
-        return .5;
+        return 1.;
       case index % 2 == 1:
-        return cos(M_PI * (double)(i + 1) * x_val);
+        return cos(.5 * M_PI * x_val * (double)(index+1));
       default:
-        return sin(M_PI * (double)(i + 1) * x_val);
+        return sin(.5 * M_PI * x_val * (double)(index));
     }
   }
   /*!***********************************************************************************************
@@ -314,9 +314,9 @@ struct Foruier
       case 0:
         return 0.;
       case index % 2 == 1:
-        return -M_PI * (double)(i + 1) * sin(M_PI * (double)(i + 1) * x_val);
+        return -0.5 * M_PI * (double)(index+1) * sin(.5 * M_PI * (double)(index+1) * x_val);
       default:
-        return M_PI * (double)(i + 1) * cos(M_PI * (double)(i + 1) * x_val);
+        return 0.5 * M_PI * (double)(index + 1) * cos(.5 * M_PI * (double)(i + 1) * x_val);
     }
   }
 };  // end of struct Fourier
