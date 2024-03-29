@@ -512,7 +512,7 @@ class Tensorial
     return integral * geom.area();
   }
 
-   /*!***********************************************************************************************
+  /*!***********************************************************************************************
    * \brief   Integrate product of shape function times some function over some geometry.
    *
    * \tparam  point_t       Type of point which is the first argument of the function.
@@ -532,9 +532,9 @@ class Tensorial
             return_t fun(const point_t&, const point_t&, const return_t),
             typename smallVec_t = point_t>
   static return_t integrate_vol_phivecfunccomp(const unsigned int i,
-                                        const int comp,
-                                        geom_t& geom,
-                                        const return_t f_param = 0.)
+                                               const int comp,
+                                               geom_t& geom,
+                                               const return_t f_param = 0.)
   {
     static_assert(geom_t::hyEdge_dim() == dim(), "Dimension of hyperedge must fit to quadrature!");
     return_t integral = 0., quad_val;
@@ -544,9 +544,9 @@ class Tensorial
     SmallVec<geom_t::space_dim()> normal_vec;
 
     if (comp > 0)
-      normal_vec = geom.inner_normal(comp-1);
+      normal_vec = geom.inner_normal(comp - 1);
     else if (comp < 0)
-      normal_vec = geom.outer_normal(-comp-1);
+      normal_vec = geom.outer_normal(-comp - 1);
 
     for (unsigned int q = 0; q < std::pow(quad_weights.size(), geom_t::hyEdge_dim()); ++q)
     {
@@ -1693,10 +1693,10 @@ class Tensorial
             return_t fun(const point_t&, const point_t&, const return_t),
             typename smallVec_t = point_t>
   static return_t integrate_bdr_phivecfunccomp(const unsigned int i,
-                                        const unsigned int bdr,
-                                        const int comp,
-                                        geom_t& geom,
-                                        const return_t f_param = 0.)
+                                               const unsigned int bdr,
+                                               const int comp,
+                                               geom_t& geom,
+                                               const return_t f_param = 0.)
   {
     static_assert(geom_t::hyEdge_dim() == dim(), "Dimension of hyperedge must fit to quadrature!");
     return_t integral = 0., quad_val;
@@ -1708,10 +1708,10 @@ class Tensorial
     SmallVec<geom_t::space_dim()> normal_vec;
 
     if (comp > 0)
-      normal_vec = geom.inner_normal(comp-1);
+      normal_vec = geom.inner_normal(comp - 1);
     else if (comp < 0)
-      normal_vec = geom.outer_normal(-comp-1);
-    
+      normal_vec = geom.outer_normal(-comp - 1);
+
     for (unsigned int q = 0; q < std::pow(quad_weights.size(), geom_t::hyEdge_dim() - 1); ++q)
     {
       dec_q = Hypercube<dim() - 1>::index_decompose(q, quadrature_t::n_points());
@@ -1849,8 +1849,8 @@ class Tensorial
             std::size_t n_coeff>
   static return_t integrate_vol_diffsquare_discanacomp(const std::array<return_t, n_coeff> coeffs,
                                                        const int comp,
-                                                   geom_t& geom,
-                                                   const return_t f_param = 0.)
+                                                       geom_t& geom,
+                                                       const return_t f_param = 0.)
   {
     static_assert(geom_t::hyEdge_dim() == dim(), "Dimension of hyperedge must fit to quadrature!");
     return_t integral = 0., quad_weight;
@@ -1860,9 +1860,9 @@ class Tensorial
     SmallVec<geom_t::space_dim()> normal_vec;
 
     if (comp > 0)
-      normal_vec = geom.inner_normal(comp-1);
+      normal_vec = geom.inner_normal(comp - 1);
     else if (comp < 0)
-      normal_vec = geom.outer_normal(-comp-1);
+      normal_vec = geom.outer_normal(-comp - 1);
 
     for (unsigned int q = 0; q < std::pow(quad_weights.size(), geom_t::hyEdge_dim()); ++q)
     {

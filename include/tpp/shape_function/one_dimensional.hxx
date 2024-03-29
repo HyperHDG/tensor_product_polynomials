@@ -281,18 +281,14 @@ struct Foruier
    * \retval  fct_value     Evaluated value of shape function.
    ************************************************************************************************/
   template <typename return_t, typename input_t>
-  static constexpr return_t fct_val(const unsigned int index,
-                                    const input_t& x_val)
+  static constexpr return_t fct_val(const unsigned int index, const input_t& x_val)
   {
-    switch (index)
-    {
-      case 0:
-        return .5;
-      case i % 2 == 1:
-        return cos( M_PI * (double)(i+1) * x );
-      default:
-        return sin( M_PI * (double)(i+1) * x );
-    }
+    if (index == 0)
+      return 1.;
+    else if (index % 2 == 1)
+      return cos(.5 * M_PI * x_val * (double)(index + 1));
+    else
+      return sin(.5 * M_PI * x_val * (double)(index));
   }
   /*!***********************************************************************************************
    * \brief   Evaluate value of the derivative of orthonormal shape function.
@@ -308,21 +304,16 @@ struct Foruier
    * \retval  fct_value     Evaluated value of shape function's derivative.
    ************************************************************************************************/
   template <typename return_t, typename input_t>
-  static constexpr return_t der_val(const unsigned int index,
-                                    const input_t& x_val)
+  static constexpr return_t der_val(const unsigned int index, const input_t& x_val)
   {
-    switch (index)
-    {
-      case 0:
-        return 0.;
-      case i % 2 == 1:
-        return -M_PI * (double)(i+1) * sin( M_PI * (double)(i+1) * x );
-      default:
-        return  M_PI * (double)(i+1) * cos( M_PI * (double)(i+1) * x );
-    }
+    if (index == 0)
+      return 0.;
+    else if (index % 2 == 1)
+      return -0.5 * M_PI * (double)(index + 1) * sin(.5 * M_PI * (double)(index + 1) * x_val);
+    else
+      return 0.5 * M_PI * (double)(index)*cos(.5 * M_PI * (double)(index)*x_val);
   }
 };  // end of struct Fourier
-
 
 }  // end of namespace ShapeType
 
