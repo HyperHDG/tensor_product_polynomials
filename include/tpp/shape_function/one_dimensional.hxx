@@ -1,5 +1,7 @@
 #pragma once  // Ensure that file is included only once in a single compilation.
 
+#include <cmath>
+
 #include <tpp/compile_time_tricks.hxx>
 #include <tpp/tpp_assert.hxx>
 
@@ -243,6 +245,84 @@ struct Lobatto
     return Legendre<poly_deg>::template fct_val<return_t>(index - 1, x_val, normalized);
   }
 };  // end of struct Lobatto
+
+/*!*************************************************************************************************
+ * \brief   Struct that handles the evaluation of one-dimensional trigonometric functions.
+ *
+ * \authors   Andreas Rupp, Heidelberg University, 2024.
+ **************************************************************************************************/
+template <unsigned int fourier_deg>
+struct Foruier
+{
+  /*!***********************************************************************************************
+   * \brief   Number of shape functions that span the local polynomial space.
+   ************************************************************************************************/
+  static constexpr unsigned int n_fun() { return degree() + 1; }
+  /*!***********************************************************************************************
+   * \brief   Dimension of abscissas of the polynomials.
+   ************************************************************************************************/
+  static constexpr unsigned int dim() { return 1U; }
+  /*!***********************************************************************************************
+   * \brief   Maximum degree of all polynomials.
+   ************************************************************************************************/
+  static constexpr unsigned int degree() { return fourier_deg; }
+
+  /*!***********************************************************************************************
+   * \brief   Evaluate value of one shape function.
+   *
+   * Evaluates value of the \c index one-dimensional shape function on the reference interval
+   * \f$[0,1]\f$ at abscissas \c x_val.
+   *
+   * \tparam  return_t      Floating type specification for return value.
+   * \tparam  input_t       Floating type specification for input value.
+   * \param   index         Index of evaluated shape function.
+   * \param   x_val         Abscissa of evaluated shape function.
+   * \param   normalized    Decide whether L^2 normalization is conducted. Defaults to true.
+   * \retval  fct_value     Evaluated value of shape function.
+   ************************************************************************************************/
+  template <typename return_t, typename input_t>
+  static constexpr return_t fct_val(const unsigned int index,
+                                    const input_t& x_val)
+  {
+    switch (index)
+    {
+      case 0:
+        return .5;
+      case i % 2 == 1:
+        return cos( M_PI * (double)(i+1) * x );
+      default:
+        return sin( M_PI * (double)(i+1) * x );
+    }
+  }
+  /*!***********************************************************************************************
+   * \brief   Evaluate value of the derivative of orthonormal shape function.
+   *
+   * Evaluates the value of the derivative of the \c index orthonormal, one-dimensional shape
+   * function on the reference interval \f$[0,1]\f$ at abscissa \c x_val.
+   *
+   * \tparam  return_t      Floating type specification for return value.
+   * \tparam  input_t       Floating type specification for input value.
+   * \param   index         Index of evaluated shape function.
+   * \param   x_val         Abscissa of evaluated shape function.
+   * \param   normalized    Decide whether L^2 normalization is conducted. Defaults to true.
+   * \retval  fct_value     Evaluated value of shape function's derivative.
+   ************************************************************************************************/
+  template <typename return_t, typename input_t>
+  static constexpr return_t der_val(const unsigned int index,
+                                    const input_t& x_val)
+  {
+    switch (index)
+    {
+      case 0:
+        return 0.;
+      case i % 2 == 1:
+        return -M_PI * (double)(i+1) * sin( M_PI * (double)(i+1) * x );
+      default:
+        return  M_PI * (double)(i+1) * cos( M_PI * (double)(i+1) * x );
+    }
+  }
+};  // end of struct Fourier
+
 
 }  // end of namespace ShapeType
 
