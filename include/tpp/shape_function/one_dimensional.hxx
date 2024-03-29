@@ -281,17 +281,16 @@ struct Foruier
    * \retval  fct_value     Evaluated value of shape function.
    ************************************************************************************************/
   template <typename return_t, typename input_t>
-  static constexpr return_t fct_val(const unsigned int index,
-                                    const input_t& x_val)
+  static constexpr return_t fct_val(const unsigned int index, const input_t& x_val)
   {
     switch (index)
     {
       case 0:
         return .5;
       case i % 2 == 1:
-        return cos( M_PI * (double)(i+1) * x );
+        return cos(M_PI * (double)(i + 1) * x);
       default:
-        return sin( M_PI * (double)(i+1) * x );
+        return sin(M_PI * (double)(i + 1) * x);
     }
   }
   /*!***********************************************************************************************
@@ -308,21 +307,19 @@ struct Foruier
    * \retval  fct_value     Evaluated value of shape function's derivative.
    ************************************************************************************************/
   template <typename return_t, typename input_t>
-  static constexpr return_t der_val(const unsigned int index,
-                                    const input_t& x_val)
+  static constexpr return_t der_val(const unsigned int index, const input_t& x_val)
   {
     switch (index)
     {
       case 0:
         return 0.;
       case i % 2 == 1:
-        return -M_PI * (double)(i+1) * sin( M_PI * (double)(i+1) * x );
+        return -M_PI * (double)(i + 1) * sin(M_PI * (double)(i + 1) * x);
       default:
-        return  M_PI * (double)(i+1) * cos( M_PI * (double)(i+1) * x );
+        return M_PI * (double)(i + 1) * cos(M_PI * (double)(i + 1) * x);
     }
   }
 };  // end of struct Fourier
-
 
 }  // end of namespace ShapeType
 
