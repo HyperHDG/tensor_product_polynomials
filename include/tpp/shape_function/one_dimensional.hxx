@@ -309,10 +309,10 @@ static constexpr return_t der_val(const unsigned int index, const input_t& x_val
 {
   if (index == 0)
     return 0.;
-      else if  (index % 2 == 1)
-        return -0.5 * M_PI * (double)(index+1) * sin(.5 * M_PI * (double)(index+1) * x_val);
-      else
-        return 0.5 * M_PI * (double)(index) * cos(.5 * M_PI * (double)(index) * x_val);
+  else if (index % 2 == 1)
+    return -0.5 * M_PI * (double)(index + 1) * sin(.5 * M_PI * (double)(index + 1) * x_val);
+  else
+    return 0.5 * M_PI * (double)(index)*cos(.5 * M_PI * (double)(index)*x_val);
 }
 }
 };  // end of struct Fourier
