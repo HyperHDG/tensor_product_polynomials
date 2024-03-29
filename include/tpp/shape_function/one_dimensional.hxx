@@ -316,7 +316,7 @@ struct Foruier
       case index % 2 == 1:
         return -0.5 * M_PI * (double)(index+1) * sin(.5 * M_PI * (double)(index+1) * x_val);
       default:
-        return 0.5 * M_PI * (double)(index + 1) * cos(.5 * M_PI * (double)(i + 1) * x_val);
+        return 0.5 * M_PI * (double)(index) * cos(.5 * M_PI * (double)(index) * x_val);
     }
   }
 };  // end of struct Fourier
