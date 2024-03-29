@@ -288,9 +288,9 @@ struct Foruier
       case 0:
         return .5;
       case index % 2 == 1:
-        return cos(M_PI * (double)(i + 1) * x);
+        return cos(M_PI * (double)(i + 1) * x_val);
       default:
-        return sin(M_PI * (double)(i + 1) * x);
+        return sin(M_PI * (double)(i + 1) * x_val);
     }
   }
   /*!***********************************************************************************************
@@ -314,9 +314,9 @@ struct Foruier
       case 0:
         return 0.;
       case index % 2 == 1:
-        return -M_PI * (double)(i + 1) * sin(M_PI * (double)(i + 1) * x);
+        return -M_PI * (double)(i + 1) * sin(M_PI * (double)(i + 1) * x_val);
       default:
-        return M_PI * (double)(i + 1) * cos(M_PI * (double)(i + 1) * x);
+        return M_PI * (double)(i + 1) * cos(M_PI * (double)(i + 1) * x_val);
     }
   }
 };  // end of struct Fourier
