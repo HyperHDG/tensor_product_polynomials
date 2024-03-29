@@ -290,31 +290,29 @@ struct Foruier
     else
       return sin(.5 * M_PI * x_val * (double)(index));
   }
-}
-/*!***********************************************************************************************
- * \brief   Evaluate value of the derivative of orthonormal shape function.
- *
- * Evaluates the value of the derivative of the \c index orthonormal, one-dimensional shape
- * function on the reference interval \f$[0,1]\f$ at abscissa \c x_val.
- *
- * \tparam  return_t      Floating type specification for return value.
- * \tparam  input_t       Floating type specification for input value.
- * \param   index         Index of evaluated shape function.
- * \param   x_val         Abscissa of evaluated shape function.
- * \param   normalized    Decide whether L^2 normalization is conducted. Defaults to true.
- * \retval  fct_value     Evaluated value of shape function's derivative.
- ************************************************************************************************/
-template <typename return_t, typename input_t>
-static constexpr return_t der_val(const unsigned int index, const input_t& x_val)
-{
-  if (index == 0)
-    return 0.;
-  else if (index % 2 == 1)
-    return -0.5 * M_PI * (double)(index + 1) * sin(.5 * M_PI * (double)(index + 1) * x_val);
-  else
-    return 0.5 * M_PI * (double)(index)*cos(.5 * M_PI * (double)(index)*x_val);
-}
-}
+  /*!***********************************************************************************************
+   * \brief   Evaluate value of the derivative of orthonormal shape function.
+   *
+   * Evaluates the value of the derivative of the \c index orthonormal, one-dimensional shape
+   * function on the reference interval \f$[0,1]\f$ at abscissa \c x_val.
+   *
+   * \tparam  return_t      Floating type specification for return value.
+   * \tparam  input_t       Floating type specification for input value.
+   * \param   index         Index of evaluated shape function.
+   * \param   x_val         Abscissa of evaluated shape function.
+   * \param   normalized    Decide whether L^2 normalization is conducted. Defaults to true.
+   * \retval  fct_value     Evaluated value of shape function's derivative.
+   ************************************************************************************************/
+  template <typename return_t, typename input_t>
+  static constexpr return_t der_val(const unsigned int index, const input_t& x_val)
+  {
+    if (index == 0)
+      return 0.;
+    else if (index % 2 == 1)
+      return -0.5 * M_PI * (double)(index + 1) * sin(.5 * M_PI * (double)(index + 1) * x_val);
+    else
+      return 0.5 * M_PI * (double)(index)*cos(.5 * M_PI * (double)(index)*x_val);
+  }
 };  // end of struct Fourier
 
 }  // end of namespace ShapeType
