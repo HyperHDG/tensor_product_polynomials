@@ -287,7 +287,7 @@ struct Foruier
     {
       case 0:
         return .5;
-      case i % 2 == 1:
+      case index % 2 == 1:
         return cos(M_PI * (double)(i + 1) * x);
       default:
         return sin(M_PI * (double)(i + 1) * x);
@@ -313,7 +313,7 @@ struct Foruier
     {
       case 0:
         return 0.;
-      case i % 2 == 1:
+      case index % 2 == 1:
         return -M_PI * (double)(i + 1) * sin(M_PI * (double)(i + 1) * x);
       default:
         return M_PI * (double)(i + 1) * cos(M_PI * (double)(i + 1) * x);
