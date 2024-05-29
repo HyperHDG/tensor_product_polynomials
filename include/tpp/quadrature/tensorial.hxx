@@ -1735,6 +1735,53 @@ class Tensorial
     return integral * geom.face_area(bdr);
   }
 
+  template <typename point_t,
+            typename geom_t,
+            return_t fun(const point_t&, const point_t&, const point_t&, const return_t),
+            typename smallVec_t = point_t>
+  static return_t integrate_bdr_phivecfunccomp_normcheck(const unsigned int i,
+                                                         const unsigned int bdr,
+                                                         const int comp,
+                                                         geom_t& geom,
+                                                         const return_t f_param = 0.)
+  {
+    static_assert(geom_t::hyEdge_dim() == dim(), "Dimension of hyperedge must fit to quadrature!");
+    return_t integral = 0., quad_val;
+    std::array<unsigned int, dim()> dec_i = Hypercube<dim()>::index_decompose(i, n_fun_1D);
+    std::array<unsigned int, std::max(1U, dim() - 1)> dec_q;
+    smallVec_t quad_pt;
+    unsigned int dim_bdr = bdr / 2, bdr_ind = bdr % 2;
+
+    SmallVec<geom_t::space_dim()> normal_vec, inner_vec = geom.inner_normal(0);
+
+    if (comp > 0)
+      normal_vec = geom.inner_normal(comp - 1);
+    else if (comp < 0)
+      normal_vec = geom.outer_normal(-comp - 1);
+
+    for (unsigned int q = 0; q < std::pow(quad_weights.size(), geom_t::hyEdge_dim() - 1); ++q)
+    {
+      dec_q = Hypercube<dim() - 1>::index_decompose(q, quadrature_t::n_points());
+      quad_val = 1.;
+      for (unsigned int dim = 0; dim < geom_t::hyEdge_dim(); ++dim)
+      {
+        if (dim == dim_bdr)
+        {
+          quad_pt[dim] = bdr_ind;
+          quad_val *= shape_fcts_at_bdr[dec_i[dim]][bdr_ind];
+        }
+        else
+        {
+          quad_pt[dim] = quad_points[dec_q[dim - (dim > dim_bdr)]];
+          quad_val *= quad_weights[dec_q[dim - (dim > dim_bdr)]] *
+                      shape_fcts_at_quad[dec_i[dim]][dec_q[dim - (dim > dim_bdr)]];
+        }
+      }
+      integral += fun(geom.map_ref_to_phys(quad_pt), normal_vec, inner_vec, f_param) * quad_val;
+    }
+    return integral * geom.face_area(bdr);
+  }
+
   /*!***********************************************************************************************
    * \brief   Average integral of product of skeletal shape functions times some function.
    *
