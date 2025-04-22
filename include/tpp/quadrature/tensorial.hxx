@@ -486,7 +486,7 @@ class Tensorial
    ************************************************************************************************/
   template <typename point_t,
             typename geom_t,
-            return_t fun(const point_t&, return_t),
+            return_t fun(const point_t&, const param_t),
             typename smallVec_t = point_t>
   static return_t integrate_vol_phifunc(const unsigned int i,
                                         geom_t& geom,
@@ -1438,7 +1438,7 @@ class Tensorial
    ************************************************************************************************/
   template <typename point_t,
             typename geom_t,
-            return_t fun(const point_t&, const return_t),
+            return_t fun(const point_t&, const param_t),
             typename smallVec_t = point_t>
   static return_t integrate_bdr_nablaphiphinufunc(const unsigned int i,
                                                   const unsigned int j,
@@ -1511,7 +1511,7 @@ class Tensorial
    ************************************************************************************************/
   template <typename point_t,
             typename geom_t,
-            return_t fun(const point_t&, const return_t),
+            return_t fun(const point_t&, const param_t),
             typename smallVec_t = point_t>
   static return_t integrate_bdr_nablaphipsinufunc(const unsigned int i,
                                                   const unsigned int j,
@@ -1639,7 +1639,7 @@ class Tensorial
    ************************************************************************************************/
   template <typename point_t,
             typename geom_t,
-            return_t fun(const point_t&, const return_t),
+            return_t fun(const point_t&, const param_t),
             typename smallVec_t = point_t>
   static return_t integrate_bdr_phifunc(const unsigned int i,
                                         const unsigned int bdr,
@@ -1690,7 +1690,7 @@ class Tensorial
    ************************************************************************************************/
   template <typename point_t,
             typename geom_t,
-            return_t fun(const point_t&, const point_t&, const return_t),
+            return_t fun(const point_t&, const point_t&, const param_t),
             typename smallVec_t = point_t>
   static return_t integrate_bdr_phivecfunccomp(const unsigned int i,
                                                const unsigned int bdr,
@@ -1737,7 +1737,7 @@ class Tensorial
 
   template <typename point_t,
             typename geom_t,
-            return_t fun(const point_t&, const point_t&, const point_t&, const return_t),
+            return_t fun(const point_t&, const point_t&, const point_t&, const param_t),
             typename smallVec_t = point_t>
   static return_t integrate_bdr_phivecfunccomp_normcheck(const unsigned int i,
                                                          const unsigned int bdr,
@@ -1796,7 +1796,7 @@ class Tensorial
    ************************************************************************************************/
   template <typename point_t,
             typename geom_t,
-            return_t fun(const point_t&, const return_t),
+            return_t fun(const point_t&, const param_t),
             typename smallVec_t = point_t>
   static return_t integrate_bdrUni_psifunc(const unsigned int i,
                                            const unsigned int bdr,
@@ -1843,7 +1843,7 @@ class Tensorial
    ************************************************************************************************/
   template <typename point_t,
             typename geom_t,
-            return_t fun(const point_t&, const return_t),
+            return_t fun(const point_t&, const param_t),
             typename smallVec_t = point_t,
             std::size_t n_coeff>
   static return_t integrate_vol_diffsquare_discana(const std::array<return_t, n_coeff> coeffs,
