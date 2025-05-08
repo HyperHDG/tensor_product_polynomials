@@ -1945,12 +1945,8 @@ class Tensorial
    * \param   geom          Geometrical information.
    * \retval  integral      Squared distance of functions.
    ************************************************************************************************/
-  template <typename point_t,
-            typename geom_t,
-            typename smallVec_t = point_t,
-            std::size_t n_coeff>
-  static return_t integrate_vol_discana(const std::array<return_t, n_coeff> coeffs,
-                                                   geom_t& geom)
+  template <typename point_t, typename geom_t, typename smallVec_t = point_t, std::size_t n_coeff>
+  static return_t integrate_vol_discana(const std::array<return_t, n_coeff> coeffs, geom_t& geom)
   {
     static_assert(geom_t::hyEdge_dim() == dim(), "Dimension of hyperedge must fit to quadrature!");
     return_t integral = 0., quad_weight;
