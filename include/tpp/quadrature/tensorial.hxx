@@ -1937,7 +1937,7 @@ class Tensorial
   }
 
   /*!***********************************************************************************************
-   * \brief   Mean of a discrete function on volume.
+   * \brief   Integral of a discrete function on volume.
    *
    * \tparam  geom_t        Geometry which is the integration domain.
    * \tparam  smallVec_t    Type of local point with respect to hyperedge. Defaults to point_t.
@@ -1973,7 +1973,18 @@ class Tensorial
     }
     return integral * geom.area();
   }
-  
+
+  /*!***********************************************************************************************
+   * \brief   Integral of a discrete function times an analytical function.
+   *
+   * \tparam  geom_t        Geometry which is the integration domain.
+   * \tparam  fun           Analytical function that is integrated, such as a coefficient or an indicator
+   * \tparam  smallVec_t    Type of local point with respect to hyperedge. Defaults to point_t.
+   * \param   coeffs        Coefficients of discrete function.
+   * \param   geom          Geometrical information.
+   * \param   f_param       Additional parameter for the analytical function 
+   * \retval  integral      Integral of the product
+   ************************************************************************************************/    
   template <typename point_t, 
             typename geom_t,
             return_t fun(const point_t&, const param_t),
@@ -2006,6 +2017,53 @@ class Tensorial
       }
       integral += quad_weight * std::accumulate(quad_val.begin(), quad_val.end(), 0.) 
         * fun(geom.map_ref_to_phys(quad_pt), f_param);
+    }
+    return integral * geom.area();
+  }
+
+  /*!***********************************************************************************************
+   * \brief   Squared integral of a discrete function times an analytical function.
+   *
+   * \tparam  geom_t        Geometry which is the integration domain.
+   * \tparam  fun           Analytical function that is integrated, such as a coefficient or an indicator
+   * \tparam  smallVec_t    Type of local point with respect to hyperedge. Defaults to point_t.
+   * \param   coeffs        Coefficients of discrete function.
+   * \param   geom          Geometrical information.
+   * \param   f_param       Additional parameter for the analytical function 
+   * \retval  integral      Integral of the squared product.
+   ************************************************************************************************/  
+  template <typename point_t, 
+            typename geom_t,
+            return_t fun(const point_t&, const param_t),
+            typename smallVec_t = point_t, 
+            std::size_t n_coeff>
+  static return_t integrate_vol_square_discana_func(const std::array<return_t, n_coeff> coeffs, 
+                                             geom_t& geom,
+                                             const param_t f_param = param_t())
+  {
+    static_assert(geom_t::hyEdge_dim() == dim(), "Dimension of hyperedge must fit to quadrature!");
+    return_t integral = 0., quad_weight;
+    std::array<unsigned int, dim()> dec_i, dec_q;
+    std::array<return_t, n_coeff> quad_val;
+    smallVec_t quad_pt;
+
+    for (unsigned int q = 0; q < std::pow(quad_weights.size(), geom_t::hyEdge_dim()); ++q)
+    {
+      dec_q = Hypercube<dim()>::index_decompose(q, quadrature_t::n_points());
+      quad_weight = 1.;
+      quad_val = coeffs;
+      for (unsigned int dim = 0; dim < geom_t::hyEdge_dim(); ++dim)
+      {
+        quad_pt[dim] = quad_points[dec_q[dim]];
+        quad_weight *= quad_weights[dec_q[dim]];
+        for (unsigned int i = 0; i < n_coeff; ++i)
+        {
+          dec_i = Hypercube<geom_t::hyEdge_dim()>::index_decompose(i, n_fun_1D);
+          quad_val[i] *= shape_fcts_at_quad[dec_i[dim]][dec_q[dim]];
+        }
+      }
+      integral += quad_weight * std::pow(std::accumulate(quad_val.begin(), quad_val.end(), 0.) 
+        * fun(geom.map_ref_to_phys(quad_pt), f_param), 2);
     }
     return integral * geom.area();
   }
