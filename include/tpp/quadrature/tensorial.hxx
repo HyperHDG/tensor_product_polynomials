@@ -209,6 +209,42 @@ class Tensorial
 
     return result;
   }
+ /*!***********************************************************************************************
+   * \brief   Integrate product of one-dimensional shape functions.
+   *
+   * \param   i             Local index of local one-dimensional shape function.
+   * \param   j             Local index of local one-dimensional shape function.
+   * \param   k             Local index of local one-dimensional shape function.
+   * \retval  integral      Integral of product of both shape functions.
+   ************************************************************************************************/
+  static constexpr return_t integrate_1D_phiphiphi(const unsigned int i, const unsigned int j, const unsigned int k)
+  {
+    tpp_assert(i < n_fun_1D && j < n_fun_1D && k < n_fun_1D,
+            "Indices of shape functions must be smaller than amount of shape functions.");
+    return_t result = 0.;
+
+    for (unsigned int q = 0; q < quad_weights.size(); ++q)
+      result += quad_weights[q] * shape_fcts_at_quad[i][q] * shape_fcts_at_quad[j][q] * shape_fcts_at_quad[k][q];
+    return result;
+  }
+ /*!***********************************************************************************************
+   * \brief   Integrate product of two one-dimensional shape function and one derivative.
+   *
+   * \param   i             Local index of local one-dimensional shape function.
+   * \param   j             Local index of local one-dimensional shape function.
+   * \param   k             Local index of local one-dimensional shape function (with derivative).
+   * \retval  integral      Integral of product of both shape functions.
+   ************************************************************************************************/
+  static constexpr return_t integrate_1D_phiphiDphi(const unsigned int i, const unsigned int j, const unsigned int k)
+  {
+    tpp_assert(i < n_fun_1D && j < n_fun_1D && k < n_fun_1D,
+            "Indices of shape functions must be smaller than amount of shape functions.");
+    return_t result = 0.;
+
+    for (unsigned int q = 0; q < quad_weights.size(); ++q)
+      result += quad_weights[q] * shape_fcts_at_quad[i][q] * shape_fcts_at_quad[j][q] * shape_ders_at_quad[k][q];
+    return result;
+  }
   /*!***********************************************************************************************
    * \brief   Integrate product of shape functions over dimT-dimensional unit volume.
    *
@@ -429,6 +465,35 @@ class Tensorial
     std::array<unsigned int, dim()> dec_j = Hypercube<dim()>::index_decompose(j, n_fun_1D);
     for (unsigned int dim_fct = 0; dim_fct < dim(); ++dim_fct)
       integral *= integrate_1D_phiphi(dec_i[dim_fct], dec_j[dim_fct]);
+    return integral * geom.area();
+  }
+ /*!***********************************************************************************************
+   * \brief   Integrate product of shape function amd derivative over dimT-dimensional unit volume.
+   *
+   * \param   i             Local index of local shape function.
+   * \param   j             Local index of local shape function.
+   * \param   k             Local index of local shape function (with derivative).
+   * \param   dim_der       Dimension of the derivative.
+   * \param   geom          Geometrical information.
+   * \retval  integral      Integral of product of the shape functions.
+   ************************************************************************************************/
+  template <typename geom_t>
+  static return_t integrate_vol_phiphiDphi(const unsigned int i,
+                                           const unsigned int j,
+                                           const unsigned int k,
+                                           const unsigned int dim_der,
+                                           geom_t& geom)
+  {
+    static_assert(geom_t::hyEdge_dim() == dim(), "Dimension of hyperedge must fit to quadrature!");
+    return_t integral = 1.;
+    std::array<unsigned int, dim()> dec_i = Hypercube<dim()>::index_decompose(i, n_fun_1D);
+    std::array<unsigned int, dim()> dec_j = Hypercube<dim()>::index_decompose(j, n_fun_1D);
+    std::array<unsigned int, dim()> dec_k = Hypercube<dim()>::index_decompose(k, n_fun_1D);
+    for (unsigned int dim_fct = 0; dim_fct < dim(); ++dim_fct)
+      if (dim_fct == dim_der)
+        integral *= integrate_1D_phiphiDphi(dec_i[dim_fct], dec_j[dim_fct], dec_k[dim_fct]);
+      else
+        integral *= integrate_1D_phiphiphi(dec_i[dim_fct], dec_j[dim_fct], dec_k[dim_fct]);
     return integral * geom.area();
   }
   /*!***********************************************************************************************
@@ -1628,6 +1693,72 @@ class Tensorial
         integral *= integrate_1D_phiphi(dec_i[dim_fct], dec_j[dim_fct - (dim_fct > dim)]);
     return integral * geom.face_area(bdr);
   }
+  /*!***********************************************************************************************
+   * \brief   Integrate product of shape functions over boundary face.
+   *
+   * \tparam  geom_t        Geometry which is the integration domain.
+   * \param   i             Local index of local shape function.
+   * \param   j             Local index of local shape function.
+   * \param   k             Local index of local shape function.
+   * \param   bdr           Boundary face index.
+   * \param   geom          Geometrical information.
+   * \retval  integral      Integral of product of both shape functions.
+   ************************************************************************************************/
+  template <typename geom_t>
+  static return_t integrate_bdr_phiphi(const unsigned int i,
+                                       const unsigned int j,
+                                       const unsigned int k,
+                                       const unsigned int bdr,
+                                       geom_t& geom)
+  {
+    static_assert(geom_t::hyEdge_dim() == dim(), "Dimension of hyperedge must fit to quadrature!");
+    return_t integral = 1.;
+    std::array<unsigned int, dim()> dec_i = Hypercube<dim()>::index_decompose(i, n_fun_1D);
+    std::array<unsigned int, dim()> dec_j = Hypercube<dim()>::index_decompose(j, n_fun_1D);
+    std::array<unsigned int, dim()> dec_k = Hypercube<dim()>::index_decompose(k, n_fun_1D);
+    unsigned int dim = bdr / 2, bdr_ind = bdr % 2;
+    for (unsigned int dim_fct = 0; dim_fct < geom_t::hyEdge_dim(); ++dim_fct)
+      if (dim == dim_fct)
+        integral *=
+          shape_fcts_at_bdr[dec_i[dim_fct]][bdr_ind] * shape_fcts_at_bdr[dec_j[dim_fct]][bdr_ind]
+          * shape_fcts_at_bdr[dec_k[dim_fct]][bdr_ind];
+      else
+        integral *= integrate_1D_phiphiphi(dec_i[dim_fct], dec_j[dim_fct], dec_k[dim_fct]);
+    return integral * geom.face_area(bdr);
+  }
+  /*!***********************************************************************************************
+   * \brief   Integrate product of shape functions of volumen and skeletal over boundary face.
+   *
+   * \tparam  geom_t        Geometry which is the integration domain.
+   * \param   i             Local index of local volumne shape function.
+   * \param   j             Local index of local volumne shape function.
+   * \param   k             Local index of local skeletal shape function.
+   * \param   bdr           Boundary face index.
+   * \param   geom          Geometrical information.
+   * \retval  integral      Integral of product of both shape functions.
+   ************************************************************************************************/
+  template <typename geom_t>
+  static return_t integrate_bdr_phiphipsi(const unsigned int i,
+                                       const unsigned int j,
+                                       const unsigned int k,
+                                       const unsigned int bdr,
+                                       geom_t& geom)
+  {
+    static_assert(geom_t::hyEdge_dim() == dim(), "Dimension of hyperedge must fit to quadrature!");
+    return_t integral = 1.;
+    std::array<unsigned int, dim()> dec_i = Hypercube<dim()>::index_decompose(i, n_fun_1D);
+    std::array<unsigned int, dim()> dec_j = Hypercube<dim()>::index_decompose(j, n_fun_1D);
+    std::array<unsigned int, std::max(1U, dim() - 1)> dec_k =
+      Hypercube<dim() - 1>::index_decompose(k, n_fun_1D);
+    unsigned int dim = bdr / 2, bdr_ind = bdr % 2;
+    for (unsigned int dim_fct = 0; dim_fct < geom_t::hyEdge_dim(); ++dim_fct)
+      if (dim == dim_fct)
+        integral *= shape_fcts_at_bdr[dec_i[dim_fct]][bdr_ind] * shape_fcts_at_bdr[dec_j[dim_fct]][bdr_ind];
+      else
+        integral *= integrate_1D_phiphiphi(dec_i[dim_fct], dec_j[dim_fct], dec_k[dim_fct - (dim_fct > dim)]);
+    return integral * geom.face_area(bdr);
+  }
+
   /*!***********************************************************************************************
    * \brief   Integrate product of shape functions times some function over boundary face.
    *
