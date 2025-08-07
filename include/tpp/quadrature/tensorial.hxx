@@ -283,7 +283,23 @@ class Tensorial
         integral *= integrate_1D_phiphi(dec_i[dim_fct], dec_j[dim_fct]);
     return integral;
   }
-  /*!***********************************************************************************************
+  template<typename geom_t>
+  static constexpr return_t integrate_vol_phiDphi(const unsigned int i,
+                                                  const unsigned int j,
+                                                  const unsigned int dim_der,
+                                                  geom_t& geom)
+  {
+    return_t integral = 1.;
+    std::array<unsigned int, dim()> dec_i = Hypercube<dim()>::index_decompose(i, n_fun_1D);
+    std::array<unsigned int, dim()> dec_j = Hypercube<dim()>::index_decompose(j, n_fun_1D);
+    for (unsigned int dim_fct = 0; dim_fct < dim(); ++dim_fct)
+      if (dim_der == dim_fct)
+        integral *= integrate_1D_phiDphi(dec_i[dim_fct], dec_j[dim_fct]);
+      else
+        integral *= integrate_1D_phiphi(dec_i[dim_fct], dec_j[dim_fct]);
+    return integral * geom.area();
+  }
+ /*!***********************************************************************************************
    * \brief   Integrate product of shape function and derivative over dimT-dimensional unit volume.
    *
    * \param   i             Local index of local shape function (with derivative).
