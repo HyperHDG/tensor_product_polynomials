@@ -1721,7 +1721,7 @@ class Tensorial
    * \retval  integral      Integral of product of both shape functions.
    ************************************************************************************************/
   template <typename geom_t>
-  static return_t integrate_bdr_phiphi(const unsigned int i,
+  static return_t integrate_bdr_phiphiphi(const unsigned int i,
                                        const unsigned int j,
                                        const unsigned int k,
                                        const unsigned int bdr,
