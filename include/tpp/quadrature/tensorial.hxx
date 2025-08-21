@@ -1680,7 +1680,7 @@ class Tensorial
         integral *= integrate_1D_phiphi(dec_i[dim_fct], dec_j[dim_fct]);
     return integral * geom.face_area(bdr);
   }
-  /*!***********************************************************************************************
+   /*!***********************************************************************************************
    * \brief   Integrate product of shape functions of volumen and skeletal over boundary face.
    *
    * \tparam  geom_t        Geometry which is the integration domain.
@@ -1707,6 +1707,36 @@ class Tensorial
         integral *= shape_fcts_at_bdr[dec_i[dim_fct]][bdr_ind];
       else
         integral *= integrate_1D_phiphi(dec_i[dim_fct], dec_j[dim_fct - (dim_fct > dim)]);
+    return integral * geom.face_area(bdr);
+  }
+
+ /*!***********************************************************************************************
+   * \brief   Integrate product of shape functions of two skeletal over boundary face.
+   *
+   * \tparam  geom_t        Geometry which is the integration domain.
+   * \param   i             Local index of local skeletal shape function.
+   * \param   j             Local index of local skeletal shape function.
+   * \param   bdr           Boundary face index.
+   * \param   geom          Geometrical information.
+   * \retval  integral      Integral of product of both shape functions.
+   ************************************************************************************************/
+  template <typename geom_t>
+  static return_t integrate_bdr_psipsi(const unsigned int i,
+                                       const unsigned int j,
+                                       const unsigned int bdr,
+                                       geom_t& geom)
+  {
+    static_assert(geom_t::hyEdge_dim() == dim(), "Dimension of hyperedge must fit to quadrature!");
+    return_t integral = 1.;
+    std::array<unsigned int, std::max(1U, dim() - 1)> dec_i =
+      Hypercube<dim() - 1>::index_decompose(i, n_fun_1D);
+    std::array<unsigned int, std::max(1U, dim() - 1)> dec_j =
+      Hypercube<dim() - 1>::index_decompose(j, n_fun_1D);
+    unsigned int dim = bdr / 2, bdr_ind = bdr % 2;
+    for (unsigned int dim_fct = 0; dim_fct < geom_t::hyEdge_dim() - 1; ++dim_fct)
+      integral *= integrate_1D_phiphi(dec_i[dim_fct], dec_j[dim_fct]);
+    if ( geom_t::hyEdge_dim() == 1 )     //point evaluation
+      integral *= shape_fcts_at_bdr[dec_i[0]][bdr_ind] * shape_fcts_at_bdr[dec_j[0]][bdr_ind];
     return integral * geom.face_area(bdr);
   }
   /*!***********************************************************************************************
