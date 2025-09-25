@@ -283,22 +283,6 @@ class Tensorial
         integral *= integrate_1D_phiphi(dec_i[dim_fct], dec_j[dim_fct]);
     return integral;
   }
-  template<typename geom_t>
-  static constexpr return_t integrate_vol_phiDphi(const unsigned int i,
-                                                  const unsigned int j,
-                                                  const unsigned int dim_der,
-                                                  geom_t& geom)
-  {
-    return_t integral = 1.;
-    std::array<unsigned int, dim()> dec_i = Hypercube<dim()>::index_decompose(i, n_fun_1D);
-    std::array<unsigned int, dim()> dec_j = Hypercube<dim()>::index_decompose(j, n_fun_1D);
-    for (unsigned int dim_fct = 0; dim_fct < dim(); ++dim_fct)
-      if (dim_der == dim_fct)
-        integral *= integrate_1D_phiDphi(dec_i[dim_fct], dec_j[dim_fct]);
-      else
-        integral *= integrate_1D_phiphi(dec_i[dim_fct], dec_j[dim_fct]);
-    return integral * geom.area();
-  }
  /*!***********************************************************************************************
    * \brief   Integrate product of shape function and derivative over dimT-dimensional unit volume.
    *
@@ -493,24 +477,30 @@ class Tensorial
    * \param   geom          Geometrical information.
    * \retval  integral      Integral of product of the shape functions.
    ************************************************************************************************/
-  template <typename geom_t>
-  static return_t integrate_vol_phiphiDphi(const unsigned int i,
+  template <typename smallVec_t,
+            typename geom_t,
+            unsigned int poly_deg_i = shape_t::degree(),
+            unsigned int poly_deg_j = shape_t::degree(),
+            unsigned int poly_deg_k = shape_t::degree()>
+  static smallVec_t integrate_vol_nablaphiphiphi(const unsigned int i,
                                            const unsigned int j,
                                            const unsigned int k,
-                                           const unsigned int dim_der,
                                            geom_t& geom)
   {
     static_assert(geom_t::hyEdge_dim() == dim(), "Dimension of hyperedge must fit to quadrature!");
-    return_t integral = 1.;
-    std::array<unsigned int, dim()> dec_i = Hypercube<dim()>::index_decompose(i, n_fun_1D);
-    std::array<unsigned int, dim()> dec_j = Hypercube<dim()>::index_decompose(j, n_fun_1D);
-    std::array<unsigned int, dim()> dec_k = Hypercube<dim()>::index_decompose(k, n_fun_1D);
-    for (unsigned int dim_fct = 0; dim_fct < dim(); ++dim_fct)
-      if (dim_fct == dim_der)
-        integral *= integrate_1D_phiphiDphi(dec_i[dim_fct], dec_j[dim_fct], dec_k[dim_fct]);
-      else
-        integral *= integrate_1D_phiphiphi(dec_i[dim_fct], dec_j[dim_fct], dec_k[dim_fct]);
-    return integral * geom.area();
+    static_assert(poly_deg_i <= shape_t::degree() && poly_deg_j <= shape_t::degree() && poly_deg_k <= shape_t::degree(),
+                  "The maximum polynomial degrees must be larger than or equal to the given ones.");
+    smallVec_t integral(1.);
+    std::array<unsigned int, dim()> dec_i = Hypercube<dim()>::index_decompose(i, poly_deg_i + 1);
+    std::array<unsigned int, dim()> dec_j = Hypercube<dim()>::index_decompose(j, poly_deg_j + 1);
+    std::array<unsigned int, dim()> dec_k = Hypercube<dim()>::index_decompose(k, poly_deg_k + 1);
+    for (unsigned int dim = 0; dim < geom_t::hyEdge_dim(); ++dim)
+      for (unsigned int dim_fct = 0; dim_fct < geom_t::hyEdge_dim(); ++dim_fct)
+        if (dim_fct == dim)
+          integral[dim] *= integrate_1D_phiphiDphi(dec_j[dim_fct], dec_k[dim_fct], dec_i[dim_fct]);
+        else
+          integral[dim] *= integrate_1D_phiphiphi(dec_j[dim_fct], dec_k[dim_fct], dec_i[dim_fct]);
+    return geom.area() * (integral / geom.mat_r());
   }
   /*!***********************************************************************************************
    * \brief   Integrate product of linear combinations of shape functions over some geometry.
@@ -1732,7 +1722,7 @@ class Tensorial
       Hypercube<dim() - 1>::index_decompose(i, n_fun_1D);
     std::array<unsigned int, std::max(1U, dim() - 1)> dec_j =
       Hypercube<dim() - 1>::index_decompose(j, n_fun_1D);
-    unsigned int dim = bdr / 2, bdr_ind = bdr % 2;
+    unsigned int bdr_ind = bdr % 2;
     for (unsigned int dim_fct = 0; dim_fct < geom_t::hyEdge_dim() - 1; ++dim_fct)
       integral *= integrate_1D_phiphi(dec_i[dim_fct], dec_j[dim_fct]);
     if ( geom_t::hyEdge_dim() == 1 )     //point evaluation
