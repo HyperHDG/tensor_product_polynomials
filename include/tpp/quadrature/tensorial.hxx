@@ -210,7 +210,7 @@ class Tensorial
     return result;
   }
  /*!***********************************************************************************************
-   * \brief   Integrate product of one-dimensional shape functions.
+   * \brief   Integrate triple product of one-dimensional shape functions.
    *
    * \param   i             Local index of local one-dimensional shape function.
    * \param   j             Local index of local one-dimensional shape function.
@@ -468,11 +468,11 @@ class Tensorial
     return integral * geom.area();
   }
  /*!***********************************************************************************************
-   * \brief   Integrate product of shape function amd derivative over dimT-dimensional unit volume.
+   * \brief   Integrate product of two shape functions and derivative over dimT-dimensional unit volume.
    *
-   * \param   i             Local index of local shape function.
+   * \param   i             Local index of local shape function (with derivative).
    * \param   j             Local index of local shape function.
-   * \param   k             Local index of local shape function (with derivative).
+   * \param   k             Local index of local shape function.
    * \param   dim_der       Dimension of the derivative.
    * \param   geom          Geometrical information.
    * \retval  integral      Integral of product of the shape functions.
@@ -1730,7 +1730,7 @@ class Tensorial
     return integral * geom.face_area(bdr);
   }
   /*!***********************************************************************************************
-   * \brief   Integrate product of shape functions over boundary face.
+   * \brief   Integrate triple product of shape functions over boundary face.
    *
    * \tparam  geom_t        Geometry which is the integration domain.
    * \param   i             Local index of local shape function.
@@ -1763,11 +1763,11 @@ class Tensorial
     return integral * geom.face_area(bdr);
   }
   /*!***********************************************************************************************
-   * \brief   Integrate product of shape functions of volumen and skeletal over boundary face.
+   * \brief   Integrate product of two shape functions of volumen and one skeletal over boundary face.
    *
    * \tparam  geom_t        Geometry which is the integration domain.
-   * \param   i             Local index of local volumne shape function.
-   * \param   j             Local index of local volumne shape function.
+   * \param   i             Local index of local volume shape function.
+   * \param   j             Local index of local volume shape function.
    * \param   k             Local index of local skeletal shape function.
    * \param   bdr           Boundary face index.
    * \param   geom          Geometrical information.
@@ -1795,10 +1795,10 @@ class Tensorial
     return integral * geom.face_area(bdr);
   }
   /*!***********************************************************************************************
-   * \brief   Integrate product of shape functions of volumen and skeletal over boundary face.
+   * \brief   Integrate product of shape function of volumen and two skeletal over boundary face.
    *
    * \tparam  geom_t        Geometry which is the integration domain.
-   * \param   i             Local index of local volumne shape function.
+   * \param   i             Local index of local volume shape function.
    * \param   j             Local index of local skeletal shape function.
    * \param   k             Local index of local skeletal shape function.
    * \param   bdr           Boundary face index.
