@@ -209,7 +209,7 @@ class Tensorial
 
     return result;
   }
- /*!***********************************************************************************************
+  /*!***********************************************************************************************
    * \brief   Integrate triple product of one-dimensional shape functions.
    *
    * \param   i             Local index of local one-dimensional shape function.
@@ -217,17 +217,20 @@ class Tensorial
    * \param   k             Local index of local one-dimensional shape function.
    * \retval  integral      Integral of product of both shape functions.
    ************************************************************************************************/
-  static constexpr return_t integrate_1D_phiphiphi(const unsigned int i, const unsigned int j, const unsigned int k)
+  static constexpr return_t integrate_1D_phiphiphi(const unsigned int i,
+                                                   const unsigned int j,
+                                                   const unsigned int k)
   {
     tpp_assert(i < n_fun_1D && j < n_fun_1D && k < n_fun_1D,
-            "Indices of shape functions must be smaller than amount of shape functions.");
+               "Indices of shape functions must be smaller than amount of shape functions.");
     return_t result = 0.;
 
     for (unsigned int q = 0; q < quad_weights.size(); ++q)
-      result += quad_weights[q] * shape_fcts_at_quad[i][q] * shape_fcts_at_quad[j][q] * shape_fcts_at_quad[k][q];
+      result += quad_weights[q] * shape_fcts_at_quad[i][q] * shape_fcts_at_quad[j][q] *
+                shape_fcts_at_quad[k][q];
     return result;
   }
- /*!***********************************************************************************************
+  /*!***********************************************************************************************
    * \brief   Integrate product of two one-dimensional shape function and one derivative.
    *
    * \param   i             Local index of local one-dimensional shape function.
@@ -235,14 +238,17 @@ class Tensorial
    * \param   k             Local index of local one-dimensional shape function (with derivative).
    * \retval  integral      Integral of product of both shape functions.
    ************************************************************************************************/
-  static constexpr return_t integrate_1D_phiphiDphi(const unsigned int i, const unsigned int j, const unsigned int k)
+  static constexpr return_t integrate_1D_phiphiDphi(const unsigned int i,
+                                                    const unsigned int j,
+                                                    const unsigned int k)
   {
     tpp_assert(i < n_fun_1D && j < n_fun_1D && k < n_fun_1D,
-            "Indices of shape functions must be smaller than amount of shape functions.");
+               "Indices of shape functions must be smaller than amount of shape functions.");
     return_t result = 0.;
 
     for (unsigned int q = 0; q < quad_weights.size(); ++q)
-      result += quad_weights[q] * shape_fcts_at_quad[i][q] * shape_fcts_at_quad[j][q] * shape_ders_at_quad[k][q];
+      result += quad_weights[q] * shape_fcts_at_quad[i][q] * shape_fcts_at_quad[j][q] *
+                shape_ders_at_quad[k][q];
     return result;
   }
   /*!***********************************************************************************************
@@ -283,7 +289,7 @@ class Tensorial
         integral *= integrate_1D_phiphi(dec_i[dim_fct], dec_j[dim_fct]);
     return integral;
   }
- /*!***********************************************************************************************
+  /*!***********************************************************************************************
    * \brief   Integrate product of shape function and derivative over dimT-dimensional unit volume.
    *
    * \param   i             Local index of local shape function (with derivative).
@@ -467,8 +473,9 @@ class Tensorial
       integral *= integrate_1D_phiphi(dec_i[dim_fct], dec_j[dim_fct]);
     return integral * geom.area();
   }
- /*!***********************************************************************************************
-   * \brief   Integrate product of two shape functions and derivative over dimT-dimensional unit volume.
+  /*!***********************************************************************************************
+   * \brief   Integrate product of two shape functions and derivative over dimT-dimensional unit
+   *volume.
    *
    * \param   i             Local index of local shape function (with derivative).
    * \param   j             Local index of local shape function.
@@ -483,12 +490,13 @@ class Tensorial
             unsigned int poly_deg_j = shape_t::degree(),
             unsigned int poly_deg_k = shape_t::degree()>
   static smallVec_t integrate_vol_nablaphiphiphi(const unsigned int i,
-                                           const unsigned int j,
-                                           const unsigned int k,
-                                           geom_t& geom)
+                                                 const unsigned int j,
+                                                 const unsigned int k,
+                                                 geom_t& geom)
   {
     static_assert(geom_t::hyEdge_dim() == dim(), "Dimension of hyperedge must fit to quadrature!");
-    static_assert(poly_deg_i <= shape_t::degree() && poly_deg_j <= shape_t::degree() && poly_deg_k <= shape_t::degree(),
+    static_assert(poly_deg_i <= shape_t::degree() && poly_deg_j <= shape_t::degree() &&
+                    poly_deg_k <= shape_t::degree(),
                   "The maximum polynomial degrees must be larger than or equal to the given ones.");
     smallVec_t integral(1.);
     std::array<unsigned int, dim()> dec_i = Hypercube<dim()>::index_decompose(i, poly_deg_i + 1);
@@ -1670,7 +1678,7 @@ class Tensorial
         integral *= integrate_1D_phiphi(dec_i[dim_fct], dec_j[dim_fct]);
     return integral * geom.face_area(bdr);
   }
-   /*!***********************************************************************************************
+  /*!***********************************************************************************************
    * \brief   Integrate product of shape functions of volumen and skeletal over boundary face.
    *
    * \tparam  geom_t        Geometry which is the integration domain.
@@ -1700,7 +1708,7 @@ class Tensorial
     return integral * geom.face_area(bdr);
   }
 
- /*!***********************************************************************************************
+  /*!***********************************************************************************************
    * \brief   Integrate product of shape functions of two skeletal over boundary face.
    *
    * \tparam  geom_t        Geometry which is the integration domain.
@@ -1725,7 +1733,7 @@ class Tensorial
     unsigned int bdr_ind = bdr % 2;
     for (unsigned int dim_fct = 0; dim_fct < geom_t::hyEdge_dim() - 1; ++dim_fct)
       integral *= integrate_1D_phiphi(dec_i[dim_fct], dec_j[dim_fct]);
-    if ( geom_t::hyEdge_dim() == 1 )     //point evaluation
+    if (geom_t::hyEdge_dim() == 1)  // point evaluation
       integral *= shape_fcts_at_bdr[dec_i[0]][bdr_ind] * shape_fcts_at_bdr[dec_j[0]][bdr_ind];
     return integral * geom.face_area(bdr);
   }
@@ -1742,10 +1750,10 @@ class Tensorial
    ************************************************************************************************/
   template <typename geom_t>
   static return_t integrate_bdr_phiphiphi(const unsigned int i,
-                                       const unsigned int j,
-                                       const unsigned int k,
-                                       const unsigned int bdr,
-                                       geom_t& geom)
+                                          const unsigned int j,
+                                          const unsigned int k,
+                                          const unsigned int bdr,
+                                          geom_t& geom)
   {
     static_assert(geom_t::hyEdge_dim() == dim(), "Dimension of hyperedge must fit to quadrature!");
     return_t integral = 1.;
@@ -1755,15 +1763,16 @@ class Tensorial
     unsigned int dim = bdr / 2, bdr_ind = bdr % 2;
     for (unsigned int dim_fct = 0; dim_fct < geom_t::hyEdge_dim(); ++dim_fct)
       if (dim == dim_fct)
-        integral *=
-          shape_fcts_at_bdr[dec_i[dim_fct]][bdr_ind] * shape_fcts_at_bdr[dec_j[dim_fct]][bdr_ind]
-          * shape_fcts_at_bdr[dec_k[dim_fct]][bdr_ind];
+        integral *= shape_fcts_at_bdr[dec_i[dim_fct]][bdr_ind] *
+                    shape_fcts_at_bdr[dec_j[dim_fct]][bdr_ind] *
+                    shape_fcts_at_bdr[dec_k[dim_fct]][bdr_ind];
       else
         integral *= integrate_1D_phiphiphi(dec_i[dim_fct], dec_j[dim_fct], dec_k[dim_fct]);
     return integral * geom.face_area(bdr);
   }
   /*!***********************************************************************************************
-   * \brief   Integrate product of two shape functions of volumen and one skeletal over boundary face.
+   * \brief   Integrate product of two shape functions of volumen and one skeletal over boundary
+   *face.
    *
    * \tparam  geom_t        Geometry which is the integration domain.
    * \param   i             Local index of local volume shape function.
@@ -1775,10 +1784,10 @@ class Tensorial
    ************************************************************************************************/
   template <typename geom_t>
   static return_t integrate_bdr_phiphipsi(const unsigned int i,
-                                       const unsigned int j,
-                                       const unsigned int k,
-                                       const unsigned int bdr,
-                                       geom_t& geom)
+                                          const unsigned int j,
+                                          const unsigned int k,
+                                          const unsigned int bdr,
+                                          geom_t& geom)
   {
     static_assert(geom_t::hyEdge_dim() == dim(), "Dimension of hyperedge must fit to quadrature!");
     return_t integral = 1.;
@@ -1789,9 +1798,11 @@ class Tensorial
     unsigned int dim = bdr / 2, bdr_ind = bdr % 2;
     for (unsigned int dim_fct = 0; dim_fct < geom_t::hyEdge_dim(); ++dim_fct)
       if (dim == dim_fct)
-        integral *= shape_fcts_at_bdr[dec_i[dim_fct]][bdr_ind] * shape_fcts_at_bdr[dec_j[dim_fct]][bdr_ind];
+        integral *=
+          shape_fcts_at_bdr[dec_i[dim_fct]][bdr_ind] * shape_fcts_at_bdr[dec_j[dim_fct]][bdr_ind];
       else
-        integral *= integrate_1D_phiphiphi(dec_i[dim_fct], dec_j[dim_fct], dec_k[dim_fct - (dim_fct > dim)]);
+        integral *=
+          integrate_1D_phiphiphi(dec_i[dim_fct], dec_j[dim_fct], dec_k[dim_fct - (dim_fct > dim)]);
     return integral * geom.face_area(bdr);
   }
   /*!***********************************************************************************************
@@ -1807,10 +1818,10 @@ class Tensorial
    ************************************************************************************************/
   template <typename geom_t>
   static return_t integrate_bdr_phipsipsi(const unsigned int i,
-                                       const unsigned int j,
-                                       const unsigned int k,
-                                       const unsigned int bdr,
-                                       geom_t& geom)
+                                          const unsigned int j,
+                                          const unsigned int k,
+                                          const unsigned int bdr,
+                                          geom_t& geom)
   {
     static_assert(geom_t::hyEdge_dim() == dim(), "Dimension of hyperedge must fit to quadrature!");
     return_t integral = 1.;
@@ -1823,10 +1834,10 @@ class Tensorial
       if (dim == dim_fct)
         integral *= shape_fcts_at_bdr[dec_i[dim_fct]][bdr_ind];
       else
-        integral *= integrate_1D_phiphiphi(dec_i[dim_fct], dec_j[dim_fct - (dim_fct > dim)], dec_k[dim_fct - (dim_fct > dim)]);
+        integral *= integrate_1D_phiphiphi(dec_i[dim_fct], dec_j[dim_fct - (dim_fct > dim)],
+                                           dec_k[dim_fct - (dim_fct > dim)]);
     return integral * geom.face_area(bdr);
   }
-
 
   /*!***********************************************************************************************
    * \brief   Integrate product of shape functions times some function over boundary face.
@@ -2178,19 +2189,23 @@ class Tensorial
    * \brief   Integral of a discrete function times an analytical function.
    *
    * \tparam  geom_t        Geometry which is the integration domain.
-   * \tparam  fun           Analytical function that is integrated, such as a coefficient or an indicator
-   * \tparam  smallVec_t    Type of local point with respect to hyperedge. Defaults to point_t.
+   * \tparam  fun           Analytical function that is integrated, such as a coefficient or an
+   *                        indicator
+   *
+   * \tparam  smallVec_t    Type of local point with respect to hyperedge. Defaults to
+   *                        point_t.
+   *
    * \param   coeffs        Coefficients of discrete function.
    * \param   geom          Geometrical information.
-   * \param   f_param       Additional parameter for the analytical function 
+   * \param   f_param       Additional parameter for the analytical function
    * \retval  integral      Integral of the product
-   ************************************************************************************************/    
-  template <typename point_t, 
+   ************************************************************************************************/
+  template <typename point_t,
             typename geom_t,
             return_t fun(const point_t&, const param_t),
-            typename smallVec_t = point_t, 
+            typename smallVec_t = point_t,
             std::size_t n_coeff>
-  static return_t integrate_vol_discana_func(const std::array<return_t, n_coeff> coeffs, 
+  static return_t integrate_vol_discana_func(const std::array<return_t, n_coeff> coeffs,
                                              geom_t& geom,
                                              const param_t f_param = param_t())
   {
@@ -2215,8 +2230,8 @@ class Tensorial
           quad_val[i] *= shape_fcts_at_quad[dec_i[dim]][dec_q[dim]];
         }
       }
-      integral += quad_weight * std::accumulate(quad_val.begin(), quad_val.end(), 0.) 
-        * fun(geom.map_ref_to_phys(quad_pt), f_param);
+      integral += quad_weight * std::accumulate(quad_val.begin(), quad_val.end(), 0.) *
+                  fun(geom.map_ref_to_phys(quad_pt), f_param);
     }
     return integral * geom.area();
   }
@@ -2225,21 +2240,22 @@ class Tensorial
    * \brief   Squared integral of a discrete function times an analytical function.
    *
    * \tparam  geom_t        Geometry which is the integration domain.
-   * \tparam  fun           Analytical function that is integrated, such as a coefficient or an indicator
+   * \tparam  fun           Analytical function that is integrated, such as a coefficient or an
+   *indicator
    * \tparam  smallVec_t    Type of local point with respect to hyperedge. Defaults to point_t.
    * \param   coeffs        Coefficients of discrete function.
    * \param   geom          Geometrical information.
-   * \param   f_param       Additional parameter for the analytical function 
+   * \param   f_param       Additional parameter for the analytical function
    * \retval  integral      Integral of the squared product.
-   ************************************************************************************************/  
-  template <typename point_t, 
+   ************************************************************************************************/
+  template <typename point_t,
             typename geom_t,
             return_t fun(const point_t&, const param_t),
-            typename smallVec_t = point_t, 
+            typename smallVec_t = point_t,
             std::size_t n_coeff>
-  static return_t integrate_vol_square_discana_func(const std::array<return_t, n_coeff> coeffs, 
-                                             geom_t& geom,
-                                             const param_t f_param = param_t())
+  static return_t integrate_vol_square_discana_func(const std::array<return_t, n_coeff> coeffs,
+                                                    geom_t& geom,
+                                                    const param_t f_param = param_t())
   {
     static_assert(geom_t::hyEdge_dim() == dim(), "Dimension of hyperedge must fit to quadrature!");
     return_t integral = 0., quad_weight;
@@ -2262,8 +2278,9 @@ class Tensorial
           quad_val[i] *= shape_fcts_at_quad[dec_i[dim]][dec_q[dim]];
         }
       }
-      integral += quad_weight * std::pow(std::accumulate(quad_val.begin(), quad_val.end(), 0.) 
-        * fun(geom.map_ref_to_phys(quad_pt), f_param), 2);
+      integral += quad_weight * std::pow(std::accumulate(quad_val.begin(), quad_val.end(), 0.) *
+                                           fun(geom.map_ref_to_phys(quad_pt), f_param),
+                                         2);
     }
     return integral * geom.area();
   }
