@@ -20,7 +20,10 @@ namespace Quadrature
  *
  * \authors   Andreas Rupp, Heidelberg University, 2021.
  **************************************************************************************************/
-template <typename quadrature_t, typename shape_t, typename return_t = double>
+template <typename quadrature_t,
+          typename shape_t,
+          typename return_t = double,
+          typename param_t = return_t>
 class Tensorial
 {
  public:
@@ -331,12 +334,12 @@ class Tensorial
    ************************************************************************************************/
   template <typename point_t,
             typename geom_t,
-            return_t fun(const point_t&, const return_t),
+            return_t fun(const point_t&, const param_t),
             typename smallVec_t = point_t>
   static return_t integrate_vol_phiphifunc(const unsigned int i,
                                            const unsigned int j,
                                            geom_t& geom,
-                                           const return_t f_param = 0.)
+                                           const param_t f_param = 0.)
   {
     static_assert(geom_t::hyEdge_dim() == dim(), "Dimension of hyperedge must fit to quadrature!");
     return_t integral = 0., quad_val;
@@ -382,7 +385,7 @@ class Tensorial
                                               const unsigned int j,
                                               const unsigned int dimension,
                                               geom_t& geom,
-                                              const return_t f_param = 0.)
+                                              const param_t f_param = 0.)
   {
     static_assert(geom_t::hyEdge_dim() == dim(), "Dimension of hyperedge must fit to quadrature!");
     return_t integral = 0., quad_val;
@@ -486,11 +489,11 @@ class Tensorial
    ************************************************************************************************/
   template <typename point_t,
             typename geom_t,
-            return_t fun(const point_t&, const return_t),
+            return_t fun(const point_t&, const param_t),
             typename smallVec_t = point_t>
   static return_t integrate_vol_phifunc(const unsigned int i,
                                         geom_t& geom,
-                                        const return_t f_param = 0.)
+                                        const param_t f_param = 0.)
   {
     static_assert(geom_t::hyEdge_dim() == dim(), "Dimension of hyperedge must fit to quadrature!");
     return_t integral = 0., quad_val;
@@ -529,12 +532,12 @@ class Tensorial
    ************************************************************************************************/
   template <typename point_t,
             typename geom_t,
-            return_t fun(const point_t&, const point_t&, const return_t),
+            return_t fun(const point_t&, const point_t&, const param_t),
             typename smallVec_t = point_t>
   static return_t integrate_vol_phivecfunccomp(const unsigned int i,
                                                const int comp,
                                                geom_t& geom,
-                                               const return_t f_param = 0.)
+                                               const param_t f_param = 0.)
   {
     static_assert(geom_t::hyEdge_dim() == dim(), "Dimension of hyperedge must fit to quadrature!");
     return_t integral = 0., quad_val;
@@ -576,11 +579,11 @@ class Tensorial
    ************************************************************************************************/
   template <typename point_t,
             typename geom_t,
-            return_t fun(const point_t&, const return_t),
+            return_t fun(const point_t&, const param_t),
             typename smallVec_t = point_t>
   static return_t integrate_volUni_phifunc(const unsigned int i,
                                            geom_t& geom,
-                                           const return_t f_param = 0.)
+                                           const param_t f_param = 0.)
   {
     static_assert(geom_t::hyEdge_dim() == dim(), "Dimension of hyperedge must fit to quadrature!");
     return_t integral = 0., quad_val;
@@ -653,12 +656,12 @@ class Tensorial
    ************************************************************************************************/
   template <typename point_t,
             typename geom_t,
-            return_t fun(const point_t&, const return_t),
+            return_t fun(const point_t&, const param_t),
             typename smallVec_t = point_t>
   static return_t integrate_vol_nablaphinablaphifunc(const unsigned int i,
                                                      const unsigned int j,
                                                      geom_t& geom,
-                                                     return_t f_param = 0.)
+                                                     param_t f_param = 0.)
   {
     static_assert(geom_t::hyEdge_dim() == dim(), "Dimension of hyperedge must fit to quadrature!");
     return_t integral = 0., quad_weight;
@@ -712,12 +715,12 @@ class Tensorial
    ************************************************************************************************/
   template <typename point_t,
             typename geom_t,
-            return_t fun(const point_t&, const return_t),
+            return_t fun(const point_t&, const param_t),
             typename smallVec_t = point_t>
   static return_t integrate_vol_derphifunc(const unsigned int i,
                                            const unsigned int dim_der,
                                            geom_t& geom,
-                                           return_t f_param = 0.)
+                                           param_t f_param = 0.)
   {
     static_assert(geom_t::hyEdge_dim() == dim(), "Dimension of hyperedge must fit to quadrature!");
     return_t integral = 0., quad_weight;
@@ -770,7 +773,7 @@ class Tensorial
   static return_t integrate_vol_nablaphiphivecfunc(const unsigned int i,
                                                    const unsigned int j,
                                                    geom_t& geom,
-                                                   const return_t f_param = 0.)
+                                                   const param_t f_param = 0.)
   {
     static_assert(geom_t::hyEdge_dim() == dim(), "Dimension of hyperedge must fit to quadrature!");
     return_t integral = 0., quad_val;
@@ -828,7 +831,7 @@ class Tensorial
                                                         const unsigned int j,
                                                         const unsigned int bdr,
                                                         geom_t& geom,
-                                                        return_t f_param = 0.)
+                                                        param_t f_param = 0.)
   {
     static_assert(geom_t::hyEdge_dim() == dim(), "Dimension of hyperedge must fit to quadrature!");
     return_t integral = 0., quad_weight, phi_i, phi_j, winding;
@@ -891,7 +894,7 @@ class Tensorial
                                                const unsigned int j,
                                                const unsigned int bdr,
                                                geom_t& geom,
-                                               return_t f_param = 0.)
+                                               param_t f_param = 0.)
   {
     static_assert(geom_t::hyEdge_dim() == dim(), "Dimension of hyperedge must fit to quadrature!");
     return_t integral = 0., quad_weight, phi_i, phi_j, winding;
@@ -954,7 +957,7 @@ class Tensorial
                                                         const unsigned int j,
                                                         const unsigned int bdr,
                                                         geom_t& geom,
-                                                        return_t f_param = 0.)
+                                                        param_t f_param = 0.)
   {
     static_assert(geom_t::hyEdge_dim() == dim(), "Dimension of hyperedge must fit to quadrature!");
     return_t integral = 0., quad_weight, phi_i, psi_j, winding;
@@ -1018,7 +1021,7 @@ class Tensorial
                                                    const unsigned int j,
                                                    const unsigned int bdr,
                                                    geom_t& geom,
-                                                   return_t f_param = 0.)
+                                                   param_t f_param = 0.)
   {
     static_assert(geom_t::hyEdge_dim() == dim(), "Dimension of hyperedge must fit to quadrature!");
     return_t integral = 0., quad_weight, phi_i, psi_j, winding;
@@ -1082,7 +1085,7 @@ class Tensorial
                                                         const unsigned int j,
                                                         const unsigned int bdr,
                                                         geom_t& geom,
-                                                        return_t f_param = 0.)
+                                                        param_t f_param = 0.)
   {
     static_assert(geom_t::hyEdge_dim() == dim(), "Dimension of hyperedge must fit to quadrature!");
     return_t integral = 0., quad_weight, psi_i, phi_j, winding;
@@ -1144,7 +1147,7 @@ class Tensorial
                                                const unsigned int j,
                                                const unsigned int bdr,
                                                geom_t& geom,
-                                               return_t f_param = 0.)
+                                               param_t f_param = 0.)
   {
     static_assert(geom_t::hyEdge_dim() == dim(), "Dimension of hyperedge must fit to quadrature!");
     return_t integral = 0., quad_weight, psi_i, phi_j, winding;
@@ -1206,7 +1209,7 @@ class Tensorial
                                                         const unsigned int j,
                                                         const unsigned int bdr,
                                                         geom_t& geom,
-                                                        return_t f_param = 0.)
+                                                        param_t f_param = 0.)
   {
     static_assert(geom_t::hyEdge_dim() == dim(), "Dimension of hyperedge must fit to quadrature!");
     return_t integral = 0., quad_weight, psi_i, psi_j, winding;
@@ -1267,7 +1270,7 @@ class Tensorial
                                                    const unsigned int j,
                                                    const unsigned int bdr,
                                                    geom_t& geom,
-                                                   return_t f_param = 0.)
+                                                   param_t f_param = 0.)
   {
     static_assert(geom_t::hyEdge_dim() == dim(), "Dimension of hyperedge must fit to quadrature!");
     return_t integral = 0., quad_weight, psi_i, psi_j, winding;
@@ -1321,13 +1324,13 @@ class Tensorial
    ************************************************************************************************/
   template <typename point_t,
             typename geom_t,
-            return_t func(const point_t&, const return_t),
+            return_t func(const point_t&, const param_t),
             point_t fun(const point_t&, const return_t),
             typename smallVec_t = point_t>
   static return_t integrate_bdr_phifuncnuvecfunc_cutwind(const unsigned int i,
                                                          const unsigned int bdr,
                                                          geom_t& geom,
-                                                         return_t f_param = 0.)
+                                                         param_t f_param = 0.)
   {
     static_assert(geom_t::hyEdge_dim() == dim(), "Dimension of hyperedge must fit to quadrature!");
     return_t integral = 0., quad_weight, phi_i, winding;
@@ -1378,13 +1381,13 @@ class Tensorial
    ************************************************************************************************/
   template <typename point_t,
             typename geom_t,
-            return_t func(const point_t&, const return_t),
+            return_t func(const point_t&, const param_t),
             point_t fun(const point_t&, const return_t),
             typename smallVec_t = point_t>
   static return_t integrate_bdr_psifuncnuvecfunc_cutwind(const unsigned int i,
                                                          const unsigned int bdr,
                                                          geom_t& geom,
-                                                         return_t f_param = 0.)
+                                                         param_t f_param = 0.)
   {
     static_assert(geom_t::hyEdge_dim() == dim(), "Dimension of hyperedge must fit to quadrature!");
     return_t integral = 0., quad_weight, psi_i, winding;
@@ -1438,13 +1441,13 @@ class Tensorial
    ************************************************************************************************/
   template <typename point_t,
             typename geom_t,
-            return_t fun(const point_t&, const return_t),
+            return_t fun(const point_t&, const param_t),
             typename smallVec_t = point_t>
   static return_t integrate_bdr_nablaphiphinufunc(const unsigned int i,
                                                   const unsigned int j,
                                                   const unsigned int bdr,
                                                   geom_t& geom,
-                                                  return_t f_param = 0.)
+                                                  param_t f_param = 0.)
   {
     static_assert(geom_t::hyEdge_dim() == dim(), "Dimension of hyperedge must fit to quadrature!");
     return_t integral = 0., quad_weight, phi_j;
@@ -1511,13 +1514,13 @@ class Tensorial
    ************************************************************************************************/
   template <typename point_t,
             typename geom_t,
-            return_t fun(const point_t&, const return_t),
+            return_t fun(const point_t&, const param_t),
             typename smallVec_t = point_t>
   static return_t integrate_bdr_nablaphipsinufunc(const unsigned int i,
                                                   const unsigned int j,
                                                   const unsigned int bdr,
                                                   geom_t& geom,
-                                                  return_t f_param = 0.)
+                                                  param_t f_param = 0.)
   {
     static_assert(geom_t::hyEdge_dim() == dim(), "Dimension of hyperedge must fit to quadrature!");
     return_t integral = 0., quad_weight, phi_j;
@@ -1639,12 +1642,12 @@ class Tensorial
    ************************************************************************************************/
   template <typename point_t,
             typename geom_t,
-            return_t fun(const point_t&, const return_t),
+            return_t fun(const point_t&, const param_t),
             typename smallVec_t = point_t>
   static return_t integrate_bdr_phifunc(const unsigned int i,
                                         const unsigned int bdr,
                                         geom_t& geom,
-                                        const return_t f_param = 0.)
+                                        const param_t f_param = 0.)
   {
     static_assert(geom_t::hyEdge_dim() == dim(), "Dimension of hyperedge must fit to quadrature!");
     return_t integral = 0., quad_val;
@@ -1690,13 +1693,13 @@ class Tensorial
    ************************************************************************************************/
   template <typename point_t,
             typename geom_t,
-            return_t fun(const point_t&, const point_t&, const return_t),
+            return_t fun(const point_t&, const point_t&, const param_t),
             typename smallVec_t = point_t>
   static return_t integrate_bdr_phivecfunccomp(const unsigned int i,
                                                const unsigned int bdr,
                                                const int comp,
                                                geom_t& geom,
-                                               const return_t f_param = 0.)
+                                               const param_t f_param = 0.)
   {
     static_assert(geom_t::hyEdge_dim() == dim(), "Dimension of hyperedge must fit to quadrature!");
     return_t integral = 0., quad_val;
@@ -1737,13 +1740,13 @@ class Tensorial
 
   template <typename point_t,
             typename geom_t,
-            return_t fun(const point_t&, const point_t&, const point_t&, const return_t),
+            return_t fun(const point_t&, const point_t&, const point_t&, const param_t),
             typename smallVec_t = point_t>
   static return_t integrate_bdr_phivecfunccomp_normcheck(const unsigned int i,
                                                          const unsigned int bdr,
                                                          const int comp,
                                                          geom_t& geom,
-                                                         const return_t f_param = 0.)
+                                                         const param_t f_param = 0.)
   {
     static_assert(geom_t::hyEdge_dim() == dim(), "Dimension of hyperedge must fit to quadrature!");
     return_t integral = 0., quad_val;
@@ -1796,12 +1799,12 @@ class Tensorial
    ************************************************************************************************/
   template <typename point_t,
             typename geom_t,
-            return_t fun(const point_t&, const return_t),
+            return_t fun(const point_t&, const param_t),
             typename smallVec_t = point_t>
   static return_t integrate_bdrUni_psifunc(const unsigned int i,
                                            const unsigned int bdr,
                                            geom_t& geom,
-                                           const return_t f_param = 0.)
+                                           const param_t f_param = 0.)
   {
     static_assert(geom_t::hyEdge_dim() == dim(), "Dimension of hyperedge must fit to quadrature!");
     return_t integral = 0., quad_val;
@@ -1831,7 +1834,7 @@ class Tensorial
     return integral;
   }
   /*!***********************************************************************************************
-   * \brief   Squared L2 distance of some function and an discrete function on volume.
+   * \brief   Squared L2 distance of some function and a discrete function on volume.
    *
    * \tparam  geom_t        Geometry which is the integration domain.
    * \tparam  fun           Function whose distance is measured.
@@ -1843,12 +1846,12 @@ class Tensorial
    ************************************************************************************************/
   template <typename point_t,
             typename geom_t,
-            return_t fun(const point_t&, const return_t),
+            return_t fun(const point_t&, const param_t),
             typename smallVec_t = point_t,
             std::size_t n_coeff>
   static return_t integrate_vol_diffsquare_discana(const std::array<return_t, n_coeff> coeffs,
                                                    geom_t& geom,
-                                                   const return_t f_param = 0.)
+                                                   const param_t f_param = 0.)
   {
     static_assert(geom_t::hyEdge_dim() == dim(), "Dimension of hyperedge must fit to quadrature!");
     return_t integral = 0., quad_weight;
@@ -1879,7 +1882,7 @@ class Tensorial
   }
 
   /*!***********************************************************************************************
-   * \brief   Squared L2 distance of some function and an discrete function on volume.
+   * \brief   Squared L2 distance of some function and a discrete function on volume.
    *
    * \tparam  geom_t        Geometry which is the integration domain.
    * \tparam  fun           Function whose distance is measured.
@@ -1897,7 +1900,7 @@ class Tensorial
   static return_t integrate_vol_diffsquare_discanacomp(const std::array<return_t, n_coeff> coeffs,
                                                        const int comp,
                                                        geom_t& geom,
-                                                       const return_t f_param = 0.)
+                                                       const param_t f_param = 0.)
   {
     static_assert(geom_t::hyEdge_dim() == dim(), "Dimension of hyperedge must fit to quadrature!");
     return_t integral = 0., quad_weight;
@@ -1932,6 +1935,139 @@ class Tensorial
     }
     return integral * geom.area();
   }
+
+  /*!***********************************************************************************************
+   * \brief   Integral of a discrete function on volume.
+   *
+   * \tparam  geom_t        Geometry which is the integration domain.
+   * \tparam  smallVec_t    Type of local point with respect to hyperedge. Defaults to point_t.
+   * \param   coeffs        Coefficients of discrete function.
+   * \param   geom          Geometrical information.
+   * \retval  integral      Squared distance of functions.
+   ************************************************************************************************/
+  template <typename point_t, typename geom_t, typename smallVec_t = point_t, std::size_t n_coeff>
+  static return_t integrate_vol_discana(const std::array<return_t, n_coeff> coeffs, geom_t& geom)
+  {
+    static_assert(geom_t::hyEdge_dim() == dim(), "Dimension of hyperedge must fit to quadrature!");
+    return_t integral = 0., quad_weight;
+    std::array<unsigned int, dim()> dec_i, dec_q;
+    std::array<return_t, n_coeff> quad_val;
+    smallVec_t quad_pt;
+
+    for (unsigned int q = 0; q < std::pow(quad_weights.size(), geom_t::hyEdge_dim()); ++q)
+    {
+      dec_q = Hypercube<dim()>::index_decompose(q, quadrature_t::n_points());
+      quad_weight = 1.;
+      quad_val = coeffs;
+      for (unsigned int dim = 0; dim < geom_t::hyEdge_dim(); ++dim)
+      {
+        quad_pt[dim] = quad_points[dec_q[dim]];
+        quad_weight *= quad_weights[dec_q[dim]];
+        for (unsigned int i = 0; i < n_coeff; ++i)
+        {
+          dec_i = Hypercube<geom_t::hyEdge_dim()>::index_decompose(i, n_fun_1D);
+          quad_val[i] *= shape_fcts_at_quad[dec_i[dim]][dec_q[dim]];
+        }
+      }
+      integral += quad_weight * std::accumulate(quad_val.begin(), quad_val.end(), 0.);
+    }
+    return integral * geom.area();
+  }
+
+  /*!***********************************************************************************************
+   * \brief   Integral of a discrete function times an analytical function.
+   *
+   * \tparam  geom_t        Geometry which is the integration domain.
+   * \tparam  fun           Analytical function that is integrated, such as a coefficient or an indicator
+   * \tparam  smallVec_t    Type of local point with respect to hyperedge. Defaults to point_t.
+   * \param   coeffs        Coefficients of discrete function.
+   * \param   geom          Geometrical information.
+   * \param   f_param       Additional parameter for the analytical function 
+   * \retval  integral      Integral of the product
+   ************************************************************************************************/    
+  template <typename point_t, 
+            typename geom_t,
+            return_t fun(const point_t&, const param_t),
+            typename smallVec_t = point_t, 
+            std::size_t n_coeff>
+  static return_t integrate_vol_discana_func(const std::array<return_t, n_coeff> coeffs, 
+                                             geom_t& geom,
+                                             const param_t f_param = param_t())
+  {
+    static_assert(geom_t::hyEdge_dim() == dim(), "Dimension of hyperedge must fit to quadrature!");
+    return_t integral = 0., quad_weight;
+    std::array<unsigned int, dim()> dec_i, dec_q;
+    std::array<return_t, n_coeff> quad_val;
+    smallVec_t quad_pt;
+
+    for (unsigned int q = 0; q < std::pow(quad_weights.size(), geom_t::hyEdge_dim()); ++q)
+    {
+      dec_q = Hypercube<dim()>::index_decompose(q, quadrature_t::n_points());
+      quad_weight = 1.;
+      quad_val = coeffs;
+      for (unsigned int dim = 0; dim < geom_t::hyEdge_dim(); ++dim)
+      {
+        quad_pt[dim] = quad_points[dec_q[dim]];
+        quad_weight *= quad_weights[dec_q[dim]];
+        for (unsigned int i = 0; i < n_coeff; ++i)
+        {
+          dec_i = Hypercube<geom_t::hyEdge_dim()>::index_decompose(i, n_fun_1D);
+          quad_val[i] *= shape_fcts_at_quad[dec_i[dim]][dec_q[dim]];
+        }
+      }
+      integral += quad_weight * std::accumulate(quad_val.begin(), quad_val.end(), 0.) 
+        * fun(geom.map_ref_to_phys(quad_pt), f_param);
+    }
+    return integral * geom.area();
+  }
+
+  /*!***********************************************************************************************
+   * \brief   Squared integral of a discrete function times an analytical function.
+   *
+   * \tparam  geom_t        Geometry which is the integration domain.
+   * \tparam  fun           Analytical function that is integrated, such as a coefficient or an indicator
+   * \tparam  smallVec_t    Type of local point with respect to hyperedge. Defaults to point_t.
+   * \param   coeffs        Coefficients of discrete function.
+   * \param   geom          Geometrical information.
+   * \param   f_param       Additional parameter for the analytical function 
+   * \retval  integral      Integral of the squared product.
+   ************************************************************************************************/  
+  template <typename point_t, 
+            typename geom_t,
+            return_t fun(const point_t&, const param_t),
+            typename smallVec_t = point_t, 
+            std::size_t n_coeff>
+  static return_t integrate_vol_square_discana_func(const std::array<return_t, n_coeff> coeffs, 
+                                             geom_t& geom,
+                                             const param_t f_param = param_t())
+  {
+    static_assert(geom_t::hyEdge_dim() == dim(), "Dimension of hyperedge must fit to quadrature!");
+    return_t integral = 0., quad_weight;
+    std::array<unsigned int, dim()> dec_i, dec_q;
+    std::array<return_t, n_coeff> quad_val;
+    smallVec_t quad_pt;
+
+    for (unsigned int q = 0; q < std::pow(quad_weights.size(), geom_t::hyEdge_dim()); ++q)
+    {
+      dec_q = Hypercube<dim()>::index_decompose(q, quadrature_t::n_points());
+      quad_weight = 1.;
+      quad_val = coeffs;
+      for (unsigned int dim = 0; dim < geom_t::hyEdge_dim(); ++dim)
+      {
+        quad_pt[dim] = quad_points[dec_q[dim]];
+        quad_weight *= quad_weights[dec_q[dim]];
+        for (unsigned int i = 0; i < n_coeff; ++i)
+        {
+          dec_i = Hypercube<geom_t::hyEdge_dim()>::index_decompose(i, n_fun_1D);
+          quad_val[i] *= shape_fcts_at_quad[dec_i[dim]][dec_q[dim]];
+        }
+      }
+      integral += quad_weight * std::pow(std::accumulate(quad_val.begin(), quad_val.end(), 0.) 
+        * fun(geom.map_ref_to_phys(quad_pt), f_param), 2);
+    }
+    return integral * geom.area();
+  }
+
 };  // end of class Integrator
 
 }  // end of namespace Quadrature
