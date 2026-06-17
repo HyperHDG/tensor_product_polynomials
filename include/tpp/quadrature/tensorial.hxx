@@ -683,6 +683,35 @@ class Tensorial
     }
     return integral;
   }
+
+  template <typename point_t,
+            typename geom_t,
+            point_t fun(const point_t&, const param_t),
+            typename smallVec_t = point_t>
+  static point_t integrate_volUni_phivecfunc(const unsigned int i,
+                                           geom_t& geom,
+                                           const param_t f_param = 0.)
+  {
+    static_assert(geom_t::hyEdge_dim() == dim(), "Dimension of hyperedge must fit to quadrature!");
+    point_t integral = 0.;
+    return_t quad_val;
+    std::array<unsigned int, dim()> dec_i = Hypercube<dim()>::index_decompose(i, n_fun_1D);
+    std::array<unsigned int, dim()> dec_q;
+    smallVec_t quad_pt;
+
+    for (unsigned int q = 0; q < std::pow(quad_weights.size(), geom_t::hyEdge_dim()); ++q)
+    {
+      dec_q = Hypercube<dim()>::index_decompose(q, quadrature_t::n_points());
+      quad_val = 1.;
+      for (unsigned int dim = 0; dim < geom_t::hyEdge_dim(); ++dim)
+      {
+        quad_pt[dim] = quad_points[dec_q[dim]];
+        quad_val *= quad_weights[dec_q[dim]] * shape_fcts_at_quad[dec_i[dim]][dec_q[dim]];
+      }
+      integral += fun(geom.map_ref_to_phys(quad_pt), f_param) * quad_val;
+    }
+    return integral;
+  }
   /*!***********************************************************************************************
    * \brief   Integrate gradient of shape function times other shape function over some geometry.
    *
@@ -2044,6 +2073,45 @@ class Tensorial
     }
     return integral;
   }
+
+  template <typename point_t,
+            typename geom_t,
+            point_t fun(const point_t&, const param_t),
+            typename smallVec_t = point_t>
+  static point_t integrate_bdrUni_psivecfunc(const unsigned int i,
+                                           const unsigned int bdr,
+                                           geom_t& geom,
+                                           const param_t f_param = 0.)
+  {
+    static_assert(geom_t::hyEdge_dim() == dim(), "Dimension of hyperedge must fit to quadrature!");
+    point_t integral = 0.;
+    return_t quad_val;
+    std::array<unsigned int, std::max(1U, dim() - 1)> dec_q,
+      dec_i = Hypercube<dim() - 1>::index_decompose(i, n_fun_1D);
+    smallVec_t quad_pt;
+    unsigned int dim_bdr = bdr / 2, bdr_ind = bdr % 2;
+
+    for (unsigned int q = 0; q < std::pow(quad_weights.size(), geom_t::hyEdge_dim() - 1); ++q)
+    {
+      dec_q = Hypercube<dim() - 1>::index_decompose(q, quadrature_t::n_points());
+      quad_val = 1.;
+      for (unsigned int dim = 0; dim < geom_t::hyEdge_dim(); ++dim)
+      {
+        if (dim == dim_bdr)
+          quad_pt[dim] = bdr_ind;
+        else
+        {
+          quad_pt[dim] = quad_points[dec_q[dim - (dim > dim_bdr)]];
+          quad_val *=
+            quad_weights[dec_q[dim - (dim > dim_bdr)]] *
+            shape_fcts_at_quad[dec_i[dim - (dim > dim_bdr)]][dec_q[dim - (dim > dim_bdr)]];
+        }
+      }
+      integral += fun(geom.map_ref_to_phys(quad_pt), f_param) * quad_val;
+    }
+    return integral;
+  }
+
   /*!***********************************************************************************************
    * \brief   Squared L2 distance of some function and a discrete function on volume.
    *
@@ -2148,6 +2216,70 @@ class Tensorial
   }
 
   /*!***********************************************************************************************
+   * \brief   Squared L2 distance of some function and a skeletal function on one boundary face.
+   *
+   * \tparam  geom_t        Geometry which is the integration domain.
+   * \tparam  fun           Function whose distance is measured.
+   * \tparam  smallVec_t    Type of local point with respect to hyperedge. Defaults to point_t.
+   * \param   coeffs        Skeletal coefficients on face \c bdr (size n_shape_bdr).
+   * \param   bdr           Index of the boundary face (0 .. 2*hyEdge_dim - 1).
+   * \param   comp          Component selector for the normal vector passed to \c fun.
+   * \param   geom          Geometrical information.
+   * \param   f_param       Function parameter (e.g. time) with respect to which it is evaluated.
+   * \retval  integral      Squared distance on the face.
+   ************************************************************************************************/
+  template <typename point_t,
+            typename geom_t,
+            return_t fun(const point_t&, const point_t&, const return_t),
+            typename smallVec_t = point_t,
+            std::size_t n_coeff>
+  static return_t integrate_bdr_diffsquare_discanacomp(const std::array<return_t, n_coeff> coeffs,
+                                                       const unsigned int bdr,
+                                                       const int comp,
+                                                       geom_t& geom,
+                                                       const param_t f_param = 0.)
+  {
+    static_assert(geom_t::hyEdge_dim() == dim(), "Dimension of hyperedge must fit to quadrature!");
+    return_t integral = 0., quad_weight;
+    std::array<unsigned int, std::max(1U, dim() - 1)> dec_i, dec_q;
+    std::array<return_t, n_coeff> quad_val;
+    smallVec_t quad_pt;
+    unsigned int dim_bdr = bdr / 2, bdr_ind = bdr % 2;
+
+    SmallVec<geom_t::space_dim()> normal_vec;
+    if (comp > 0)
+      normal_vec = geom.inner_normal(comp - 1);
+    else if (comp < 0)
+      normal_vec = geom.outer_normal(-comp - 1);
+
+    for (unsigned int q = 0; q < std::pow(quad_weights.size(), geom_t::hyEdge_dim() - 1); ++q)
+    {
+      dec_q = Hypercube<dim() - 1>::index_decompose(q, quadrature_t::n_points());
+      quad_weight = 1.;
+      quad_val = coeffs;
+      for (unsigned int dim = 0; dim < geom_t::hyEdge_dim(); ++dim)
+      {
+        if (dim == dim_bdr)
+          quad_pt[dim] = bdr_ind;
+        else
+        {
+          unsigned int k = dim - (dim > dim_bdr);
+          quad_pt[dim] = quad_points[dec_q[k]];
+          quad_weight *= quad_weights[dec_q[k]];
+          for (unsigned int i = 0; i < n_coeff; ++i)
+          {
+            dec_i = Hypercube<geom_t::hyEdge_dim() - 1>::index_decompose(i, n_fun_1D);
+            quad_val[i] *= shape_fcts_at_quad[dec_i[k]][dec_q[k]];
+          }
+        }
+      }
+      integral += quad_weight * std::pow(fun(geom.map_ref_to_phys(quad_pt), normal_vec, f_param) -
+                                           std::accumulate(quad_val.begin(), quad_val.end(), 0.),
+                                         2);
+    }
+    return integral * geom.face_area(bdr);
+  }
+
    * \brief   Integral of a discrete function on volume.
    *
    * \tparam  geom_t        Geometry which is the integration domain.
@@ -2284,7 +2416,6 @@ class Tensorial
     }
     return integral * geom.area();
   }
-
 };  // end of class Integrator
 
 }  // end of namespace Quadrature
