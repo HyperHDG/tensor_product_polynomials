@@ -1,56 +1,31 @@
+# Author: Andreas Rupp, Saarland University, 2026.
+# Author: Joseph Holten, KIT, 2026.
+
 name: CMake
 
 on: [push]
 
-
 jobs:
-  # Do the G++-10 test!
-  build_gnu10:
-    name: Test build with g++-10
-    runs-on: ubuntu-20.04
-    env:
-      CXX: g++-10
+  # ============== Test code on the latest Ubuntu with the latest available compilers =============
+  build_and_test_ubuntu:
+    strategy:
+      matrix:
+        osys: [ ubuntu-24.04 ]
+        comp: [ {cxx: g++-14}, {cxx: clang++-19} ]
+
+    name: Test code with ${{ matrix.comp.cxx }} on ${{ matrix.osys }}
+    runs-on: ${{ matrix.osys }}
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
       with:
        submodules: recursive
-    - name: Conduct CMake test
+    - name: Install Python and CXX compiler
+      run: |
+        sudo apt-get update;
+        sudo apt-get install -y ${{ matrix.comp.cxx }};
+    - name: Conduct cmake test
       uses: HyperHDG/actions@cmake
       with:
-        cxx_compiler: ${{env.CXX}}
-
-  # Do the Clang++-10 test!
-  build_clang10:
-    name: Test build with clang++-10
-    runs-on: ubuntu-20.04
-    env:
-      CXX: clang++-10
-    
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v2
-      with:
-       submodules: recursive
-    - name: Conduct CMake test
-      uses: HyperHDG/actions@cmake
-      with:
-        cxx_compiler: ${{env.CXX}}
-
-  # Do the Clang++-11 test!
-  build_clang11:
-    name: Test build with clang++-11
-    runs-on: ubuntu-20.04
-    env:
-      CXX: clang++-11
-    
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v2
-      with:
-       submodules: recursive
-    - name: Conduct CMake test
-      uses: HyperHDG/actions@cmake
-      with:
-        cxx_compiler: ${{env.CXX}}
+        cxx_compiler: ${{ matrix.comp.cxx }}
