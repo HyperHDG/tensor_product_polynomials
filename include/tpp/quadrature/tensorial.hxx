@@ -2280,6 +2280,7 @@ class Tensorial
     return integral * geom.face_area(bdr);
   }
 
+  /****************************************************************************************
    * \brief   Integral of a discrete function on volume.
    *
    * \tparam  geom_t        Geometry which is the integration domain.
