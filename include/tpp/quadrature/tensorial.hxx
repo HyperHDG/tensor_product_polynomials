@@ -689,8 +689,8 @@ class Tensorial
             point_t fun(const point_t&, const param_t),
             typename smallVec_t = point_t>
   static point_t integrate_volUni_phivecfunc(const unsigned int i,
-                                           geom_t& geom,
-                                           const param_t f_param = 0.)
+                                             geom_t& geom,
+                                             const param_t f_param = 0.)
   {
     static_assert(geom_t::hyEdge_dim() == dim(), "Dimension of hyperedge must fit to quadrature!");
     point_t integral = 0.;
@@ -2079,9 +2079,9 @@ class Tensorial
             point_t fun(const point_t&, const param_t),
             typename smallVec_t = point_t>
   static point_t integrate_bdrUni_psivecfunc(const unsigned int i,
-                                           const unsigned int bdr,
-                                           geom_t& geom,
-                                           const param_t f_param = 0.)
+                                             const unsigned int bdr,
+                                             geom_t& geom,
+                                             const param_t f_param = 0.)
   {
     static_assert(geom_t::hyEdge_dim() == dim(), "Dimension of hyperedge must fit to quadrature!");
     point_t integral = 0.;
