@@ -4,53 +4,27 @@ on: [push]
 
 
 jobs:
-  # Do the G++-10 test!
-  build_gnu10:
-    name: Test build with g++-10
-    runs-on: ubuntu-20.04
-    env:
-      CXX: g++-10
+  # The ubuntu-20.04 runners (g++-10, clang++-10, clang++-11) have been retired. Test the oldest and
+  # newest compilers preinstalled on the current images.
+  build:
+    name: Test build with ${{ matrix.cxx }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+        - { os: ubuntu-22.04, cc: gcc-10,   cxx: g++-10 }
+        - { os: ubuntu-22.04, cc: clang-13, cxx: clang++-13 }
+        - { os: ubuntu-24.04, cc: gcc-14,   cxx: g++-14 }
+        - { os: ubuntu-24.04, cc: clang-18, cxx: clang++-18 }
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
       with:
        submodules: recursive
     - name: Conduct CMake test
       uses: HyperHDG/actions@cmake
       with:
-        cxx_compiler: ${{env.CXX}}
-
-  # Do the Clang++-10 test!
-  build_clang10:
-    name: Test build with clang++-10
-    runs-on: ubuntu-20.04
-    env:
-      CXX: clang++-10
-    
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v2
-      with:
-       submodules: recursive
-    - name: Conduct CMake test
-      uses: HyperHDG/actions@cmake
-      with:
-        cxx_compiler: ${{env.CXX}}
-
-  # Do the Clang++-11 test!
-  build_clang11:
-    name: Test build with clang++-11
-    runs-on: ubuntu-20.04
-    env:
-      CXX: clang++-11
-    
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v2
-      with:
-       submodules: recursive
-    - name: Conduct CMake test
-      uses: HyperHDG/actions@cmake
-      with:
-        cxx_compiler: ${{env.CXX}}
+        c_compiler: ${{ matrix.cc }}
+        cxx_compiler: ${{ matrix.cxx }}
