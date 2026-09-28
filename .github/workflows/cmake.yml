@@ -1,30 +1,31 @@
+# Author: Andreas Rupp, Saarland University, 2026.
+# Author: Joseph Holten, KIT, 2026.
+
 name: CMake
 
 on: [push]
 
-
 jobs:
-  # The ubuntu-20.04 runners (g++-10, clang++-10, clang++-11) have been retired. Test the oldest and
-  # newest compilers preinstalled on the current images.
-  build:
-    name: Test build with ${{ matrix.cxx }}
-    runs-on: ${{ matrix.os }}
+  # ============== Test code on the latest Ubuntu with the latest available compilers =============
+  build_and_test_ubuntu:
     strategy:
-      fail-fast: false
       matrix:
-        include:
-        - { os: ubuntu-22.04, cc: gcc-10,   cxx: g++-10 }
-        - { os: ubuntu-22.04, cc: clang-13, cxx: clang++-13 }
-        - { os: ubuntu-24.04, cc: gcc-14,   cxx: g++-14 }
-        - { os: ubuntu-24.04, cc: clang-18, cxx: clang++-18 }
+        osys: [ ubuntu-24.04 ]
+        comp: [ {cxx: g++-14}, {cxx: clang++-19} ]
+
+    name: Test code with ${{ matrix.comp.cxx }} on ${{ matrix.osys }}
+    runs-on: ${{ matrix.osys }}
 
     steps:
     - name: Checkout
       uses: actions/checkout@v4
       with:
        submodules: recursive
-    - name: Conduct CMake test
+    - name: Install Python and CXX compiler
+      run: |
+        sudo apt-get update;
+        sudo apt-get install -y ${{ matrix.comp.cxx }};
+    - name: Conduct cmake test
       uses: HyperHDG/actions@cmake
       with:
-        c_compiler: ${{ matrix.cc }}
-        cxx_compiler: ${{ matrix.cxx }}
+        cxx_compiler: ${{ matrix.comp.cxx }}
