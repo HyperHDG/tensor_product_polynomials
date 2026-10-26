@@ -390,7 +390,8 @@ class Tensorial
     std::array<unsigned int, dim()> dec_q;
     smallVec_t quad_pt;
 
-    for (unsigned int q = 0; q < std::pow(quad_weights.size(), geom_t::hyEdge_dim()); ++q)
+    for (unsigned int q = 0, n_q = Hypercube<geom_t::hyEdge_dim()>::pow(quad_weights.size());
+         q < n_q; ++q)
     {
       dec_q = Hypercube<dim()>::index_decompose(q, quadrature_t::n_points());
       quad_val = 1.;
@@ -437,7 +438,8 @@ class Tensorial
     smallVec_t quad_pt;
     const auto mat_q = geom.mat_q();
 
-    for (unsigned int q = 0; q < std::pow(quad_weights.size(), geom_t::hyEdge_dim()); ++q)
+    for (unsigned int q = 0, n_q = Hypercube<geom_t::hyEdge_dim()>::pow(quad_weights.size());
+         q < n_q; ++q)
     {
       dec_q = Hypercube<dim()>::index_decompose(q, quadrature_t::n_points());
       quad_val = 1.;
@@ -531,7 +533,8 @@ class Tensorial
 
     std::array<unsigned int, dim()> dec_k, dec_q;
 
-    for (unsigned int q = 0; q < std::pow(quad_weights.size(), geom_t::hyEdge_dim()); ++q)
+    for (unsigned int q = 0, n_q = Hypercube<geom_t::hyEdge_dim()>::pow(quad_weights.size());
+         q < n_q; ++q)
     {
       dec_q = Hypercube<dim()>::index_decompose(q, quadrature_t::n_points());
       quad_val = 1.;
@@ -580,7 +583,8 @@ class Tensorial
     std::array<unsigned int, dim()> dec_q;
     smallVec_t quad_pt;
 
-    for (unsigned int q = 0; q < std::pow(quad_weights.size(), geom_t::hyEdge_dim()); ++q)
+    for (unsigned int q = 0, n_q = Hypercube<geom_t::hyEdge_dim()>::pow(quad_weights.size());
+         q < n_q; ++q)
     {
       dec_q = Hypercube<dim()>::index_decompose(q, quadrature_t::n_points());
       quad_val = 1.;
@@ -630,7 +634,8 @@ class Tensorial
     else if (comp < 0)
       normal_vec = geom.outer_normal(-comp - 1);
 
-    for (unsigned int q = 0; q < std::pow(quad_weights.size(), geom_t::hyEdge_dim()); ++q)
+    for (unsigned int q = 0, n_q = Hypercube<geom_t::hyEdge_dim()>::pow(quad_weights.size());
+         q < n_q; ++q)
     {
       dec_q = Hypercube<dim()>::index_decompose(q, quadrature_t::n_points());
       quad_val = 1.;
@@ -670,7 +675,8 @@ class Tensorial
     std::array<unsigned int, dim()> dec_q;
     smallVec_t quad_pt;
 
-    for (unsigned int q = 0; q < std::pow(quad_weights.size(), geom_t::hyEdge_dim()); ++q)
+    for (unsigned int q = 0, n_q = Hypercube<geom_t::hyEdge_dim()>::pow(quad_weights.size());
+         q < n_q; ++q)
     {
       dec_q = Hypercube<dim()>::index_decompose(q, quadrature_t::n_points());
       quad_val = 1.;
@@ -699,7 +705,8 @@ class Tensorial
     std::array<unsigned int, dim()> dec_q;
     smallVec_t quad_pt;
 
-    for (unsigned int q = 0; q < std::pow(quad_weights.size(), geom_t::hyEdge_dim()); ++q)
+    for (unsigned int q = 0, n_q = Hypercube<geom_t::hyEdge_dim()>::pow(quad_weights.size());
+         q < n_q; ++q)
     {
       dec_q = Hypercube<dim()>::index_decompose(q, quadrature_t::n_points());
       quad_val = 1.;
@@ -779,7 +786,8 @@ class Tensorial
     smallVec_t quad_pt, nabla_phi_i, nabla_phi_j;
     const auto rrT = mat_times_transposed_mat(geom.mat_r(), geom.mat_r());
 
-    for (unsigned int q = 0; q < std::pow(quad_weights.size(), geom_t::hyEdge_dim()); ++q)
+    for (unsigned int q = 0, n_q = Hypercube<geom_t::hyEdge_dim()>::pow(quad_weights.size());
+         q < n_q; ++q)
     {
       dec_q = Hypercube<dim()>::index_decompose(q, quadrature_t::n_points());
       quad_weight = 1.;
@@ -837,7 +845,8 @@ class Tensorial
     smallVec_t quad_pt, nabla_phi_i;
     const auto rT = transposed(geom.mat_r());
 
-    for (unsigned int q = 0; q < std::pow(quad_weights.size(), geom_t::hyEdge_dim()); ++q)
+    for (unsigned int q = 0, n_q = Hypercube<geom_t::hyEdge_dim()>::pow(quad_weights.size());
+         q < n_q; ++q)
     {
       dec_q = Hypercube<dim()>::index_decompose(q, quadrature_t::n_points());
       quad_weight = 1.;
@@ -893,7 +902,8 @@ class Tensorial
     const auto qT = transposed(geom.mat_q());
     const auto rT = transposed(geom.mat_r());
 
-    for (unsigned int q = 0; q < std::pow(quad_weights.size(), geom_t::hyEdge_dim()); ++q)
+    for (unsigned int q = 0, n_q = Hypercube<geom_t::hyEdge_dim()>::pow(quad_weights.size());
+         q < n_q; ++q)
     {
       dec_q = Hypercube<dim()>::index_decompose(q, quadrature_t::n_points());
       quad_val = 1.;
@@ -950,7 +960,8 @@ class Tensorial
     point_t normal = geom.inner_normal(bdr);
     const unsigned int bdr_dim = bdr / 2, bdr_ind = bdr % 2;
 
-    for (unsigned int q = 0; q < std::pow(quad_weights.size(), geom_t::hyEdge_dim() - 1); ++q)
+    for (unsigned int q = 0, n_q = Hypercube<geom_t::hyEdge_dim() - 1>::pow(quad_weights.size());
+         q < n_q; ++q)
     {
       dec_q = Hypercube<dim() - 1>::index_decompose(q, quadrature_t::n_points());
       quad_weight = 1.;
@@ -1013,7 +1024,8 @@ class Tensorial
     point_t normal = geom.inner_normal(bdr);
     const unsigned int bdr_dim = bdr / 2, bdr_ind = bdr % 2;
 
-    for (unsigned int q = 0; q < std::pow(quad_weights.size(), geom_t::hyEdge_dim() - 1); ++q)
+    for (unsigned int q = 0, n_q = Hypercube<geom_t::hyEdge_dim() - 1>::pow(quad_weights.size());
+         q < n_q; ++q)
     {
       dec_q = Hypercube<dim() - 1>::index_decompose(q, quadrature_t::n_points());
       quad_weight = 1.;
@@ -1077,7 +1089,8 @@ class Tensorial
     point_t normal = geom.inner_normal(bdr);
     const unsigned int bdr_dim = bdr / 2, bdr_ind = bdr % 2;
 
-    for (unsigned int q = 0; q < std::pow(quad_weights.size(), geom_t::hyEdge_dim() - 1); ++q)
+    for (unsigned int q = 0, n_q = Hypercube<geom_t::hyEdge_dim() - 1>::pow(quad_weights.size());
+         q < n_q; ++q)
     {
       dec_q = Hypercube<dim() - 1>::index_decompose(q, quadrature_t::n_points());
       quad_weight = 1.;
@@ -1141,7 +1154,8 @@ class Tensorial
     point_t normal = geom.inner_normal(bdr);
     const unsigned int bdr_dim = bdr / 2, bdr_ind = bdr % 2;
 
-    for (unsigned int q = 0; q < std::pow(quad_weights.size(), geom_t::hyEdge_dim() - 1); ++q)
+    for (unsigned int q = 0, n_q = Hypercube<geom_t::hyEdge_dim() - 1>::pow(quad_weights.size());
+         q < n_q; ++q)
     {
       dec_q = Hypercube<dim() - 1>::index_decompose(q, quadrature_t::n_points());
       quad_weight = 1.;
@@ -1205,7 +1219,8 @@ class Tensorial
     point_t normal = geom.inner_normal(bdr);
     const unsigned int bdr_dim = bdr / 2, bdr_ind = bdr % 2;
 
-    for (unsigned int q = 0; q < std::pow(quad_weights.size(), geom_t::hyEdge_dim() - 1); ++q)
+    for (unsigned int q = 0, n_q = Hypercube<geom_t::hyEdge_dim() - 1>::pow(quad_weights.size());
+         q < n_q; ++q)
     {
       dec_q = Hypercube<dim() - 1>::index_decompose(q, quadrature_t::n_points());
       quad_weight = 1.;
@@ -1267,7 +1282,8 @@ class Tensorial
     point_t normal = geom.inner_normal(bdr);
     const unsigned int bdr_dim = bdr / 2, bdr_ind = bdr % 2;
 
-    for (unsigned int q = 0; q < std::pow(quad_weights.size(), geom_t::hyEdge_dim() - 1); ++q)
+    for (unsigned int q = 0, n_q = Hypercube<geom_t::hyEdge_dim() - 1>::pow(quad_weights.size());
+         q < n_q; ++q)
     {
       dec_q = Hypercube<dim() - 1>::index_decompose(q, quadrature_t::n_points());
       quad_weight = 1.;
@@ -1330,7 +1346,8 @@ class Tensorial
     point_t normal = geom.inner_normal(bdr);
     unsigned int bdr_dim = bdr / 2, bdr_ind = bdr % 2;
 
-    for (unsigned int q = 0; q < std::pow(quad_weights.size(), geom_t::hyEdge_dim() - 1); ++q)
+    for (unsigned int q = 0, n_q = Hypercube<geom_t::hyEdge_dim() - 1>::pow(quad_weights.size());
+         q < n_q; ++q)
     {
       dec_q = Hypercube<dim() - 1>::index_decompose(q, quadrature_t::n_points());
       quad_weight = 1.;
@@ -1391,7 +1408,8 @@ class Tensorial
     point_t normal = geom.inner_normal(bdr);
     unsigned int bdr_dim = bdr / 2, bdr_ind = bdr % 2;
 
-    for (unsigned int q = 0; q < std::pow(quad_weights.size(), geom_t::hyEdge_dim() - 1); ++q)
+    for (unsigned int q = 0, n_q = Hypercube<geom_t::hyEdge_dim() - 1>::pow(quad_weights.size());
+         q < n_q; ++q)
     {
       dec_q = Hypercube<dim() - 1>::index_decompose(q, quadrature_t::n_points());
       quad_weight = 1.;
@@ -1448,7 +1466,8 @@ class Tensorial
     point_t normal = geom.inner_normal(bdr);
     const unsigned int bdr_dim = bdr / 2, bdr_ind = bdr % 2;
 
-    for (unsigned int q = 0; q < std::pow(quad_weights.size(), geom_t::hyEdge_dim() - 1); ++q)
+    for (unsigned int q = 0, n_q = Hypercube<geom_t::hyEdge_dim() - 1>::pow(quad_weights.size());
+         q < n_q; ++q)
     {
       dec_q = Hypercube<dim() - 1>::index_decompose(q, quadrature_t::n_points());
       quad_weight = 1.;
@@ -1506,7 +1525,8 @@ class Tensorial
     point_t normal = geom.inner_normal(bdr);
     const unsigned int bdr_dim = bdr / 2, bdr_ind = bdr % 2;
 
-    for (unsigned int q = 0; q < std::pow(quad_weights.size(), geom_t::hyEdge_dim() - 1); ++q)
+    for (unsigned int q = 0, n_q = Hypercube<geom_t::hyEdge_dim() - 1>::pow(quad_weights.size());
+         q < n_q; ++q)
     {
       dec_q = Hypercube<dim() - 1>::index_decompose(q, quadrature_t::n_points());
       quad_weight = 1.;
@@ -1566,7 +1586,8 @@ class Tensorial
     const auto rT = transposed(geom.mat_r());
     const unsigned int bdr_dim = bdr / 2, bdr_ind = bdr % 2;
 
-    for (unsigned int q = 0; q < std::pow(quad_weights.size(), geom_t::hyEdge_dim() - 1); ++q)
+    for (unsigned int q = 0, n_q = Hypercube<geom_t::hyEdge_dim() - 1>::pow(quad_weights.size());
+         q < n_q; ++q)
     {
       dec_q = Hypercube<dim() - 1>::index_decompose(q, quadrature_t::n_points());
       quad_weight = 1.;
@@ -1640,7 +1661,8 @@ class Tensorial
     const auto rT = transposed(geom.mat_r());
     const unsigned int bdr_dim = bdr / 2, bdr_ind = bdr % 2;
 
-    for (unsigned int q = 0; q < std::pow(quad_weights.size(), geom_t::hyEdge_dim() - 1); ++q)
+    for (unsigned int q = 0, n_q = Hypercube<geom_t::hyEdge_dim() - 1>::pow(quad_weights.size());
+         q < n_q; ++q)
     {
       dec_q = Hypercube<dim() - 1>::index_decompose(q, quadrature_t::n_points());
       quad_weight = 1.;
@@ -1896,7 +1918,8 @@ class Tensorial
     smallVec_t quad_pt;
     unsigned int dim_bdr = bdr / 2, bdr_ind = bdr % 2;
 
-    for (unsigned int q = 0; q < std::pow(quad_weights.size(), geom_t::hyEdge_dim() - 1); ++q)
+    for (unsigned int q = 0, n_q = Hypercube<geom_t::hyEdge_dim() - 1>::pow(quad_weights.size());
+         q < n_q; ++q)
     {
       dec_q = Hypercube<dim() - 1>::index_decompose(q, quadrature_t::n_points());
       quad_val = 1.;
@@ -1955,7 +1978,8 @@ class Tensorial
     else if (comp < 0)
       normal_vec = geom.outer_normal(-comp - 1);
 
-    for (unsigned int q = 0; q < std::pow(quad_weights.size(), geom_t::hyEdge_dim() - 1); ++q)
+    for (unsigned int q = 0, n_q = Hypercube<geom_t::hyEdge_dim() - 1>::pow(quad_weights.size());
+         q < n_q; ++q)
     {
       dec_q = Hypercube<dim() - 1>::index_decompose(q, quadrature_t::n_points());
       quad_val = 1.;
@@ -2002,7 +2026,8 @@ class Tensorial
     else if (comp < 0)
       normal_vec = geom.outer_normal(-comp - 1);
 
-    for (unsigned int q = 0; q < std::pow(quad_weights.size(), geom_t::hyEdge_dim() - 1); ++q)
+    for (unsigned int q = 0, n_q = Hypercube<geom_t::hyEdge_dim() - 1>::pow(quad_weights.size());
+         q < n_q; ++q)
     {
       dec_q = Hypercube<dim() - 1>::index_decompose(q, quadrature_t::n_points());
       quad_val = 1.;
@@ -2053,7 +2078,8 @@ class Tensorial
     smallVec_t quad_pt;
     unsigned int dim_bdr = bdr / 2, bdr_ind = bdr % 2;
 
-    for (unsigned int q = 0; q < std::pow(quad_weights.size(), geom_t::hyEdge_dim() - 1); ++q)
+    for (unsigned int q = 0, n_q = Hypercube<geom_t::hyEdge_dim() - 1>::pow(quad_weights.size());
+         q < n_q; ++q)
     {
       dec_q = Hypercube<dim() - 1>::index_decompose(q, quadrature_t::n_points());
       quad_val = 1.;
@@ -2091,7 +2117,8 @@ class Tensorial
     smallVec_t quad_pt;
     unsigned int dim_bdr = bdr / 2, bdr_ind = bdr % 2;
 
-    for (unsigned int q = 0; q < std::pow(quad_weights.size(), geom_t::hyEdge_dim() - 1); ++q)
+    for (unsigned int q = 0, n_q = Hypercube<geom_t::hyEdge_dim() - 1>::pow(quad_weights.size());
+         q < n_q; ++q)
     {
       dec_q = Hypercube<dim() - 1>::index_decompose(q, quadrature_t::n_points());
       quad_val = 1.;
@@ -2138,7 +2165,8 @@ class Tensorial
     std::array<return_t, n_coeff> quad_val;
     smallVec_t quad_pt;
 
-    for (unsigned int q = 0; q < std::pow(quad_weights.size(), geom_t::hyEdge_dim()); ++q)
+    for (unsigned int q = 0, n_q = Hypercube<geom_t::hyEdge_dim()>::pow(quad_weights.size());
+         q < n_q; ++q)
     {
       dec_q = Hypercube<dim()>::index_decompose(q, quadrature_t::n_points());
       quad_weight = 1.;
@@ -2193,7 +2221,8 @@ class Tensorial
     else if (comp < 0)
       normal_vec = geom.outer_normal(-comp - 1);
 
-    for (unsigned int q = 0; q < std::pow(quad_weights.size(), geom_t::hyEdge_dim()); ++q)
+    for (unsigned int q = 0, n_q = Hypercube<geom_t::hyEdge_dim()>::pow(quad_weights.size());
+         q < n_q; ++q)
     {
       dec_q = Hypercube<dim()>::index_decompose(q, quadrature_t::n_points());
       quad_weight = 1.;
@@ -2252,7 +2281,8 @@ class Tensorial
     else if (comp < 0)
       normal_vec = geom.outer_normal(-comp - 1);
 
-    for (unsigned int q = 0; q < std::pow(quad_weights.size(), geom_t::hyEdge_dim() - 1); ++q)
+    for (unsigned int q = 0, n_q = Hypercube<geom_t::hyEdge_dim() - 1>::pow(quad_weights.size());
+         q < n_q; ++q)
     {
       dec_q = Hypercube<dim() - 1>::index_decompose(q, quadrature_t::n_points());
       quad_weight = 1.;
@@ -2298,7 +2328,8 @@ class Tensorial
     std::array<return_t, n_coeff> quad_val;
     smallVec_t quad_pt;
 
-    for (unsigned int q = 0; q < std::pow(quad_weights.size(), geom_t::hyEdge_dim()); ++q)
+    for (unsigned int q = 0, n_q = Hypercube<geom_t::hyEdge_dim()>::pow(quad_weights.size());
+         q < n_q; ++q)
     {
       dec_q = Hypercube<dim()>::index_decompose(q, quadrature_t::n_points());
       quad_weight = 1.;
@@ -2348,7 +2379,8 @@ class Tensorial
     std::array<return_t, n_coeff> quad_val;
     smallVec_t quad_pt;
 
-    for (unsigned int q = 0; q < std::pow(quad_weights.size(), geom_t::hyEdge_dim()); ++q)
+    for (unsigned int q = 0, n_q = Hypercube<geom_t::hyEdge_dim()>::pow(quad_weights.size());
+         q < n_q; ++q)
     {
       dec_q = Hypercube<dim()>::index_decompose(q, quadrature_t::n_points());
       quad_weight = 1.;
@@ -2396,7 +2428,8 @@ class Tensorial
     std::array<return_t, n_coeff> quad_val;
     smallVec_t quad_pt;
 
-    for (unsigned int q = 0; q < std::pow(quad_weights.size(), geom_t::hyEdge_dim()); ++q)
+    for (unsigned int q = 0, n_q = Hypercube<geom_t::hyEdge_dim()>::pow(quad_weights.size());
+         q < n_q; ++q)
     {
       dec_q = Hypercube<dim()>::index_decompose(q, quadrature_t::n_points());
       quad_weight = 1.;
