@@ -9,9 +9,16 @@
 #include <stdfloat>
 #endif
 
-// Gauss--Legendre rules with 1 to 12 points in double, long double and (where the compiler has it)
-// std::float128_t: points ascending in (0, 1), positive weights summing to one, and every monomial
-// x^k with k <= 2 n - 1 integrated exactly, up to a few epsilon of the type.
+// Gauss--Legendre rules with 1 to 12 points in the floating-point type REAL: points ascending in
+// (0, 1), positive weights summing to one, and every monomial x^k with k <= 2 n - 1 integrated
+// exactly, up to a few epsilon of the type. tests/CMakeLists.txt builds one executable per type
+// (double, long double and, where the compiler has it, std::float128_t).
+
+#ifndef REAL
+#define REAL double  // set by tests/CMakeLists.txt; the default serves editors and linters
+#endif
+#define STRINGIFY_(x) #x
+#define STRINGIFY(x) STRINGIFY_(x)
 
 int failures = 0;
 
@@ -66,12 +73,7 @@ void check_all(const char* type)
 
 int main()
 {
-  check_all<double>("double");
-  check_all<long double>("long double");
-#if defined(__STDCPP_FLOAT128_T__)
-  check_all<std::float128_t>("float128_t");
-  std::printf("float128_t checked\n");
-#endif
-  std::printf("%s\n", failures ? "FAILED" : "ok");
+  check_all<REAL>(STRINGIFY(REAL));
+  std::printf("%s  1 to 12 points in %s\n", failures ? "FAIL" : "ok  ", STRINGIFY(REAL));
   return failures;
 }
