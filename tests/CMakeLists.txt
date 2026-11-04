@@ -1,7 +1,7 @@
 # Add a the test executable and CTest test
 add_executable(one_dimensional one_dimensional.cxx)
 target_link_libraries(one_dimensional PUBLIC tpp)
-add_test(COMMAND one_dimensional)
+add_test(NAME one_dimensional COMMAND one_dimensional)
 
 # Gauss--Legendre rules, one executable per floating-point type (built in parallel):
 # double, long double and std::float128_t where the compiler has it (e.g. GCC >= 13 in C++23).
