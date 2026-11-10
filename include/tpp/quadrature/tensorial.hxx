@@ -69,8 +69,8 @@ class Tensorial
 
     for (unsigned int fct = 0; fct < n_fun_1D; ++fct)
       for (unsigned int pt = 0; pt < quadrature_t::n_points(); ++pt)
-        result[fct][pt] = shape_t::shape_fun_t::shape_fun_1d::template fct_val<return_t>(
-          fct, quadrature_t::points()[pt]);
+        result[fct][pt] =
+          shape_t::shape_fun_t::shape_fun_1d::template fct_val<return_t>(fct, quad_points[pt]);
 
     return result;
   }
@@ -84,8 +84,8 @@ class Tensorial
 
     for (unsigned int fct = 0; fct < n_fun_1D; ++fct)
       for (unsigned int pt = 0; pt < quadrature_t::n_points(); ++pt)
-        result[fct][pt] = shape_t::shape_fun_t::shape_fun_1d::template der_val<return_t>(
-          fct, quadrature_t::points()[pt]);
+        result[fct][pt] =
+          shape_t::shape_fun_t::shape_fun_1d::template der_val<return_t>(fct, quad_points[pt]);
 
     return result;
   }
@@ -2181,9 +2181,10 @@ class Tensorial
           quad_val[i] *= shape_fcts_at_quad[dec_i[dim]][dec_q[dim]];
         }
       }
-      integral += quad_weight * std::pow(fun(geom.map_ref_to_phys(quad_pt), f_param) -
-                                           std::accumulate(quad_val.begin(), quad_val.end(), 0.),
-                                         2);
+      integral +=
+        quad_weight * std::pow(fun(geom.map_ref_to_phys(quad_pt), f_param) -
+                                 std::accumulate(quad_val.begin(), quad_val.end(), (return_t)0.),
+                               2);
     }
     return integral * geom.area();
   }
@@ -2237,9 +2238,10 @@ class Tensorial
           quad_val[i] *= shape_fcts_at_quad[dec_i[dim]][dec_q[dim]];
         }
       }
-      integral += quad_weight * std::pow(fun(geom.map_ref_to_phys(quad_pt), normal_vec, f_param) -
-                                           std::accumulate(quad_val.begin(), quad_val.end(), 0.),
-                                         2);
+      integral +=
+        quad_weight * std::pow(fun(geom.map_ref_to_phys(quad_pt), normal_vec, f_param) -
+                                 std::accumulate(quad_val.begin(), quad_val.end(), (return_t)0.),
+                               2);
     }
     return integral * geom.area();
   }
@@ -2303,9 +2305,10 @@ class Tensorial
           }
         }
       }
-      integral += quad_weight * std::pow(fun(geom.map_ref_to_phys(quad_pt), normal_vec, f_param) -
-                                           std::accumulate(quad_val.begin(), quad_val.end(), 0.),
-                                         2);
+      integral +=
+        quad_weight * std::pow(fun(geom.map_ref_to_phys(quad_pt), normal_vec, f_param) -
+                                 std::accumulate(quad_val.begin(), quad_val.end(), (return_t)0.),
+                               2);
     }
     return integral * geom.face_area(bdr);
   }
@@ -2344,7 +2347,7 @@ class Tensorial
           quad_val[i] *= shape_fcts_at_quad[dec_i[dim]][dec_q[dim]];
         }
       }
-      integral += quad_weight * std::accumulate(quad_val.begin(), quad_val.end(), 0.);
+      integral += quad_weight * std::accumulate(quad_val.begin(), quad_val.end(), (return_t)0.);
     }
     return integral * geom.area();
   }
@@ -2395,7 +2398,7 @@ class Tensorial
           quad_val[i] *= shape_fcts_at_quad[dec_i[dim]][dec_q[dim]];
         }
       }
-      integral += quad_weight * std::accumulate(quad_val.begin(), quad_val.end(), 0.) *
+      integral += quad_weight * std::accumulate(quad_val.begin(), quad_val.end(), (return_t)0.) *
                   fun(geom.map_ref_to_phys(quad_pt), f_param);
     }
     return integral * geom.area();
@@ -2444,9 +2447,10 @@ class Tensorial
           quad_val[i] *= shape_fcts_at_quad[dec_i[dim]][dec_q[dim]];
         }
       }
-      integral += quad_weight * std::pow(std::accumulate(quad_val.begin(), quad_val.end(), 0.) *
-                                           fun(geom.map_ref_to_phys(quad_pt), f_param),
-                                         2);
+      integral +=
+        quad_weight * std::pow(std::accumulate(quad_val.begin(), quad_val.end(), (return_t)0.) *
+                                 fun(geom.map_ref_to_phys(quad_pt), f_param),
+                               2);
     }
     return integral * geom.area();
   }

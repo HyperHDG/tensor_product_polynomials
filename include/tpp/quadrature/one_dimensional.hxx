@@ -3,6 +3,7 @@
 #include <tpp/compile_time_tricks.hxx>
 
 #include <array>
+#include <limits>
 
 namespace TPP
 {
@@ -59,12 +60,88 @@ class GaussLegendre
     return weights;
   }
 
+ private:
+  /*!***********************************************************************************************
+   * \brief   Absolute value, usable in constant expressions for any floating point type.
+   ************************************************************************************************/
+  template <typename return_t>
+  static constexpr return_t absolute(const return_t x)
+  {
+    return x < (return_t)0. ? -x : x;
+  }
+  /*!***********************************************************************************************
+   * \brief   Cosine by its Taylor series, usable in constant expressions; only for the initial
+   *          guesses of the points, so its accuracy is irrelevant.
+   ************************************************************************************************/
+  template <typename return_t>
+  static constexpr return_t cosine(const return_t x)
+  {
+    return_t term = 1., sum = 1.;
+    for (unsigned int k = 1; k < 100 && absolute(term) > std::numeric_limits<return_t>::epsilon();
+         ++k)
+    {
+      term *= -x * x / (return_t)((2 * k - 1) * (2 * k));
+      sum += term;
+    }
+    return sum;
+  }
+  /*!***********************************************************************************************
+   * \brief   Legendre polynomial P_n on [-1,1] and its derivative at x, n = n_points().
+   ************************************************************************************************/
+  template <typename return_t>
+  static constexpr std::array<return_t, 2> legendre(const return_t x)
+  {
+    return_t p_previous = 1., p = x;
+    for (unsigned int k = 2; k <= n_points(); ++k)
+    {
+      const return_t p_next =
+        ((return_t)(2 * k - 1) * x * p - (return_t)(k - 1) * p_previous) / (return_t)k;
+      p_previous = p;
+      p = p_next;
+    }
+    if constexpr (n_points() == 1)
+      p_previous = 1.;
+    return {p, (return_t)n_points() * (x * p - p_previous) / (x * x - (return_t)1.)};
+  }
+  /*!***********************************************************************************************
+   * \brief   Points (ascending, in [-1,1]) and weights of the Gauss--Legendre rule, in return_t.
+   *
+   * The points are the roots of P_n, found by Newton's method from the classical initial guesses
+   * -cos(pi (i + 3/4) / (n + 1/2)) to the precision of return_t, and the weights are
+   * 2 / ((1 - x^2) P_n'(x)^2). All in return_t, so that the rule is as accurate as the type, and
+   * usable in constant expressions.
+   ************************************************************************************************/
+  template <typename return_t>
+  static constexpr std::array<std::array<return_t, n_points()>, 2> rule()
+  {
+    constexpr return_t pi = (return_t)3.14159265358979323846264338327950288419716939937510L;
+    std::array<std::array<return_t, n_points()>, 2> rule;
+    for (unsigned int i = 0; i < n_points(); ++i)
+    {
+      return_t x =
+        -cosine<return_t>(pi * ((return_t)i + (return_t)0.75) / ((return_t)n_points() + 0.5));
+      for (unsigned int iteration = 0; iteration < 100; ++iteration)
+      {
+        const std::array<return_t, 2> p = legendre<return_t>(x);
+        const return_t step = p[0] / p[1];
+        x -= step;
+        if (absolute(step) <= std::numeric_limits<return_t>::epsilon())
+          break;
+      }
+      const return_t derivative = legendre<return_t>(x)[1];
+      rule[0][i] = x;
+      rule[1][i] = (return_t)2. / (((return_t)1. - x * x) * derivative * derivative);
+    }
+    return rule;
+  }
+
  public:
   /*!***********************************************************************************************
    * \brief   Gauss--Legendre quadrature points on one-dimensional unit interval.
    *
    * Returns the quadrature points of the quadrature rule with accuracy order \c quad_deg on the
-   * one-dimensional unit interval \f$[0,1]\f$.
+   * one-dimensional unit interval \f$[0,1]\f$, in ascending order, computed in \c return_t to its
+   * precision.
    *
    * \tparam  return_t            Floating type specification. Default is double.
    * \retval  quad_points         \c std::array containing the quadrature points.
@@ -72,63 +149,14 @@ class GaussLegendre
   template <typename return_t = double>
   static constexpr std::array<return_t, n_points()> points()
   {
-    static_assert(n_points() < 10, "Amount of points needs to be smaller than 10!");
-
-    if constexpr (n_points() == 1)
-      return transform_points(std::array<return_t, n_points()>({static_cast<return_t>(0.)}));
-    if constexpr (n_points() == 2)
-      return transform_points(std::array<return_t, n_points()>(
-        {-heron_root<return_t>(1. / 3.), heron_root<return_t>(1. / 3.)}));
-    if constexpr (n_points() == 3)
-      return transform_points(
-        std::array<return_t, n_points()>({-heron_root<return_t>(3. / 5.), static_cast<return_t>(0.),
-                                          heron_root<return_t>(3. / 5.)}));
-    if constexpr (n_points() == 4)
-      return transform_points(std::array<return_t, n_points()>(
-        {-heron_root<return_t>(3. / 7. + 2. / 7. * heron_root<return_t>(6. / 5.)),
-         -heron_root<return_t>(3. / 7. - 2. / 7. * heron_root<return_t>(6. / 5.)),
-         heron_root<return_t>(3. / 7. - 2. / 7. * heron_root<return_t>(6. / 5.)),
-         heron_root<return_t>(3. / 7. + 2. / 7. * heron_root<return_t>(6. / 5.))}));
-    if constexpr (n_points() == 5)
-      return transform_points(std::array<return_t, n_points()>(
-        {static_cast<return_t>(-heron_root<return_t>(5. + 2. * heron_root<return_t>(10. / 7.)) /
-                               3.),
-         static_cast<return_t>(-heron_root<return_t>(5. - 2. * heron_root<return_t>(10. / 7.)) /
-                               3.),
-         static_cast<return_t>(0.),
-         static_cast<return_t>(heron_root<return_t>(5. - 2. * heron_root<return_t>(10. / 7.)) / 3.),
-         static_cast<return_t>(heron_root<return_t>(5. + 2. * heron_root<return_t>(10. / 7.)) /
-                               3.)}));
-    if constexpr (n_points() == 6)
-      return transform_points(std::array<return_t, n_points()>(
-        {static_cast<return_t>(0.6612093864662645), static_cast<return_t>(-0.6612093864662645),
-         static_cast<return_t>(-0.2386191860831969), static_cast<return_t>(0.2386191860831969),
-         static_cast<return_t>(-0.9324695142031521), static_cast<return_t>(0.9324695142031521)}));
-    if constexpr (n_points() == 7)
-      return transform_points(std::array<return_t, n_points()>(
-        {static_cast<return_t>(0.0000000000000000), static_cast<return_t>(0.4058451513773972),
-         static_cast<return_t>(-0.4058451513773972), static_cast<return_t>(-0.7415311855993945),
-         static_cast<return_t>(0.7415311855993945), static_cast<return_t>(-0.9491079123427585),
-         static_cast<return_t>(0.9491079123427585)}));
-    if constexpr (n_points() == 8)
-      return transform_points(std::array<return_t, n_points()>(
-        {static_cast<return_t>(-0.1834346424956498), static_cast<return_t>(0.1834346424956498),
-         static_cast<return_t>(-0.5255324099163290), static_cast<return_t>(0.5255324099163290),
-         static_cast<return_t>(-0.7966664774136267), static_cast<return_t>(0.7966664774136267),
-         static_cast<return_t>(-0.9602898564975363), static_cast<return_t>(0.9602898564975363)}));
-    if constexpr (n_points() == 9)
-      return transform_points(std::array<return_t, n_points()>(
-        {static_cast<return_t>(0.0000000000000000), static_cast<return_t>(-0.8360311073266358),
-         static_cast<return_t>(0.8360311073266358), static_cast<return_t>(-0.9681602395076261),
-         static_cast<return_t>(0.9681602395076261), static_cast<return_t>(-0.3242534234038089),
-         static_cast<return_t>(0.3123470770400029), static_cast<return_t>(0.2606106964029354),
-         static_cast<return_t>(0.2606106964029354)}));
+    return transform_points<return_t>(rule<return_t>()[0]);
   }
   /*!***********************************************************************************************
    * \brief   Gauss--Legendre quadrature weights on one-dimensional unit interval.
    *
    * Returns the quadrature weights of the quadrature rule with accuracy order \c quad_deg on the
-   * one-dimensional unit interval \f$[0,1]\f$.
+   * one-dimensional unit interval \f$[0,1]\f$, in the order of the points, computed in
+   * \c return_t to its precision.
    *
    * \tparam  return_t            Floating type specification. Default is double.
    * \retval  quad_weights        \c std::array containing the quadrature weights.
@@ -136,54 +164,7 @@ class GaussLegendre
   template <typename return_t = double>
   static constexpr std::array<return_t, n_points()> weights()
   {
-    static_assert(n_points() < 10, "Amount of points needs to be smaller than 10!");
-
-    if constexpr (n_points() == 1)
-      return transform_weights(std::array<return_t, n_points()>({static_cast<return_t>(2.)}));
-    if constexpr (n_points() == 2)
-      return transform_weights(
-        std::array<return_t, n_points()>({static_cast<return_t>(1.), static_cast<return_t>(1.)}));
-    if constexpr (n_points() == 3)
-      return transform_weights(std::array<return_t, n_points()>({static_cast<return_t>(5. / 9.),
-                                                                 static_cast<return_t>(8. / 9.),
-                                                                 static_cast<return_t>(5. / 9.)}));
-    if constexpr (n_points() == 4)
-      return transform_weights(std::array<return_t, n_points()>(
-        {static_cast<return_t>(1. / 36. * (18. - heron_root<return_t>(30.))),
-         static_cast<return_t>(1. / 36. * (18. + heron_root<return_t>(30.))),
-         static_cast<return_t>(1. / 36. * (18. + heron_root<return_t>(30.))),
-         static_cast<return_t>(1. / 36. * (18. - heron_root<return_t>(30.)))}));
-    if constexpr (n_points() == 5)
-      return transform_weights(std::array<return_t, n_points()>(
-        {static_cast<return_t>(1. / 900. * (322. - 13. * heron_root<return_t>(70.))),
-         static_cast<return_t>(1. / 900. * (322. + 13. * heron_root<return_t>(70.))),
-         static_cast<return_t>(1. / 900. * (322. + 190.)),
-         static_cast<return_t>(1. / 900. * (322. + 13. * heron_root<return_t>(70.))),
-         static_cast<return_t>(1. / 900. * (322. - 13. * heron_root<return_t>(70.)))}));
-    if constexpr (n_points() == 6)
-      return transform_weights(std::array<return_t, n_points()>(
-        {static_cast<return_t>(0.3607615730481386), static_cast<return_t>(0.3607615730481386),
-         static_cast<return_t>(0.4679139345726910), static_cast<return_t>(0.4679139345726910),
-         static_cast<return_t>(0.1713244923791704), static_cast<return_t>(0.1713244923791700)}));
-    if constexpr (n_points() == 7)
-      return transform_weights(std::array<return_t, n_points()>(
-        {static_cast<return_t>(0.4179591836734694), static_cast<return_t>(0.3818300505051189),
-         static_cast<return_t>(0.3818300505051189), static_cast<return_t>(0.2797053914892766),
-         static_cast<return_t>(0.2797053914892766), static_cast<return_t>(0.1294849661688697),
-         static_cast<return_t>(0.1294849661688697)}));
-    if constexpr (n_points() == 8)
-      return transform_weights(std::array<return_t, n_points()>(
-        {static_cast<return_t>(0.3626837833783620), static_cast<return_t>(0.3626837833783620),
-         static_cast<return_t>(0.3137066458778873), static_cast<return_t>(0.3137066458778873),
-         static_cast<return_t>(0.2223810344533745), static_cast<return_t>(0.2223810344533745),
-         static_cast<return_t>(0.1012285362903763), static_cast<return_t>(0.1012285362903763)}));
-    if constexpr (n_points() == 9)
-      return transform_weights(std::array<return_t, n_points()>(
-        {static_cast<return_t>(0.3302393550012598), static_cast<return_t>(0.1806481606948574),
-         static_cast<return_t>(0.1806481606948574), static_cast<return_t>(0.0812743883615744),
-         static_cast<return_t>(0.0812743883615744), static_cast<return_t>(0.3123470770400029),
-         static_cast<return_t>(0.3123470770400029), static_cast<return_t>(0.2606106964029354),
-         static_cast<return_t>(0.2606106964029354)}));
+    return transform_weights<return_t>(rule<return_t>()[1]);
   }
 };  // end of struct GaussLegendre
 
