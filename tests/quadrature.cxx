@@ -1,5 +1,6 @@
 #include <tpp/quadrature/one_dimensional.hxx>
 
+#include <algorithm>
 #include <cmath>
 #include <cstdio>
 #include <limits>
